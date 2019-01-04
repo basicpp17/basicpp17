@@ -36,7 +36,7 @@ For formatting `clang-format` is used with the `.clang-format`
 * `tuple17` - simple & fast replacement for `std::tuple`
 * `strong17` - simple opinionated strong typedefs
 * `one_of17` - simple & fast relacement for `std::variant`
-* "some_of17` - a heap allocated & packed `tuple<optional<T>...>`
+* `some_of17` - a heap allocated & packed `tuple<optional<T>...>`
 
 ## Meta Design
 
@@ -80,48 +80,48 @@ Fold & indexOf
 
 ## Meta Parts
 
-Type<>
+`Type<T>`
 - empty constexpr wrapper for any type
 - support for compile time comparison
 
-TemplateOfTypes<…>
+`TemplateOfTypes<…>`
 - operations on any template of types
 
-TemplateOfValues<…>
+`TemplateOfValues<…>`
 - operations on any template of values
 
-TypePack<…>
+`TypePack<…>`
 - Any amount of types
 - Support for concatentation, indexOf & recursion
 
-Const<>
+`Const<V>`
 - std::integral_constant but with C++17 auto
 - empty struct (use functons)
 
-Bool<>
+`Bool<>`
 - required special const, because Const<false> == Const<0>
 - convinient implicit cast to bool allows usage in if constexpr conditions
 
-Index<>
+`Index<I>`
 - specialisation of Const for size_t
 - implements arithmetic operators
 
-ConstPack<…>
+`ConstPack<…>`
 - Any amount of values
 - Support for concatentation, folding & recursion
 
-IndexPack<…>
+`IndexPack<…>`
 - specialisation of ConstPack for size_t
 - conversions for std::index_sequence
 
-IndexType<I, T>
+`IndexType<I, T>`
 - wrapper that associates an index to a type
 
-IndexTypePack
+`IndexTypePack<…>`
 - TypePack of IndexTypes
 - allows for enum like index generation
 
-TypeList<…>
+`TypeList<…>`
 - constexpr wrapper struct for IndexTypePacks
 - ensures all indices are unique
 - a lot of member functions
