@@ -14,18 +14,18 @@ Project {
 
     AutotestRunner {}
 
+    // note: if do not use this .qbs project you need a similar setup
     Product {
         name: "cpp17"
 
         Export {
             Depends { name: "cpp" }
             cpp.cxxLanguageVersion: "c++17"
-            cpp.treatWarningsAsErrors: true // TODO: fix all warnings
+            cpp.treatWarningsAsErrors: true
 
             Properties {
                 condition: qbs.toolchain.contains('msvc')
                 cpp.cxxFlags: [
-                    // "/await", // Coroutine-TS support
                     "/permissive-", "/Zc:__cplusplus", // best C++ compatibility
                     "/diagnostics:caret", // better errors
                     "/wd4068", // ignore unknown pragmas
@@ -34,7 +34,6 @@ Project {
             Properties {
                 condition: qbs.toolchain.contains('clang')
                 cpp.cxxFlags: [
-                    // "-fcoroutines-ts", // Coroutine-TS support
                     "--pedantic", // best C++ compatibility
                     "-Wall", "-Wextra", // enable more warnings
                     "-ftemplate-backtrace-limit=0", // do not cut template backtraces
