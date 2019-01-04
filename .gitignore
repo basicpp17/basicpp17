@@ -1,0 +1,9 @@
+!*.lib/
+!*.app/
+!*.data/
+!*.view/
+*.user
+*.user.*
+.vagrant/
+.vscode/
+.vs/
