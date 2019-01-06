@@ -8,6 +8,8 @@
 #include "ConstPack.recurse.h" // count
 #include "IndexPack.for.h" // IndexPackFor
 
+#include <cstddef> // size_t
+
 namespace meta17 {
 
 template<size_t I, auto... Vs, size_t... Is>

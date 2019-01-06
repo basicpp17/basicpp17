@@ -1,6 +1,8 @@
 #pragma once
 #include "ConstPack.h"
 
+#include <cstddef> // size_t
+
 namespace meta17 {
 
 /// IndexPack is a specialized ConstPack

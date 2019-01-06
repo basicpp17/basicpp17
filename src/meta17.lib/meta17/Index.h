@@ -1,6 +1,8 @@
 #pragma once
 #include "Const.h"
 
+#include <cstddef> // size_t
+
 namespace meta17 {
 
 /// Index is a specialized Const

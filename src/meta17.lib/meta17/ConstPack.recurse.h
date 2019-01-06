@@ -2,6 +2,8 @@
 #include "Const.h"
 #include "ConstPack.h"
 
+#include <cstddef> // size_t
+
 namespace meta17 {
 
 /// return number of values in ConstPack
