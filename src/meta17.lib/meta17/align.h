@@ -21,7 +21,7 @@ constexpr auto alignOffset(Const<Align> = {}, Const<Offset> = {}) -> Const<align
     return {};
 }
 
-template<auto Offset, auto... Size, auto... Align>
+template<size_t Offset, size_t... Size, size_t... Align>
 constexpr auto alignSizeAlignPack(ConstPack<Size...>, ConstPack<Align...>, Const<Offset> = {}) {
     if constexpr (0 < sizeof...(Size)) {
         constexpr auto aligned = toValue(alignOffset(constHead<Align...>(), Const<Offset>{}));
@@ -38,7 +38,7 @@ constexpr auto alignSizeAlignPack(ConstPack<Size...>, ConstPack<Align...>, Const
 //    align(Offsets[1] + SizeOf[1], AlignOf[2]),
 //    ...
 
-template<auto Offset, class... Ts>
+template<size_t Offset, class... Ts>
 constexpr auto alignTypePack(TypePack<Ts...>, Const<Offset> = {}) {
     return alignSizeAlignPack<Offset>(const_pack<sizeof(Ts)...>, const_pack<alignof(Ts)...>);
 }
