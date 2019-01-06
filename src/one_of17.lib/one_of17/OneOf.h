@@ -12,7 +12,8 @@
 #include <meta17/TypePack.wrap.h> // ToTypePack
 #include <meta17/Unreachable.h> // unreachable
 
-#include <limits>
+#include <cstdint> // uint8_t, …
+#include <limits> // std::numeric_limits
 #include <type_traits> // std::aligned_storage_t
 
 namespace one_of17 {
