@@ -171,17 +171,17 @@ private:
         });
     }
 
-    template<class F, class... Ts, size_t... Is>
-    constexpr auto visitVoidImpl(F&& f, TypePack<Ts...>, IndexPack<Is...>) {
+    template<class F, class... TTs, size_t... Is>
+    constexpr auto visitVoidImpl(F&& f, TypePack<TTs...>, IndexPack<Is...>) {
         return (void)((Is == which ? (f(*asPtr<Ts>()), true) : false) || ...);
     }
-    template<class F, class T, class... Ts, size_t I, size_t... Is>
-    constexpr auto visitRecursiveImpl(F&& f, TypePack<T, Ts...>, IndexPack<I, Is...>) {
+    template<class F, class T, class... TTs, size_t I, size_t... Is>
+    constexpr auto visitRecursiveImpl(F&& f, TypePack<T, TTs...>, IndexPack<I, Is...>) {
         if (I == which) {
             return f(*asPtr<T>());
         }
-        if constexpr (0 != sizeof...(Ts)) {
-            return visitRecursiveImpl(std::forward<F>(f), type_pack<Ts...>, index_pack<Is...>);
+        if constexpr (0 != sizeof...(TTs)) {
+            return visitRecursiveImpl(std::forward<F>(f), type_pack<TTs...>, index_pack<Is...>);
         }
         else {
             UNREACHABLE();
