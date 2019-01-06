@@ -23,6 +23,7 @@ Project {
 
         Properties {
             condition: qbs.toolchain.contains('clang')
+            cpp.cxxFlags: ["-Wno-unused-parameter"]
             cpp.cxxStandardLibrary: "libc++"
         }
 
@@ -36,6 +37,7 @@ Project {
 
             Properties {
                 condition: qbs.toolchain.contains('clang')
+                cpp.cxxFlags: ["-Wno-unused-parameter"]
                 cpp.linkerFlags: ["-lpthread"]
             }
 
