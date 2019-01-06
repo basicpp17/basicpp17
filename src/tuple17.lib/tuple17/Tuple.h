@@ -99,10 +99,11 @@ public:
     template<class... Os>
     constexpr Tuple(const Tuple<Os...>& o) {
         static_assert((hasType<Os>() && ...), "not all types are stored here!");
+        using O = std::remove_cv_t<std::remove_reference_t<decltype(o)>>;
         visitIndexTypes(indices, [&](auto i, auto t) {
             using T = UnwrapType<decltype(t)>;
             auto p = ptrAt(i);
-            if constexpr (o.template hasType<T>()) {
+            if constexpr (O::template hasType<T>()) {
                 new (p) T(o.template of<T>());
             }
             else {
