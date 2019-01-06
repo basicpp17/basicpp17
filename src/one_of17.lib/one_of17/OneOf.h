@@ -70,7 +70,7 @@ private:
 
 public:
     constexpr OneOf() {
-        constructOf<First>();
+        constructOf(type<First>);
         which = 0;
     }
     ~OneOf() {
@@ -160,7 +160,7 @@ public:
 
 private:
     template<class T, class... Args>
-    constexpr auto constructOf(Type<T> = {}, Args&&... args) {
+    constexpr auto constructOf(Type<T>, Args&&... args) {
         new (&m) T(std::forward<Args>(args)...);
     }
     constexpr auto destruct() {
