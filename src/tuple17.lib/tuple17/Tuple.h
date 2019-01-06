@@ -53,37 +53,37 @@ private:
 
 public:
     constexpr Tuple() {
-        visitIndexTypes(indices, [this](auto i, auto t) {
+        visitIndexTypes(indices, [&](auto i, auto t) {
             using T = UnwrapType<decltype(t)>;
             new (ptrAt(i)) T();
         });
     }
     ~Tuple() {
-        visitIndexTypes(indices, [this](auto i, auto t) {
+        visitIndexTypes(indices, [&](auto i, auto t) {
             using T = UnwrapType<decltype(t)>;
             at(i).~T();
         });
     }
 
     constexpr Tuple(const Tuple& o) {
-        visitIndexTypes(indices, [this, &o](auto i, auto t) {
+        visitIndexTypes(indices, [&](auto i, auto t) {
             using T = UnwrapType<decltype(t)>;
             new (ptrAt(i)) T(o.at(i));
         });
     }
     constexpr auto operator=(const Tuple& o) -> Tuple& {
-        visitIndexTypes(indices, [this, &o](auto i, auto) { at(i) = o.at(i); });
+        visitIndexTypes(indices, [&](auto i, auto) { at(i) = o.at(i); });
         return *this;
     }
 
     constexpr Tuple(Tuple&& o) {
-        visitIndexTypes(indices, [this, &o](auto i, auto t) {
+        visitIndexTypes(indices, [&](auto i, auto t) {
             using T = UnwrapType<decltype(t)>;
             new (ptrAt(i)) T(std::move(o).at(i));
         });
     }
     constexpr auto operator=(Tuple&& o) -> Tuple& {
-        visitIndexTypes(indices, [this, &o](auto i, auto) { at(i) = std::move(o).at(i); });
+        visitIndexTypes(indices, [&](auto i, auto) { at(i) = std::move(o).at(i); });
         return *this;
     }
 
