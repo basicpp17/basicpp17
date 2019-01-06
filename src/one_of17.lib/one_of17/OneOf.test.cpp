@@ -10,7 +10,7 @@ TEST(OneOf, basic) {
     auto x = MakeOneOf<TypePack<char, int, float>>{};
 
     auto s = x.visit([](auto v) { return sizeof(v); });
-    ASSERT_EQ(s, 1);
+    ASSERT_EQ(s, size_t{1});
 }
 
 TEST(OneOf, add) {
