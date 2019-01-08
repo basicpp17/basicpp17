@@ -1,5 +1,7 @@
 # A C++17 base library
 
+[![Build Status](https://travis-ci.org/basicpp17/basicpp17.svg?branch=develop)](https://travis-ci.org/basicpp17/basicpp17)
+
 A collection of useful meta helpers and value types.
 
 ## Target Compilers
