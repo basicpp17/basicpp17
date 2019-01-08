@@ -1,0 +1,10 @@
+language: cpp
+
+services:
+  - docker
+
+script:
+  - docker run -v${PWD}:/build
+      arbmind/qbs-clang7:1 
+      build --file /build/BasiC++17.qbs --build-directory /tmp/build 
+      -p autotest-runner
