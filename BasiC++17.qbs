@@ -57,6 +57,7 @@ Project {
             ".travis.yml",
             "LICENSE",
             "Readme.md",
+            "azure-pipelines.yml",
         ]
     }
 }

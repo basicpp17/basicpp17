@@ -1,6 +1,7 @@
 # A C++17 base library
 
 [![Build Status](https://travis-ci.org/basicpp17/basicpp17.svg?branch=develop)](https://travis-ci.org/basicpp17/basicpp17)
+[![Build Status](https://dev.azure.com/BasiCpp17/BasiCpp17/_apis/build/status/basicpp17.basicpp17?branchName=develop)](https://dev.azure.com/BasiCpp17/BasiCpp17/_build/latest?definitionId=1&branchName=develop)
 
 A collection of useful meta helpers and value types.
 
