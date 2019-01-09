@@ -1,0 +1,23 @@
+jobs:
+  - job: Linux
+    pool:
+      vmImage: ubuntu-16.04
+    steps:
+      - checkout: self
+        submodules: true
+      - script: docker run -v${PWD}:/build
+            arbmind/qbs-clang7:1 
+            build --file /build/BasiC++17.qbs --build-directory /tmp/build 
+            -p autotest-runner
+  
+  - job: Windows
+    pool:
+      vmImage: vs2017-win2016
+    steps:
+      - checkout: self
+        submodules: true
+      - script: choco install qbs
+      - script: qbs setup-toolchains --detect
+      - script: qbs
+            build profile:MSVC2017-x64 --file BasiC++17.qbs --build-directory %TMP%/build
+            -p autotest-runner
