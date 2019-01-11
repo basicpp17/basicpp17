@@ -51,6 +51,7 @@ Project {
             ".clang-tidy",
             ".editorconfig",
             ".gitignore",
+            "LICENSE",
             "Readme.md",
         ]
     }

@@ -127,3 +127,12 @@ Fold & indexOf
 - constexpr wrapper struct for IndexTypePacks
 - ensures all indices are unique
 - a lot of member functions
+
+## License
+
+This project usses the MIT License - see LICENSE file.
+
+## Contributions
+
+Please report your ideas and bugs as issues!
+Pull requests are also welcome.
