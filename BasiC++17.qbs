@@ -51,6 +51,7 @@ Project {
             ".clang-tidy",
             ".editorconfig",
             ".gitignore",
+            ".travis.yml",
             "LICENSE",
             "Readme.md",
         ]

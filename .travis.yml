@@ -5,6 +5,8 @@ matrix:
     - os: linux
       services:
         - docker
+      before_script:
+        - thirdparty/git_clone_googletest.sh
       script:
         - docker run -v${PWD}:/build
             arbmind/qbs-clang7:1 
@@ -15,6 +17,8 @@ matrix:
       install:
         - choco install qbs
         - qbs setup-toolchains --detect
+      before_script:
+        - thirdparty/git_clone_googletest.sh
       script:
         - qbs
             build profile:MSVC2017-x64 --file BasiC++17.qbs --build-directory ${TMP}/build

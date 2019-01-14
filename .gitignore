@@ -4,6 +4,7 @@
 !*.view/
 *.user
 *.user.*
+thirtparty/*/
 .vagrant/
 .vscode/
 .vs/
