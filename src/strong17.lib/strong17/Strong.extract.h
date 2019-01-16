@@ -15,7 +15,7 @@ using meta17::UnwrapType;
 
 /// return the value type for a given strong type
 template<class V, class... Tags>
-auto extractValueType(Type<Strong<V, Tags...>> = {}) -> Type<V> {
+constexpr auto extractValueType(Type<Strong<V, Tags...>> = {}) -> Type<V> {
     return {};
 }
 template<class S>
