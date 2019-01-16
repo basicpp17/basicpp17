@@ -9,6 +9,7 @@ StaticLibrary {
         "Strong.extract.h",
         "Strong.h",
         "Strong.hash.h",
+        "Strong.inspect.h",
         "Strong.make.h",
         "Strong.manip.h",
         "Strong.ops.h",
