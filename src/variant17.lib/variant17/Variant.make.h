@@ -1,22 +1,21 @@
 #pragma once
-#include "SomeOf.h"
+#include "Variant.h"
 
 #include <meta17/Type.h>
 #include <meta17/TypePack.h>
 
 #include <meta17/Type.wrap.h> // UnwrapType
 
-namespace some_of17 {
+namespace one_of17 {
 
-using meta17::Type;
 using meta17::TypePack;
 using meta17::UnwrapType;
 
 template<class... Ts>
-auto makeSomeOfType(TypePack<Ts...> = {}) -> Type<SomeOf<Ts...>> {
+auto makeVariantType(TypePack<Ts...> = {}) -> Type<Variant<Ts...>> {
     return {};
 }
 template<class P>
-using MakeSomeOf = UnwrapType<decltype(makeSomeOfType(P{}))>;
+using MakeVariant = UnwrapType<decltype(makeVariantType(P{}))>;
 
-} // namespace some_of17
+} // namespace one_of17

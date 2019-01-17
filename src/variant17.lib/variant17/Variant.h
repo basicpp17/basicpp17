@@ -52,13 +52,13 @@ auto selectType() {
 template<size_t N>
 using SelectType = UnwrapType<decltype(selectType<N>())>;
 
-/// OneOf != Variant
+/// Variant != Variant
 /// * unchecked invalid state (only destruction is valid!)
 /// * simple recursive vistor
 /// * allows uncheck casts (you have to check before!)
 /// * sizeof(index) limits
 template<class... Ts>
-struct OneOf {
+struct Variant {
     using Pack = ToTypePack<Ts...>;
     using Indices = IndexPackFor<Pack>;
     using First = UnwrapType<TypeHead<Pack>>;
@@ -70,20 +70,20 @@ private:
     Which which{npos};
 
 public:
-    constexpr OneOf() {
+    constexpr Variant() {
         constructOf(type<First>);
         which = 0;
     }
-    ~OneOf() {
+    ~Variant() {
         if (which != npos) destruct();
     }
 
     // copy
-    constexpr OneOf(const OneOf& o) {
+    constexpr Variant(const Variant& o) {
         o.visit([&](auto& v) { constructOf(type<decltype(v)>, v); });
         which = o.which;
     }
-    constexpr auto operator=(const OneOf& o) -> OneOf& {
+    constexpr auto operator=(const Variant& o) -> Variant& {
         if (o.which == which) {
             o.visit([&](auto& v) { *asPtr<decltype(v)>() = v; });
         }
@@ -95,14 +95,14 @@ public:
         }
         return *this;
     }
-    constexpr OneOf(OneOf&& o) {
+    constexpr Variant(Variant&& o) {
         o.visit([&](auto&& v) { constructOf(type<decltype(v)>, std::move(v)); });
         which = o.which;
         o.which = npos;
     }
 
     // move
-    constexpr auto operator=(OneOf&& o) -> OneOf& {
+    constexpr auto operator=(Variant&& o) -> Variant& {
         if (o.which == which) {
             o.visit([&](auto&& v) { *asPtr<decltype(v)>() = std::move(v); });
         }
@@ -120,21 +120,21 @@ public:
     template<
         class T,
         class BT = std::remove_cv_t<std::remove_reference_t<T>>,
-        class = std::enable_if_t<type<BT> != type<OneOf>>>
-    OneOf(T&& t) {
+        class = std::enable_if_t<type<BT> != type<Variant>>>
+    Variant(T&& t) {
         constructOf(type<BT>, std::forward<T>(t));
         which = indexOf<BT>();
     }
 
     /// inplace construct of type
     template<class T, class... Args>
-    OneOf(Type<T>, Args&&... args) {
+    Variant(Type<T>, Args&&... args) {
         constructOf(type<T>, std::forward<Args>(args)...);
         which = indexOf<T>();
     }
 
     template<size_t I, class... Args>
-    OneOf(Index<I>, Args&&... args) {
+    Variant(Index<I>, Args&&... args) {
         constexpr auto t = typeAt<I>(Pack{}, Indices{});
         constructOf(t, std::forward<Args>(args)...);
         which = I;

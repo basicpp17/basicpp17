@@ -1,21 +1,22 @@
 #pragma once
-#include "OneOf.h"
+#include "Partial.h"
 
 #include <meta17/Type.h>
 #include <meta17/TypePack.h>
 
 #include <meta17/Type.wrap.h> // UnwrapType
 
-namespace one_of17 {
+namespace some_of17 {
 
+using meta17::Type;
 using meta17::TypePack;
 using meta17::UnwrapType;
 
 template<class... Ts>
-auto makeOneOfType(TypePack<Ts...> = {}) -> Type<OneOf<Ts...>> {
+auto makePartialType(TypePack<Ts...> = {}) -> Type<Partial<Ts...>> {
     return {};
 }
 template<class P>
-using MakeOneOf = UnwrapType<decltype(makeOneOfType(P{}))>;
+using MakePartial = UnwrapType<decltype(makePartialType(P{}))>;
 
-} // namespace one_of17
+} // namespace some_of17

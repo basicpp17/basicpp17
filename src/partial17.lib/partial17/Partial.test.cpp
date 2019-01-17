@@ -1,7 +1,7 @@
-#include "SomeOf.h"
+#include "Partial.h"
 
-#include "SomeOf.make.h"
-#include "SomeOf.trait.h"
+#include "Partial.make.h"
+#include "Partial.trait.h"
 
 #include <meta17/Const.ops.h> // index == index
 
@@ -9,12 +9,12 @@
 
 using namespace some_of17;
 
-TEST(SomeOf, basic) {
-    auto x = SomeOf<char, int, float>(); //
+TEST(Partial, basic) {
+    auto x = Partial<char, int, float>(); //
 }
 
-TEST(SomeOf, fromFactory) {
-    const auto created = SomeOf<char, int, float>::fromFactory(
+TEST(Partial, fromFactory) {
+    const auto created = Partial<char, int, float>::fromFactory(
         [](size_t i) { return (0 == i % 2); },
         [](auto i) {
             if constexpr (i == index<0>) {

@@ -5,10 +5,10 @@ StaticLibrary {
     Depends { name: "meta17" }
 
     files: [
-        "OneOf.cpp",
-        "OneOf.h",
-        "OneOf.make.h",
-        "OneOf.trait.h",
+        "Variant.cpp",
+        "Variant.h",
+        "Variant.make.h",
+        "Variant.trait.h",
     ]
 
     Export {

@@ -1,4 +1,4 @@
-#include "SomeOf.h"
+#include "Partial.h"
 
 namespace some_of17 {
 

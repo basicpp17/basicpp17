@@ -10,6 +10,6 @@ Application {
     Depends { name: "googletest" }
 
     files: [
-        "OneOf.test.cpp",
+        "Variant.test.cpp",
     ]
 }

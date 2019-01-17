@@ -1,20 +1,20 @@
-#include "OneOf.h"
+#include "Variant.h"
 
-#include "OneOf.make.h"
+#include "Variant.make.h"
 
 #include <gtest/gtest.h>
 
 using namespace one_of17;
 
-TEST(OneOf, basic) {
-    auto x = MakeOneOf<TypePack<char, int, float>>{};
+TEST(Variant, basic) {
+    auto x = MakeVariant<TypePack<char, int, float>>{};
 
     auto s = x.visit([](auto v) { return sizeof(v); });
     ASSERT_EQ(s, size_t{1});
 }
 
-TEST(OneOf, add) {
-    auto x = OneOf<char, int, float>(3.14f);
+TEST(Variant, add) {
+    auto x = Variant<char, int, float>(3.14f);
 
     x.visit([](auto& v) { v += 3.2f; });
 
@@ -24,8 +24,8 @@ TEST(OneOf, add) {
     });
 }
 
-TEST(OneOf, emplace) {
-    auto x = OneOf<char, int, float>(type<int>, 23.14f);
+TEST(Variant, emplace) {
+    auto x = Variant<char, int, float>(type<int>, 23.14f);
 
     x.visit([](auto v) {
         ASSERT_EQ(sizeof(v), sizeof(int));

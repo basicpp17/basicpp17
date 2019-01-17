@@ -37,7 +37,7 @@ constexpr auto alignPointer(Ptr* ptr, Const<Align> = {}) -> Ptr* {
 }
 
 template<class... Ts>
-struct SomeOf {
+struct Partial {
     using Pack = ToTypePack<Ts...>;
     using Indices = IndexPackFor<Pack>;
     enum {
@@ -50,16 +50,16 @@ private:
     std::unique_ptr<uint8_t[]> m_data{};
 
 public:
-    constexpr SomeOf() = default;
-    ~SomeOf() { destructAll(); }
+    constexpr Partial() = default;
+    ~Partial() { destructAll(); }
 
     // copy - TODO
-    SomeOf(const SomeOf& o) {
+    Partial(const Partial& o) {
         auto hasValue = [&](auto i) { return o.has(i); };
         auto factory = [&](auto i) { return o.get(i); };
         *this = fromFactory(hasValue, factory);
     }
-    auto operator=(const SomeOf& o) -> SomeOf& {
+    auto operator=(const Partial& o) -> Partial& {
         destructAll();
         m_bits.reset();
         auto hasValue = [&](auto i) { return o.has(i); };
@@ -69,12 +69,12 @@ public:
     }
 
     // move
-    SomeOf(SomeOf&& o) noexcept
+    Partial(Partial&& o) noexcept
         : m_bits(o.m_bits)
         , m_data(std::move(o.m_data)) {
         o.m_bits.reset();
     }
-    auto operator=(SomeOf&& o) noexcept -> SomeOf& {
+    auto operator=(Partial&& o) noexcept -> Partial& {
         destructAll();
         m_bits = o.m_bits;
         m_data = std::move(o.m_data);
@@ -84,7 +84,7 @@ public:
 
     template<class HasValue, class Factory>
     static auto fromFactory(HasValue&& hasValue, Factory&& factory) {
-        auto r = SomeOf{};
+        auto r = Partial{};
         auto size = size_t{};
         visitIndexTypes(
             [&](auto i, auto t) {
@@ -157,7 +157,7 @@ public:
         visitInitialized(std::forward<F>(f), m_data.get());
     }
 
-    [[nodiscard]] auto merge(const SomeOf& o) const -> SomeOf {
+    [[nodiscard]] auto merge(const Partial& o) const -> Partial {
         auto hasValue = [&](auto i) { return has(i) || o.has(i); };
         auto factory = [&](auto i) { return o.has(i) ? o.get(i) : get(i); };
         return fromFactory(hasValue, factory);
