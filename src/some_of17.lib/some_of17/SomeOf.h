@@ -157,7 +157,7 @@ public:
         visitInitialized(std::forward<F>(f), m_data.get());
     }
 
-    auto setSome(const SomeOf& o) const -> SomeOf {
+    [[nodiscard]] auto merge(const SomeOf& o) const -> SomeOf {
         auto hasValue = [&](auto i) { return has(i) || o.has(i); };
         auto factory = [&](auto i) { return o.has(i) ? o.get(i) : get(i); };
         return fromFactory(hasValue, factory);
