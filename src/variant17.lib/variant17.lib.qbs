@@ -1,10 +1,10 @@
 import qbs
 
 Project {
-    name: "one_of17.lib"
+    name: "variant17.lib"
 
     references: [
-        "one_of17/one_of17.qbs",
-        "one_of17/one_of17.tests.qbs",
+        "variant17/variant17.qbs",
+        "variant17/variant17.tests.qbs",
     ]
 }

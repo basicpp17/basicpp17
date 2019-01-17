@@ -8,8 +8,8 @@ Project {
         "src/meta17.lib",
         "src/tuple17.lib",
         "src/strong17.lib",
-        "src/some_of17.lib",
-        "src/one_of17.lib",
+        "src/partial17.lib",
+        "src/variant17.lib",
     ]
 
     AutotestRunner {}
