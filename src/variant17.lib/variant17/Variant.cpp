@@ -1,7 +1,7 @@
 #include "Variant.h"
 
-namespace one_of17 {
+namespace variant17 {
 
 // TODO
 
-} // namespace one_of17
+} // namespace variant17

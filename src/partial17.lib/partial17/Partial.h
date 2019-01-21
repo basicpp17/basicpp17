@@ -14,7 +14,7 @@
 #include <memory> // std::unique_ptr
 #include <utility> // std::launder
 
-namespace some_of17 {
+namespace partial17 {
 
 using meta17::alignOffset;
 using meta17::Const;
@@ -207,4 +207,4 @@ private:
     }
 };
 
-} // namespace some_of17
+} // namespace partial17

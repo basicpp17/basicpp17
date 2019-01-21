@@ -6,7 +6,7 @@
 
 #include <meta17/Type.wrap.h> // UnwrapType
 
-namespace one_of17 {
+namespace variant17 {
 
 using meta17::TypePack;
 using meta17::UnwrapType;
@@ -18,4 +18,4 @@ auto makeVariantType(TypePack<Ts...> = {}) -> Type<Variant<Ts...>> {
 template<class P>
 using MakeVariant = UnwrapType<decltype(makeVariantType(P{}))>;
 
-} // namespace one_of17
+} // namespace variant17

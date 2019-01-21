@@ -16,7 +16,7 @@
 #include <limits> // std::numeric_limits
 #include <type_traits> // std::aligned_storage_t
 
-namespace one_of17 {
+namespace variant17 {
 
 using meta17::checkedIndexOf;
 using meta17::ConstPack;
@@ -189,4 +189,4 @@ private:
     }
 };
 
-} // namespace one_of17
+} // namespace variant17

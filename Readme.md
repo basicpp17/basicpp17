@@ -37,8 +37,8 @@ For formatting `clang-format` is used with the `.clang-format`
 * `meta17` - everything without runtime code or data
 * `tuple17` - simple & fast replacement for `std::tuple`
 * `strong17` - simple opinionated strong typedefs
-* `one_of17` - simple & fast relacement for `std::variant`
-* `some_of17` - a heap allocated & packed `tuple<optional<T>...>`
+* `variant17` - simple & fast relacement for `std::variant`
+* `partial17` - a heap allocated & packed `tuple<optional<T>...>`
 
 ## Meta Design
 

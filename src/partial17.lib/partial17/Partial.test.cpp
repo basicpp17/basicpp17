@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-using namespace some_of17;
+using namespace partial17;
 
 TEST(Partial, basic) {
     auto x = Partial<char, int, float>(); //

@@ -1,7 +1,7 @@
 #include "Partial.h"
 
-namespace some_of17 {
+namespace partial17 {
 
 // TODO
 
-} // namespace some_of17
+} // namespace partial17

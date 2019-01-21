@@ -6,7 +6,7 @@
 
 #include <meta17/Type.wrap.h> // UnwrapType
 
-namespace some_of17 {
+namespace partial17 {
 
 using meta17::Type;
 using meta17::TypePack;
@@ -19,4 +19,4 @@ auto makePartialType(TypePack<Ts...> = {}) -> Type<Partial<Ts...>> {
 template<class P>
 using MakePartial = UnwrapType<decltype(makePartialType(P{}))>;
 
-} // namespace some_of17
+} // namespace partial17

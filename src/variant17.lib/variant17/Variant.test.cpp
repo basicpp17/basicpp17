@@ -4,7 +4,7 @@
 
 #include <gtest/gtest.h>
 
-using namespace one_of17;
+using namespace variant17;
 
 TEST(Variant, basic) {
     auto x = MakeVariant<TypePack<char, int, float>>{};

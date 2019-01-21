@@ -3,7 +3,7 @@
 
 #include <meta17/TemplateOfTypes.trait.h>
 
-namespace some_of17 {
+namespace partial17 {
 
 using meta17::IsTypeTemplate;
 
@@ -11,6 +11,6 @@ template<class T>
 using IsPartial = IsTypeTemplate<T, Partial>;
 
 template<class T>
-constexpr auto is_some_of = IsPartial<T>{};
+constexpr auto is_partial = IsPartial<T>{};
 
-} // namespace some_of17
+} // namespace partial17
