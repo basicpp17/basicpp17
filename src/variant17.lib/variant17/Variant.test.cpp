@@ -7,6 +7,14 @@
 using namespace variant17;
 
 TEST(Variant, basic) {
+    auto x = Variant<char, int, float>{};
+    auto y = x; // copy constructor
+    x = y; // copy operator
+    x = std::move(y); // move operator
+    auto z = Variant<char, int, float>{std::move(x)}; // move construct
+}
+
+TEST(Variant, basicVisit) {
     auto x = MakeVariant<TypePack<char, int, float>>{};
 
     auto s = x.visit([](auto v) { return sizeof(v); });

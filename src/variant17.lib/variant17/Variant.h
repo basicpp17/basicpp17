@@ -80,36 +80,54 @@ public:
 
     // copy
     constexpr Variant(const Variant& o) {
-        o.visit([&](auto& v) { constructOf(type<decltype(v)>, v); });
+        o.visit([&](auto& v) {
+            using V = std::remove_cv_t<std::remove_reference_t<decltype(v)>>;
+            constructOf(type<V>, v);
+        });
         which = o.which;
     }
     constexpr auto operator=(const Variant& o) -> Variant& {
         if (o.which == which) {
-            o.visit([&](auto& v) { *asPtr<decltype(v)>() = v; });
+            o.visit([&](auto& v) {
+                using V = std::remove_cv_t<std::remove_reference_t<decltype(v)>>;
+                *asPtr(type<V>) = v;
+            });
         }
         else {
             destruct();
             which = npos;
-            o.visit([&](auto& v) { constructOf(type<decltype(v)>, v); });
+            o.visit([&](auto& v) {
+                using V = std::remove_cv_t<std::remove_reference_t<decltype(v)>>;
+                constructOf(type<V>, v);
+            });
             which = o.which;
         }
         return *this;
     }
+
+    // move
     constexpr Variant(Variant&& o) {
-        o.visit([&](auto&& v) { constructOf(type<decltype(v)>, std::move(v)); });
+        o.visit([&](auto&& v) {
+            using V = std::remove_cv_t<std::remove_reference_t<decltype(v)>>;
+            constructOf(type<V>, std::move(v));
+        });
         which = o.which;
         o.which = npos;
     }
-
-    // move
     constexpr auto operator=(Variant&& o) -> Variant& {
         if (o.which == which) {
-            o.visit([&](auto&& v) { *asPtr<decltype(v)>() = std::move(v); });
+            o.visit([&](auto&& v) {
+                using V = std::remove_cv_t<std::remove_reference_t<decltype(v)>>;
+                *asPtr(type<V>) = std::move(v);
+            });
         }
         else {
             destruct();
             which = npos;
-            o.visit([&](auto&& v) { constructOf(type<decltype(v)>, std::move(v)); });
+            o.visit([&](auto&& v) {
+                using V = std::remove_cv_t<std::remove_reference_t<decltype(v)>>;
+                constructOf(type<V>, std::move(v));
+            });
             which = o.which;
             o.which = npos;
         }
@@ -149,14 +167,17 @@ public:
     constexpr auto asPtr(Type<T> = {}) -> T* {
         return std::launder(reinterpret_cast<T*>(&m));
     }
-
+    template<class T>
+    constexpr auto asPtr(Type<T> = {}) const -> const T* {
+        return std::launder(reinterpret_cast<const T*>(&m));
+    }
     template<class F>
     constexpr auto visit(F&& f) {
-        using R = std::remove_cv_t<decltype(f(std::declval<First&>()))>;
-        if constexpr (type<R> == type<void>)
-            visitVoidImpl(std::forward<F>(f), Pack{}, Indices{});
-        else
-            return visitRecursiveImpl(std::forward<F>(f), Pack{}, Indices{});
+        return visitImpl(*this, std::forward<F>(f));
+    }
+    template<class F>
+    constexpr auto visit(F&& f) const {
+        return visitImpl(*this, std::forward<F>(f));
     }
 
 private:
@@ -171,22 +192,34 @@ private:
         });
     }
 
-    template<class F, class... TTs, size_t... Is>
-    constexpr auto visitVoidImpl(F&& f, TypePack<TTs...>, IndexPack<Is...>) {
-        return (void)((Is == which ? (f(*asPtr<Ts>()), true) : false) || ...);
+    template<class V, class F>
+    static constexpr auto visitImpl(V&& v, F&& f) {
+        using R = std::remove_cv_t<decltype(f(v.first()))>;
+        if constexpr (type<R> == type<void>)
+            visitVoidImpl(std::forward<V>(v), std::forward<F>(f), Indices{});
+        else
+            return visitRecursiveImpl(std::forward<V>(v), std::forward<F>(f), Pack{}, Indices{});
     }
-    template<class F, class T, class... TTs, size_t I, size_t... Is>
-    constexpr auto visitRecursiveImpl(F&& f, TypePack<T, TTs...>, IndexPack<I, Is...>) {
-        if (I == which) {
-            return f(*asPtr<T>());
+
+    template<class V, class F, size_t... Is>
+    static constexpr auto visitVoidImpl(V&& v, F&& f, IndexPack<Is...>) {
+        return (void)((Is == v.which ? (f(*v.asPtr(type<Ts>)), true) : false) || ...);
+    }
+    template<class V, class F, class T, class... TTs, size_t I, size_t... Is>
+    static constexpr auto visitRecursiveImpl(V&& v, F&& f, TypePack<T, TTs...>, IndexPack<I, Is...>) {
+        if (I == v.which) {
+            return f(*v.asPtr(type<T>));
         }
         if constexpr (0 != sizeof...(TTs)) {
-            return visitRecursiveImpl(std::forward<F>(f), type_pack<TTs...>, index_pack<Is...>);
+            return visitRecursiveImpl(std::forward<V>(v), std::forward<F>(f), type_pack<TTs...>, index_pack<Is...>);
         }
         else {
             UNREACHABLE();
         }
     }
+
+    auto first() -> First&;
+    auto first() const -> const First&;
 };
 
 } // namespace variant17
