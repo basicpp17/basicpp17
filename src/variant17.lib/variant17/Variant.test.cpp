@@ -12,6 +12,8 @@ TEST(Variant, basic) {
     x = y; // copy operator
     x = std::move(y); // move operator
     auto z = Variant<char, int, float>{std::move(x)}; // move construct
+
+    ASSERT_EQ(z.which(), type<char>);
 }
 
 TEST(Variant, basicVisit) {
@@ -39,4 +41,16 @@ TEST(Variant, emplace) {
         ASSERT_EQ(sizeof(v), sizeof(int));
         ASSERT_EQ(v, 23);
     });
+}
+
+TEST(Variant, nonDefault) {
+    struct X {
+        X() = delete;
+        X(int) {}
+    };
+
+    auto x = Variant<X>(type<X>, 2);
+    // auto y = Variant<X>{}; // won't compile
+
+    x.visit([](auto v) { ASSERT_EQ(sizeof(v), sizeof(X)); });
 }

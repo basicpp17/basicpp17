@@ -52,7 +52,7 @@ auto selectType() {
 template<size_t N>
 using SelectType = UnwrapType<decltype(selectType<N>())>;
 
-/// Variant != Variant
+/// Variant != std::variant
 /// * unchecked invalid state (only destruction is valid!)
 /// * simple recursive vistor
 /// * allows uncheck casts (you have to check before!)
@@ -62,20 +62,42 @@ struct Variant {
     using Pack = ToTypePack<Ts...>;
     using Indices = IndexPackFor<Pack>;
     using First = UnwrapType<TypeHead<Pack>>;
-    using Which = UnwrapType<SelectType<sizeof...(Ts)>>; // enough for npos!
+    using WhichValue = UnwrapType<SelectType<sizeof...(Ts)>>; // enough for npos!
     enum { npos = sizeof...(Ts) }; // invalid state after exception - only destruction checks!
+
+    struct Which {
+        explicit constexpr Which(WhichValue v)
+            : value(v) {}
+
+        operator WhichValue() const { return value; }
+
+        constexpr bool operator==(Which w) const { return w.value == value; }
+        constexpr bool operator!=(Which w) const { return w.value != value; }
+
+        template<class T>
+        constexpr bool operator==(Type<T>) const {
+            return whichOf<T>() == *this;
+        }
+        template<class T>
+        constexpr bool operator!=(Type<T>) const {
+            return whichOf<T>() != *this;
+        }
+
+    private:
+        WhichValue value;
+    };
 
 private:
     std::aligned_union_t<0, Ts...> m{};
-    Which which{npos};
+    WhichValue whichValue{npos};
 
 public:
     constexpr Variant() {
         constructOf(type<First>);
-        which = 0;
+        whichValue = 0;
     }
     ~Variant() {
-        if (which != npos) destruct();
+        if (whichValue != npos) destruct();
     }
 
     // copy
@@ -84,10 +106,10 @@ public:
             using V = std::remove_cv_t<std::remove_reference_t<decltype(v)>>;
             constructOf(type<V>, v);
         });
-        which = o.which;
+        whichValue = o.whichValue;
     }
     constexpr auto operator=(const Variant& o) -> Variant& {
-        if (o.which == which) {
+        if (o.whichValue == whichValue) {
             o.visit([&](auto& v) {
                 using V = std::remove_cv_t<std::remove_reference_t<decltype(v)>>;
                 *asPtr(type<V>) = v;
@@ -95,12 +117,12 @@ public:
         }
         else {
             destruct();
-            which = npos;
+            whichValue = npos;
             o.visit([&](auto& v) {
                 using V = std::remove_cv_t<std::remove_reference_t<decltype(v)>>;
                 constructOf(type<V>, v);
             });
-            which = o.which;
+            whichValue = o.whichValue;
         }
         return *this;
     }
@@ -111,11 +133,11 @@ public:
             using V = std::remove_cv_t<std::remove_reference_t<decltype(v)>>;
             constructOf(type<V>, std::move(v));
         });
-        which = o.which;
-        o.which = npos;
+        whichValue = o.whichValue;
+        o.whichValue = npos;
     }
     constexpr auto operator=(Variant&& o) -> Variant& {
-        if (o.which == which) {
+        if (o.whichValue == whichValue) {
             o.visit([&](auto&& v) {
                 using V = std::remove_cv_t<std::remove_reference_t<decltype(v)>>;
                 *asPtr(type<V>) = std::move(v);
@@ -123,13 +145,13 @@ public:
         }
         else {
             destruct();
-            which = npos;
+            whichValue = npos;
             o.visit([&](auto&& v) {
                 using V = std::remove_cv_t<std::remove_reference_t<decltype(v)>>;
                 constructOf(type<V>, std::move(v));
             });
-            which = o.which;
-            o.which = npos;
+            whichValue = o.whichValue;
+            o.whichValue = npos;
         }
         return *this;
     }
@@ -141,27 +163,29 @@ public:
         class = std::enable_if_t<type<BT> != type<Variant>>>
     Variant(T&& t) {
         constructOf(type<BT>, std::forward<T>(t));
-        which = indexOf<BT>();
+        whichValue = whichOf<BT>();
     }
 
     /// inplace construct of type
     template<class T, class... Args>
     Variant(Type<T>, Args&&... args) {
         constructOf(type<T>, std::forward<Args>(args)...);
-        which = indexOf<T>();
+        whichValue = whichOf<T>();
     }
 
     template<size_t I, class... Args>
     Variant(Index<I>, Args&&... args) {
         constexpr auto t = typeAt<I>(Pack{}, Indices{});
         constructOf(t, std::forward<Args>(args)...);
-        which = I;
+        whichValue = I;
     }
 
     template<class T>
-    constexpr static auto indexOf(Type<T> = {}) {
-        return meta17::checkedIndexOf<T>(Pack{}, Indices{});
+    constexpr static auto whichOf(Type<T> = {}) -> Which {
+        return Which{static_cast<WhichValue>(meta17::checkedIndexOf<T>(Pack{}, Indices{}))};
     }
+
+    constexpr auto which() const -> Which { return Which{whichValue}; }
 
     template<class T>
     constexpr auto asPtr(Type<T> = {}) -> T* {
@@ -203,11 +227,11 @@ private:
 
     template<class V, class F, size_t... Is>
     static constexpr auto visitVoidImpl(V&& v, F&& f, IndexPack<Is...>) {
-        return (void)((Is == v.which ? (f(*v.asPtr(type<Ts>)), true) : false) || ...);
+        return (void)((Is == v.whichValue ? (f(*v.asPtr(type<Ts>)), true) : false) || ...);
     }
     template<class V, class F, class T, class... TTs, size_t I, size_t... Is>
     static constexpr auto visitRecursiveImpl(V&& v, F&& f, TypePack<T, TTs...>, IndexPack<I, Is...>) {
-        if (I == v.which) {
+        if (I == v.whichValue) {
             return f(*v.asPtr(type<T>));
         }
         if constexpr (0 != sizeof...(TTs)) {
