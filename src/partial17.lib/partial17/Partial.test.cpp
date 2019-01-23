@@ -10,7 +10,11 @@
 using namespace partial17;
 
 TEST(Partial, basic) {
-    auto x = Partial<char, int, float>(); //
+    auto x = Partial<char, int, float>{}; //
+    auto y = x; // copy constructor
+    x = y; // copy operator
+    x = std::move(y); // move operator
+    auto z = Partial<char, int, float>{std::move(x)}; // move construct
 }
 
 TEST(Partial, fromFactory) {

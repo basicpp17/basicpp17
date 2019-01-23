@@ -53,7 +53,7 @@ public:
     constexpr Partial() = default;
     ~Partial() { destructAll(); }
 
-    // copy - TODO
+    // copy
     Partial(const Partial& o) {
         auto hasValue = [&](auto i) { return o.has(i); };
         auto factory = [&](auto i) { return o.get(i); };
