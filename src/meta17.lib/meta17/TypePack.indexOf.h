@@ -16,8 +16,15 @@ template<class T, class TP>
 constexpr auto count_of = countOf(TP{}, type<T>);
 
 /// return true if T occurs at least once in the TypePack
+/*
 template<class T, class... Ts>
 constexpr auto containsOf(TypePack<Ts...>, Type<T> = {}) -> bool {
+    return ((type<Ts> == type<T>) || ...);
+}*/
+
+// Generic Version
+template<class T, class... Ts, template<typename...> class C>
+constexpr auto containsOf(C<Ts...>, Type<T> = {}) -> bool {
     return ((type<Ts> == type<T>) || ...);
 }
 template<class T, class TP>

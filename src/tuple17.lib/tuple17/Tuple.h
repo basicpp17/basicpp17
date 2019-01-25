@@ -69,7 +69,8 @@ struct Tuple {
     };
 
 private:
-    std::aligned_storage_t<size, max_align> m;
+    // std::aligned_storage_t<size, max_align> m;
+    std::aligned_storage_t<size> m;
 
 public:
     constexpr Tuple() {
@@ -233,4 +234,25 @@ private:
     }
 };
 
+// Deduction guide to allow easy in-place construction
+template<class... Ts>
+Tuple(Ts&&...)->Tuple<std::remove_cv_t<std::remove_reference_t<Ts>>...>;
+
 } // namespace tuple17
+
+/// for c++17 structured bindings support
+namespace std {
+template<class... Ts>
+class tuple_size<tuple17::Tuple<Ts...>> : public std::integral_constant<std::size_t, sizeof...(Ts)> {};
+
+template<std::size_t N, class... Ts>
+class tuple_element<N, tuple17::Tuple<Ts...>> {
+public:
+    using type = decltype(std::declval<tuple17::Tuple<Ts...>>().template at<N>());
+};
+
+template<class T, class... Ts>
+auto constexpr get(tuple17::Tuple<Ts...>& tuple, ::meta17::Type<T> = {}) {
+    return tuple.template of<T>();
+}
+} // namespace std

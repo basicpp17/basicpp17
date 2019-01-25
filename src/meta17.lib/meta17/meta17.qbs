@@ -102,6 +102,7 @@ Product {
             "TypeList.h",
             "TypeList.make.h",
             "TypeList.ops.h",
+            "TypeList.trait.h",
         ]
     }
     Group {
@@ -110,6 +111,7 @@ Product {
             "TypePack.access.h",
             "TypePack.h",
             "TypePack.indexOf.h",
+            "TypePack.iterate.h",
             "TypePack.manip.h",
             "TypePack.ops.h",
             "TypePack.recurse.h",

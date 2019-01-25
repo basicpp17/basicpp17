@@ -8,6 +8,7 @@ StaticLibrary {
         "Variant.cpp",
         "Variant.h",
         "Variant.make.h",
+        "Variant.ops.h",
         "Variant.trait.h",
     ]
 
