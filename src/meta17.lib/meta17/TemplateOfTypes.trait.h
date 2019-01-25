@@ -22,4 +22,7 @@ struct IsTypeTemplate<Template, Template<Ts...>> : ::meta17::True {};
 template<class T, template<class...> class Template>
 using IsTypeTemplate = trait::IsTypeTemplate<Template, std::remove_const_t<T>>;
 
+template<class T, template<class...> class Template>
+constexpr auto is_type_template = IsTypeTemplate<T, Template>{};
+
 } // namespace meta17
