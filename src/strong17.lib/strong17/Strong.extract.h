@@ -25,6 +25,24 @@ constexpr auto extract_value_type = ExtractValueType<S>{};
 template<class S>
 using ExtractValue = UnwrapType<ExtractValueType<S>>;
 
+/// like extractValue, but does nothing for non-strong types
+
+template<class V, class... Tags>
+constexpr auto weakenType(Type<Strong<V, Tags...>> = {}) -> Type<V> {
+    return {};
+}
+template<class T>
+constexpr auto weakenType(Type<T> = {}) -> Type<T> {
+    return {};
+}
+
+template<class S>
+using WeakenType = decltype(weakenType(type<S>));
+template<class S>
+constexpr auto weaken_type = WeakenType<S>{};
+template<class S>
+using WeakenTypeValue = UnwrapType<WeakenType<S>>;
+
 /// return the type pack of tags for a given strong type
 template<class V, class... Tags>
 auto extractTagsPack(Type<Strong<V, Tags...>> = {}) -> TypePack<Tags...> {
