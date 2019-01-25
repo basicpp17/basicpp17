@@ -9,7 +9,6 @@
 #include <meta17/TypePack.wrap.h>
 #include <meta17/align.h> // AlignedOffsetsFor
 
-#include <algorithm> // std::max
 #include <cinttypes> // uint8_t
 #include <new> // aligned_storage
 #include <utility> // std::conditional
@@ -28,6 +27,13 @@ using meta17::Type;
 using meta17::type;
 using meta17::UnwrapType;
 
+template<class... Ts>
+constexpr auto maxAlignOf() {
+    auto r = size_t{1};
+    ((alignof(Ts) > r ? (r = alignof(Ts), 0) : 0), ...);
+    return r;
+}
+
 /** \brief storage type for all given types
  *
  * features:
@@ -45,7 +51,7 @@ struct Tuple {
     using Sizes = ConstPack<sizeof(Ts)...>;
     enum : size_t {
         size = toValue(constLast(offsets, indices) + constLast(Sizes{}, indices)),
-        max_align = std::max({sizeof(Ts)...}),
+        max_align = maxAlignOf<Ts...>(),
     };
 
 private:
