@@ -15,6 +15,7 @@ StaticLibrary {
         "Strong.ops.h",
         "Strong.ostream.h",
         "Strong.trait.h",
+        "Strong.weaken.h",
     ]
 
     Export {

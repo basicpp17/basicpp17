@@ -213,6 +213,11 @@ private:
         (f(Const<Is>{}, typeAt<Is>()), ...);
     }
 
+    template<class F, size_t... Is>
+    constexpr auto visitIndexTypes(IndexPack<Is...>, F&& f) const {
+        (f(Const<Is>{}, typeAt<Is>()), ...);
+    }
+
     template<size_t I>
     constexpr auto ptrAt(Const<I> = {}) & -> void* {
         return reinterpret_cast<uint8_t*>(&m) + offsetAt<I>();

@@ -188,7 +188,7 @@ public:
     constexpr auto which() const -> Which { return Which{whichValue}; }
 
     template<class T>
-    constexpr auto asPtr(Type<T> = {}) -> T* {
+    constexpr auto asPtr(Type<T> = {}) -> T* { // TODO(mstaff): Maybe an assert to verify that this is the current type?
         return std::launder(reinterpret_cast<T*>(&m));
     }
     template<class T>
