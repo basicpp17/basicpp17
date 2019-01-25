@@ -11,6 +11,7 @@
 
 #include <cinttypes> // uint8_t
 #include <new> // aligned_storage
+#include <type_traits> // std::is_reference_v / std::is_const_v
 #include <utility> // std::conditional
 
 namespace tuple17 {
@@ -34,6 +35,16 @@ constexpr auto maxAlignOf() {
     return r;
 }
 
+template<class... Ts>
+constexpr auto noReference() {
+    return (!std::is_reference_v<Ts> && ... && true);
+}
+
+template<class... Ts>
+constexpr auto noConst() {
+    return (!std::is_const_v<Ts> && ... && true);
+}
+
 /** \brief storage type for all given types
  *
  * features:
@@ -45,6 +56,9 @@ constexpr auto maxAlignOf() {
  */
 template<class... Ts>
 struct Tuple {
+    static_assert(noReference<Ts...>());
+    static_assert(noConst<Ts...>());
+
     static constexpr auto pack = to_type_pack<Ts...>;
     static constexpr auto indices = indexPackFor(pack);
     static constexpr auto offsets = alignTypePack<0>(pack);
@@ -53,9 +67,6 @@ struct Tuple {
         size = toValue(constLast(offsets, indices) + constLast(Sizes{}, indices)),
         max_align = maxAlignOf<Ts...>(),
     };
-
-    static_assert(!(std::is_reference_v<Ts> || ...));
-    static_assert(!(std::is_const_v<Ts> || ...));
 
 private:
     std::aligned_storage_t<size, max_align> m;
