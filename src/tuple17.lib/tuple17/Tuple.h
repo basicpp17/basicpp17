@@ -54,6 +54,9 @@ struct Tuple {
         max_align = maxAlignOf<Ts...>(),
     };
 
+    static_assert(!(std::is_reference_v<Ts> || ...));
+    static_assert(!(std::is_const_v<Ts> || ...));
+
 private:
     std::aligned_storage_t<size, max_align> m;
 
