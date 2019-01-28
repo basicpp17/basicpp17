@@ -185,16 +185,19 @@ public:
 
     template<class T>
     constexpr auto of(Type<T> = {}) & -> T& {
+        static_assert(hasType(meta17::type<T>));
         return *std::launder(reinterpret_cast<T*>(ptrOf<T>()));
     }
 
     template<class T>
     constexpr auto of(Type<T> = {}) && -> T {
+        static_assert(hasType(meta17::type<T>));
         return std::move(*std::launder(reinterpret_cast<T*>(ptrOf<T>())));
     }
 
     template<class T>
     constexpr auto of(Type<T> = {}) const& -> const T& {
+        static_assert(hasType(meta17::type<T>));
         return *std::launder(reinterpret_cast<const T*>(ptrOf<T>()));
     }
 
