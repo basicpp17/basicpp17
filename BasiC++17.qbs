@@ -29,6 +29,7 @@ Project {
                     "/permissive-", "/Zc:__cplusplus", // best C++ compatibility
                     "/diagnostics:caret", // better errors
                     "/wd4068", // ignore unknown pragmas
+                    "/D_ENABLE_EXTENDED_ALIGNED_STORAGE", // use real alignments
                 ]
             }
             Properties {

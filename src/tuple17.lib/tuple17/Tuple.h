@@ -69,8 +69,7 @@ struct Tuple {
     };
 
 private:
-    // std::aligned_storage_t<size, max_align> m;
-    std::aligned_storage_t<size> m;
+    std::aligned_storage_t<size, max_align> m;
 
 public:
     constexpr Tuple() {
