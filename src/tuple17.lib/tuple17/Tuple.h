@@ -200,11 +200,11 @@ public:
 
     template<class F>
     auto visitAll(F&& f) & {
-        visitIndexTypes(indices, [this, &f](auto i, auto) { f(at(i)); });
+        visitIndexTypes(indices, [&](auto i, auto) { f(at(i)); });
     }
     template<class F>
     auto visitAll(F&& f) const& {
-        visitIndexTypes(indices, [this, &f](auto i, auto) { f(at(i)); });
+        visitIndexTypes(indices, [&](auto i, auto) { f(at(i)); });
     }
 
 private:

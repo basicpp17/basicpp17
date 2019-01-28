@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Type.h"
 #include "TypePack.h"
 
 namespace meta17 {
