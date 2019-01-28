@@ -36,3 +36,12 @@ TEST(Tuple, basic) {
     ASSERT_EQ((g.of<int>()), 23);
     ASSERT_EQ((g.of<float>()), 0);
 }
+
+TEST(Tuple, SingleArgCopy) {
+    using X = Tuple<int>;
+
+    X a{23};
+    X b(a); // Test that it won't use the argument forward constructor
+
+    ASSERT_EQ(a, b);
+}

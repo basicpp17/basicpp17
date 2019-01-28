@@ -112,7 +112,7 @@ public:
         class... Args,
         class = std::enable_if_t< //
             sizeof...(Args) == sizeof...(Ts) //
-            && typeHead(to_type_pack<Args...>) != type<Tuple>>>
+            && typeHead(to_type_pack<std::remove_reference_t<std::remove_cv_t<Args>>...>) != type<Tuple>>>
     constexpr Tuple(Args&&... args) {
         (new (ptrOf<Ts>()) Ts(std::forward<Args>(args)), ...);
     }
