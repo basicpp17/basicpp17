@@ -34,6 +34,13 @@ using meta17::TypeHead;
 using meta17::TypePack;
 using meta17::UnwrapType;
 
+template<class... Ts>
+struct Overloaded : Ts... {
+    using Ts::operator()...;
+};
+template<class... Ts>
+Overloaded(Ts...)->Overloaded<Ts...>;
+
 template<size_t N>
 auto selectType() {
     if constexpr (N <= std::numeric_limits<uint8_t>::max()) {
@@ -202,6 +209,16 @@ public:
     template<class F>
     constexpr auto visit(F&& f) const {
         return visitImpl(*this, std::forward<F>(f));
+    }
+
+    /// overloaded visitor
+    template<class F, class F2, class... Fs>
+    constexpr auto visit(F&& f, F2&& f2, Fs&&... fs) {
+        return visit(Overloaded{std::forward<F>(f), std::forward<F2>(f2), std::forward<Fs>(fs)...});
+    }
+    template<class F, class F2, class... Fs>
+    constexpr auto visit(F&& f, F2&& f2, Fs&&... fs) const {
+        return visit(Overloaded{std::forward<F>(f), std::forward<F2>(f2), std::forward<Fs>(fs)...});
     }
 
 private:

@@ -54,3 +54,9 @@ TEST(Variant, nonDefault) {
 
     x.visit([](auto v) { ASSERT_EQ(sizeof(v), sizeof(X)); });
 }
+
+TEST(Variant, overloaded) {
+    auto x = Variant<char, int, float>{};
+
+    ASSERT_EQ(1, x.visit([](char) { return 1; }, [](int) { return 2; }, [](float) { return 3; }));
+}
