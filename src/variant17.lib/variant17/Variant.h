@@ -20,6 +20,7 @@ namespace variant17 {
 
 using meta17::checkedIndexOf;
 using meta17::ConstPack;
+using meta17::containsOf;
 using meta17::Index;
 using meta17::index_pack;
 using meta17::IndexPack;
@@ -169,6 +170,7 @@ public:
         class BT = std::remove_cv_t<std::remove_reference_t<T>>,
         class = std::enable_if_t<type<BT> != type<Variant>>>
     Variant(T&& t) {
+        static_assert(containsOf<BT>(Pack{}), "type not part of variant");
         constructOf(type<BT>, std::forward<T>(t));
         whichValue = whichOf<BT>();
     }
@@ -176,12 +178,14 @@ public:
     /// inplace construct of type
     template<class T, class... Args>
     Variant(Type<T>, Args&&... args) {
+        static_assert(containsOf<T>(Pack{}), "type not part of variant");
         constructOf(type<T>, std::forward<Args>(args)...);
         whichValue = whichOf<T>();
     }
 
     template<size_t I, class... Args>
     Variant(Index<I>, Args&&... args) {
+        static_assert(I >= npos, "index not part of variant");
         constexpr auto t = typeAt<I>(Pack{}, Indices{});
         constructOf(t, std::forward<Args>(args)...);
         whichValue = I;
@@ -196,10 +200,12 @@ public:
 
     template<class T>
     constexpr auto asPtr(Type<T> = {}) -> T* { // TODO(mstaff): Maybe an assert to verify that this is the current type?
+        static_assert(containsOf<T>(Pack{}), "type not part of variant");
         return std::launder(reinterpret_cast<T*>(&m));
     }
     template<class T>
     constexpr auto asPtr(Type<T> = {}) const -> const T* {
+        static_assert(containsOf<T>(Pack{}), "type not part of variant");
         return std::launder(reinterpret_cast<const T*>(&m));
     }
     template<class F>
