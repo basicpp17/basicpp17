@@ -70,6 +70,13 @@ Product {
         ]
     }
     Group {
+        name: "None"
+        files: [
+            "None.h",
+            "None.ostream.h",
+        ]
+    }
+    Group {
         name: "TemplateOfTypes"
         files: [
             "TemplateOfTypes.extract.h",
