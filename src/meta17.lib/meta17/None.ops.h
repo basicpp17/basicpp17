@@ -5,21 +5,21 @@
 namespace meta17 {
 
 /// Comparison and Ordering
-#define BOOL_OP(OP)                                                                                                    \
+#define BOOL_OP_TRUE(OP)                                                                                               \
     constexpr bool operator OP(const None&, const None&) { return true; }
 
-/// TODO(mstaff): this is copied from a previous implementation. Thus, some questions arise:
-/// Should all of these operators be implemented
-/// Should all of these operators return true or should we treat all Nones as equal?
-///
+/// Comparison and Ordering
+#define BOOL_OP_FALSE(OP)                                                                                              \
+    constexpr bool operator OP(const None&, const None&) { return false; }
 
-BOOL_OP(==)
-BOOL_OP(!=)
-BOOL_OP(<)
-BOOL_OP(>)
-BOOL_OP(<=)
-BOOL_OP(>=)
+BOOL_OP_TRUE(==)
+BOOL_OP_FALSE(!=)
+BOOL_OP_FALSE(<)
+BOOL_OP_FALSE(>)
+BOOL_OP_TRUE(<=)
+BOOL_OP_TRUE(>=)
 
-#undef BOOL_OP
+#undef BOOL_OP_TRUE
+#undef BOOL_OP_FALSE
 
 } // namespace meta17
