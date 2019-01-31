@@ -2,8 +2,14 @@
 
 #include "None.h"
 
+#include <ostream>
+
 namespace meta17 {
 
-auto operator<<(std::ostream& out, const data::None&) -> std::ostream&;
-
+template<class Chr, class Traits>
+auto operator<<(std::basic_ostream<Chr, Traits>& out, const None&) -> decltype(out)& {
+    out << "";
+    return out;
 }
+
+} // namespace meta17

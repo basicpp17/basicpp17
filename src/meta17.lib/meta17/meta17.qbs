@@ -73,6 +73,7 @@ Product {
         name: "None"
         files: [
             "None.h",
+            "None.ops.h",
             "None.ostream.h",
         ]
     }
