@@ -7,4 +7,7 @@ namespace meta17 {
 template<auto>
 struct Const {};
 
+template<auto V>
+constexpr auto _const = Const<V>{};
+
 } // namespace meta17

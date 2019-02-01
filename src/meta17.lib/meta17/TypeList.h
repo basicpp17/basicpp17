@@ -66,7 +66,7 @@ struct TypeList<TypePack<IndexType<Is, Ts>...>> {
         return {};
     }
 
-    static_assert(allArguments((1 == countIndex(Const<Is>{}))...), "all indices have to be unique!");
+    static_assert(allArguments((1 == countIndex(_const<Is>))...), "all indices have to be unique!");
 };
 
 template<>

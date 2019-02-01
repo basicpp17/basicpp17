@@ -16,24 +16,24 @@ static_assert(to_value<Const<23>> == 23);
 static_assert(std::is_same_v<ToConst<True>, Const<true>>);
 
 // equality & ordering
-static_assert(Const<23>{} == 23);
+static_assert(_const<23> == 23);
 static_assert(Const<0>{} != 3);
-static_assert(Const<1>{} < Const<2>{});
-static_assert(Const<3>{} > Const<2>{});
+static_assert(_const<1> < Const<2>{});
+static_assert(_const<3>> _const<2>);
 
-static_assert(Const<1>{} == Const<true>{});
-static_assert(Const<1>{} == 1); // Const<1> == Const<true>
-static_assert(1 > Const<0>{});
+static_assert(_const<1> == Const<true>{});
+static_assert(_const<1> == 1); // Const<1> == Const<true>
+static_assert(1 > _const<0>);
 
 // calculations
-static_assert(Const<1>{} + Const<5>{} == Const<6>{});
-static_assert(Const<1>{} - Const<5>{} == Const<-4>{});
+static_assert(_const<1> + _const<5> == _const<6>);
+static_assert(_const<1> - _const<5> == _const<-4>);
 
-static_assert(Const<2>{} * Const<5>{} == Const<10>{});
-static_assert(Const<false>{} * Const<5>{} == Const<0>{}); // bool works nice
-static_assert(Const<5>{} * Const<true>{} == Const<5>{}); // bool works nice
+static_assert(_const<2> * _const<5> == _const<10>);
+static_assert(_const<false> * _const<5> == _const<0>); // bool works nice
+static_assert(_const<5> * _const<true> == _const<5>); // bool works nice
 
-// static_assert(Const<10>{} / Const<0>{} || true); // wont compile
-static_assert(Const<10>{} / Const<1>{} == Const<10>{});
-static_assert(Const<10>{} / Const<2>{} == Const<5>{});
-static_assert(Const<10>{} % Const<5>{} == Const<0>{});
+// static_assert(_const<10> / _const<0> || true); // wont compile
+static_assert(_const<10> / _const<1> == _const<10>);
+static_assert(_const<10> / _const<2> == _const<5>);
+static_assert(_const<10> % _const<5> == _const<0>);

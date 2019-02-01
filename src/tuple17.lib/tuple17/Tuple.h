@@ -16,6 +16,7 @@
 
 namespace tuple17 {
 
+using meta17::_const;
 using meta17::alignTypePack;
 using meta17::Const;
 using meta17::ConstPack;
@@ -212,12 +213,12 @@ public:
 private:
     template<class F, size_t... Is>
     constexpr auto visitIndexTypes(IndexPack<Is...>, F&& f) {
-        (f(Const<Is>{}, typeAt<Is>()), ...);
+        (f(_const<Is>, typeAt<Is>()), ...);
     }
 
     template<class F, size_t... Is>
     constexpr auto visitIndexTypes(IndexPack<Is...>, F&& f) const {
-        (f(Const<Is>{}, typeAt<Is>()), ...);
+        (f(_const<Is>, typeAt<Is>()), ...);
     }
 
     template<size_t I>

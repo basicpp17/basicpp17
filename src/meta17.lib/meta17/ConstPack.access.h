@@ -14,7 +14,7 @@ namespace meta17 {
 
 template<size_t I, auto... Vs, size_t... Is>
 constexpr auto constAt(ConstPack<Vs...> = {}, IndexPack<Is...> = {}, Index<I> = {}) {
-    return Const<((I == Is ? Vs : 0) + ... + 0)>{};
+    return _const<((I == Is ? Vs : 0) + ... + 0)>;
 }
 
 template<class P, class I>
