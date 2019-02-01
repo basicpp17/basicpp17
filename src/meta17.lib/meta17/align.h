@@ -32,15 +32,34 @@ constexpr auto alignSizeAlignPack(ConstPack<Size...>, ConstPack<Align...>, Const
     else
         return ConstPack<>{};
 }
-// using Offsets = std::index_sequence<
+// using Offsets = ConstPack<
 //    align(                     0, AlignOf[0]),
 //    align(Offsets[0] + SizeOf[0], AlignOf[1]),
 //    align(Offsets[1] + SizeOf[1], AlignOf[2]),
 //    ...
 
+/// creates ConstPack that contains the offset of all members of a Ts tuple
 template<size_t Offset, class... Ts>
 constexpr auto alignTypePack(TypePack<Ts...>, Const<Offset> = {}) {
     return alignSizeAlignPack<Offset>(const_pack<sizeof(Ts)...>, const_pack<alignof(Ts)...>);
+}
+
+/// size of Offset + sizePack aligned as alignPack
+template<size_t Offset, size_t... Size, size_t... Align>
+constexpr auto sizeOfSizeAlignPack(ConstPack<Size...>, ConstPack<Align...>, Const<Offset> = {}) -> size_t {
+    if constexpr (0 < sizeof...(Size)) {
+        constexpr auto aligned = toValue(alignOffset(constHead<Align...>(), Const<Offset>{}));
+        return sizeOfSizeAlignPack<aligned + toValue(constHead<Size...>())>(
+            constTail<Size...>(), constTail<Align...>());
+    }
+    else
+        return Offset;
+}
+
+/// size of all members of a Ts tuple
+template<size_t Offset, class... Ts>
+constexpr auto sizeOfTypePack(TypePack<Ts...>, Const<Offset> = {}) -> size_t {
+    return sizeOfSizeAlignPack<Offset>(const_pack<sizeof(Ts)...>, const_pack<alignof(Ts)...>);
 }
 
 template<class P>

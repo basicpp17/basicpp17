@@ -42,6 +42,8 @@ constexpr auto indexOf(TP = {}, Type<T> = {}) {
     using IP = IndexPackFor<TP>;
     return indexOf<T>(TP{}, IP{});
 }
+template<class T, class TP>
+constexpr auto index_of = indexOf(TP{}, type<T>);
 
 /// statically asserts that the returned index is valid
 template<class T, class TP, class IP>

@@ -35,14 +35,24 @@ TEST(Partial, fromFactory) {
     ASSERT_FALSE(created.has<1>());
     ASSERT_TRUE(created.has<2>());
 
-    ASSERT_EQ(created.get<0>(), 'a');
-    ASSERT_EQ(created.get<2>(), 3.14f);
+    EXPECT_EQ(created.get<0>(), 'a');
+    EXPECT_EQ(created.get<2>(), 3.14f);
 
     auto copy = created;
     ASSERT_TRUE(copy.has<0>());
     ASSERT_FALSE(copy.has<1>());
     ASSERT_TRUE(copy.has<2>());
 
-    ASSERT_EQ(copy.get<0>(), 'a');
-    ASSERT_EQ(copy.get<2>(), 3.14f);
+    EXPECT_EQ(copy.get<0>(), 'a');
+    EXPECT_EQ(copy.get<2>(), 3.14f);
+}
+
+TEST(Partial, fromArgs) {
+    const auto created = Partial<char, int, float>(3.14f, 'a'); //
+    ASSERT_TRUE(created.has<0>());
+    ASSERT_FALSE(created.has<1>());
+    ASSERT_TRUE(created.has<2>());
+
+    EXPECT_EQ(created.get<0>(), 'a');
+    EXPECT_EQ(created.get<2>(), 3.14f);
 }

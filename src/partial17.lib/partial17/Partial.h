@@ -6,23 +6,28 @@
 #include <meta17/IndexPack.for.h> // IndexPackFor
 #include <meta17/Type.wrap.h> // ToTypePack
 #include <meta17/TypePack.access.h> // TypeAt
+#include <meta17/TypePack.indexOf.h> // index_of, contains_of
 #include <meta17/TypePack.wrap.h> // ToTypePack
-#include <meta17/align.h>
+#include <meta17/align.h> // sizeOfTypePack, alignOffset
 
 #include <algorithm> // std::max
 #include <bitset>
 #include <memory> // std::unique_ptr
+#include <type_traits> // std::remove_reference_t, std::remove_const_t
 #include <utility> // std::launder
 
 namespace partial17 {
 
 using meta17::alignOffset;
 using meta17::Const;
+using meta17::contains_of;
 using meta17::index;
+using meta17::index_of;
 using meta17::Index;
 using meta17::index_pack;
 using meta17::IndexPack;
 using meta17::IndexPackFor;
+using meta17::sizeOfTypePack;
 using meta17::ToTypePack;
 using meta17::type;
 using meta17::type_pack;
@@ -80,6 +85,32 @@ public:
         m_data = std::move(o.m_data);
         o.m_bits.reset();
         return *this;
+    }
+
+    // construct
+    template<
+        class... Vs,
+        class = std::enable_if_t<
+            (sizeof...(Vs) > 0) && (contains_of<std::remove_cv_t<std::remove_reference_t<Vs>>, Pack> && ...)>>
+    Partial(Vs&&... vs) {
+        auto size = sizeOfTypePack<0>(type_pack<std::remove_cv_t<std::remove_reference_t<Vs>>...>);
+        auto ptr = new uint8_t[size + max_align - 1];
+        m_data.reset(ptr);
+        ptr = alignPointer<max_align>(ptr);
+
+        auto make = [&](auto t, auto&& v) {
+            using V = decltype(v);
+            using T = std::remove_cv_t<std::remove_reference_t<V>>;
+            if constexpr (t == type<T>) {
+                auto iv = index_of<T, Pack>;
+                ptr = alignPointer<alignof(T)>(ptr);
+                new (ptr) T(std::forward<V>(v));
+                m_bits.set(iv);
+                ptr += sizeof(T);
+            }
+        };
+        auto invoke = [&](auto t) { (make(t, std::forward<Vs>(vs)), ...); };
+        (invoke(type<Ts>), ...);
     }
 
     template<class HasValue, class Factory>
