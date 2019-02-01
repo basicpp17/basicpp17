@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstddef>
+
 namespace meta17 {
 
 /// combines an index with a type
