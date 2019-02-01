@@ -23,6 +23,7 @@ using meta17::ConstPack;
 using meta17::index;
 using meta17::IndexPack;
 using meta17::IndexPackFor;
+using meta17::sizeOfTypePack;
 using meta17::to_type_pack;
 using meta17::ToTypePack;
 using meta17::Type;
@@ -63,9 +64,8 @@ struct Tuple {
     static constexpr auto pack = to_type_pack<Ts...>;
     static constexpr auto indices = indexPackFor(pack);
     static constexpr auto offsets = alignTypePack<0>(pack);
-    using Sizes = ConstPack<sizeof(Ts)...>;
     enum : size_t {
-        size = toValue(constLast(offsets, indices) + constLast(Sizes{}, indices)),
+        size = sizeOfTypePack<0>(pack),
         max_align = maxAlignOf<Ts...>(),
     };
 
