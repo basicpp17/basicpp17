@@ -22,8 +22,8 @@ using meta17::alignOffset;
 using meta17::Const;
 using meta17::contains_of;
 using meta17::index;
-using meta17::index_of;
 using meta17::Index;
+using meta17::index_of;
 using meta17::index_pack;
 using meta17::IndexPack;
 using meta17::IndexPackFor;
@@ -146,6 +146,8 @@ public:
     }
 
     auto data() const { return alignPointer<max_align>(m_data.get()); }
+
+    auto bitset() const -> std::bitset<max_count> { return m_bits; }
 
     auto count() const {
         auto acc = size_t{};
