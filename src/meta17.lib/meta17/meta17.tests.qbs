@@ -20,6 +20,7 @@ Application {
         "IndexPack.test.cpp",
         "IndexType.test.cpp",
         "IndexTypePack.test.cpp",
+        "TemplateOfTypes.test.cpp",
         "Type.test.cpp",
         "TypeList.test.cpp",
         "TypePack.test.cpp",

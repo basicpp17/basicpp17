@@ -84,6 +84,7 @@ Product {
             "TemplateOfTypes.h",
             "TemplateOfTypes.manip.h",
             "TemplateOfTypes.trait.h",
+            "TemplateOfTypes.transform.h",
             "TemplateOfTypes.wrap.h",
         ]
     }
