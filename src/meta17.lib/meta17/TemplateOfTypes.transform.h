@@ -2,6 +2,7 @@
 #include "TemplateOfTypes.h"
 
 #include "Type.h"
+#include "Type.wrap.h"
 
 namespace meta17 {
 
@@ -11,6 +12,6 @@ auto transformTemplate(Type<From<Ts...>>, TemplateOfTypes<To> = {}) -> Type<To<T
 }
 
 template<template<class...> class To, class From>
-using TransformTemplate = decltype(transformTemplate<To>(type<From>));
+using TransformTemplate = UnwrapType<decltype(transformTemplate<To>(type<From>))>;
 
 } // namespace meta17
