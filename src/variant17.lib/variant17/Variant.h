@@ -196,6 +196,11 @@ public:
         return Which{static_cast<WhichValue>(meta17::checkedIndexOf<T>(Pack{}, Indices{}))};
     }
 
+    template<size_t I>
+    static constexpr auto typeAt(meta17::Const<I> = {}) {
+        return meta17::indexedTypeAt<I>(Pack{}, Indices{});
+    }
+
     constexpr auto which() const -> Which { return Which{whichValue}; }
 
     template<class T>
