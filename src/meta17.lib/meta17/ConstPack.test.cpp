@@ -1,5 +1,6 @@
 #include "meta17/ConstPack.access.h"
 #include "meta17/ConstPack.h"
+#include "meta17/ConstPack.indexOf.h"
 #include "meta17/ConstPack.ops.h"
 #include "meta17/ConstPack.recurse.h"
 #include "meta17/ConstPack.trait.h"
@@ -27,3 +28,7 @@ static_assert(_const<1> + const_pack<2, 3> + const_pack<> == const_pack<1, 2, 3>
 
 static_assert(ConstAt<ConstPack<1, 2, 4>, Index<1>>{} == _const<2>);
 static_assert(ConstLast<ConstPack<1, 2>>{} == _const<2>);
+
+static_assert(count_const<1, ConstPack<1, 2, 3, 1>> == 2);
+static_assert(contains_const<1, ConstPack<1, 2, 3>>);
+static_assert(!contains_const<4, ConstPack<1, 2, 3>>);

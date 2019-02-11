@@ -24,6 +24,7 @@ Product {
             "ConstPack.access.h",
             "ConstPack.fold.h",
             "ConstPack.h",
+            "ConstPack.indexOf.h",
             "ConstPack.ops.h",
             "ConstPack.recurse.h",
             "ConstPack.trait.h",
