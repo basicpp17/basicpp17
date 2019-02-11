@@ -170,6 +170,12 @@ public:
     }
     auto has(size_t i) const { return m_bits[i]; }
 
+    template<class T>
+    auto has(meta17::Type<T> = {}) const {
+        constexpr size_t index = meta17::checkedIndexOf<T, Pack, Indices>();
+        return has<index>();
+    }
+
     template<size_t I>
     auto get(Index<I> = {}) -> UnwrapType<TypeAt<Index<I>, Pack>>& {
         using T = UnwrapType<TypeAt<Index<I>, Pack>>;
@@ -179,6 +185,12 @@ public:
     auto get(Index<I> = {}) const -> const UnwrapType<TypeAt<Index<I>, Pack>>& {
         using T = UnwrapType<TypeAt<Index<I>, Pack>>;
         return *std::launder(reinterpret_cast<const T*>(alignPointer<max_align>(m_data.get()) + offsetAt<I>()));
+    }
+
+    template<class T>
+    auto get(meta17::Type<T> = {}) const {
+        constexpr size_t index = meta17::checkedIndexOf<T, Pack, Indices>();
+        return get<index>();
     }
 
     template<class F>

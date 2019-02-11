@@ -56,3 +56,11 @@ TEST(Partial, fromArgs) {
     EXPECT_EQ(created.get<0>(), 'a');
     EXPECT_EQ(created.get<2>(), 3.14f);
 }
+
+TEST(Partial, byType) {
+
+    auto x = Partial<char, int, float>{}; //
+    if (x.has(meta17::Type<char>{})) {
+        auto y = x.get(type<char>);
+    }
+}
