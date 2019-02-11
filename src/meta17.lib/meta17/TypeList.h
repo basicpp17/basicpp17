@@ -18,7 +18,7 @@ struct TypeList<TypePack<IndexType<Is, Ts>...>> {
 
     template<class C>
     static constexpr auto countOf(Type<C> c = {}) -> size_t {
-        return ((c == Type<Ts>{} ? 1u : 0u) + ...);
+        return ((c == type<Ts> ? 1u : 0u) + ...);
     }
 
     template<class C>
@@ -28,7 +28,7 @@ struct TypeList<TypePack<IndexType<Is, Ts>...>> {
 
     template<class C>
     static constexpr auto indexOf(Type<C> c = {}) -> size_t {
-        return 1 == countOf(c) ? ((c == Type<Ts>{} ? Is : 0u) + ...) : npos;
+        return 1 == countOf(c) ? ((c == type<Ts> ? Is : 0u) + ...) : npos;
     }
 
     template<size_t I>
@@ -56,13 +56,12 @@ struct TypeList<TypePack<IndexType<Is, Ts>...>> {
 
     template<class F>
     static constexpr auto countIfType(F f) -> size_t {
-        return ((f(Type<Ts>{}) ? 1u : 0u) + ... + 0u);
+        return ((f(type<Ts>) ? 1u : 0u) + ... + 0u);
     }
 
     template<class F>
     static constexpr auto filterIfType(F f) //
-        -> TypeList<
-            AccumulateInstances<std::conditional_t<f(Type<Ts>{}), TypePack<IndexType<Is, Ts>>, TypePack<>>...>> {
+        -> TypeList<AccumulateInstances<std::conditional_t<f(type<Ts>), TypePack<IndexType<Is, Ts>>, TypePack<>>...>> {
         return {};
     }
 

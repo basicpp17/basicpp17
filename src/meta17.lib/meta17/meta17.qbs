@@ -83,6 +83,8 @@ Product {
         files: [
             "TemplateOfTypes.extract.h",
             "TemplateOfTypes.h",
+            "TemplateOfTypes.indexOf.h",
+            "TemplateOfTypes.iterate.h",
             "TemplateOfTypes.manip.h",
             "TemplateOfTypes.trait.h",
             "TemplateOfTypes.transform.h",

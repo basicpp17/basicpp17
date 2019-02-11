@@ -3,13 +3,13 @@
 #include <meta17/Type.h>
 
 #include <meta17/ConstPack.fold.h> // max(Pack)
-#include <meta17/IndexPack.for.h> // IndexPackFor
+#include <meta17/IndexPack.for.h> // indexPackFor
 #include <meta17/Type.ops.h> // type == type
 #include <meta17/Type.wrap.h> // UnwrapType
 #include <meta17/TypePack.access.h> // TypeAt
 #include <meta17/TypePack.indexOf.h> // indexOf
 #include <meta17/TypePack.recurse.h> // ExtractHead
-#include <meta17/TypePack.wrap.h> // ToTypePack
+#include <meta17/TypePack.wrap.h> // to_type_pack
 #include <meta17/Unreachable.h> // unreachable
 
 #include <cstdint> // uint8_t, …
@@ -19,14 +19,13 @@
 namespace variant17 {
 
 using meta17::checkedIndexOf;
-using meta17::ConstPack;
 using meta17::containsOf;
 using meta17::Index;
 using meta17::index_pack;
 using meta17::IndexPack;
-using meta17::IndexPackFor;
+using meta17::indexPackFor;
 using meta17::max;
-using meta17::ToTypePack;
+using meta17::to_type_pack;
 using meta17::type;
 using meta17::Type;
 using meta17::type_pack;
@@ -67,9 +66,9 @@ using SelectType = UnwrapType<decltype(selectType<N>())>;
 /// * sizeof(index) limits
 template<class... Ts>
 struct Variant {
-    using Pack = ToTypePack<Ts...>;
-    using Indices = IndexPackFor<Pack>;
-    using First = UnwrapType<TypeHead<Pack>>;
+    static constexpr auto pack = to_type_pack<Ts...>;
+    static constexpr auto indices = indexPackFor(pack);
+    using First = TypeHead<decltype(pack)>;
     using WhichValue = UnwrapType<SelectType<sizeof...(Ts)>>; // enough for npos!
     enum { npos = sizeof...(Ts) }; // invalid state after exception - only destruction checks!
 
@@ -170,7 +169,7 @@ public:
         class BT = std::remove_cv_t<std::remove_reference_t<T>>,
         class = std::enable_if_t<type<BT> != type<Variant>>>
     Variant(T&& t) {
-        static_assert(containsOf<BT>(Pack{}), "type not part of variant");
+        static_assert(containsOf<BT>(pack), "type not part of variant");
         constructOf(type<BT>, std::forward<T>(t));
         whichValue = whichOf<BT>();
     }
@@ -178,7 +177,7 @@ public:
     /// inplace construct of type
     template<class T, class... Args>
     Variant(Type<T>, Args&&... args) {
-        static_assert(containsOf<T>(Pack{}), "type not part of variant");
+        static_assert(containsOf<T>(pack), "type not part of variant");
         constructOf(type<T>, std::forward<Args>(args)...);
         whichValue = whichOf<T>();
     }
@@ -186,31 +185,31 @@ public:
     template<size_t I, class... Args>
     Variant(Index<I>, Args&&... args) {
         static_assert(I >= npos, "index not part of variant");
-        constexpr auto t = typeAt<I>(Pack{}, Indices{});
+        constexpr auto t = typeAt<I>(pack, indices);
         constructOf(t, std::forward<Args>(args)...);
         whichValue = I;
     }
 
     template<class T>
     constexpr static auto whichOf(Type<T> = {}) -> Which {
-        return Which{static_cast<WhichValue>(meta17::checkedIndexOf<T>(Pack{}, Indices{}))};
+        return Which{static_cast<WhichValue>(meta17::checkedIndexOf<T>(pack, indices))};
     }
 
     template<size_t I>
     static constexpr auto typeAt(meta17::Const<I> = {}) {
-        return meta17::indexedTypeAt<I>(Pack{}, Indices{});
+        return meta17::indexedTypeAt<I>(pack, indices);
     }
 
     constexpr auto which() const -> Which { return Which{whichValue}; }
 
     template<class T>
     constexpr auto asPtr(Type<T> = {}) -> T* { // TODO(mstaff): Maybe an assert to verify that this is the current type?
-        static_assert(containsOf<T>(Pack{}), "type not part of variant");
+        static_assert(containsOf<T>(pack), "type not part of variant");
         return std::launder(reinterpret_cast<T*>(&m));
     }
     template<class T>
     constexpr auto asPtr(Type<T> = {}) const -> const T* {
-        static_assert(containsOf<T>(Pack{}), "type not part of variant");
+        static_assert(containsOf<T>(pack), "type not part of variant");
         return std::launder(reinterpret_cast<const T*>(&m));
     }
     template<class F>
@@ -248,9 +247,9 @@ private:
     static constexpr auto visitImpl(V&& v, F&& f) {
         using R = std::remove_cv_t<decltype(f(v.first()))>;
         if constexpr (type<R> == type<void>)
-            visitVoidImpl(std::forward<V>(v), std::forward<F>(f), Indices{});
+            visitVoidImpl(std::forward<V>(v), std::forward<F>(f), indices);
         else
-            return visitRecursiveImpl(std::forward<V>(v), std::forward<F>(f), Pack{}, Indices{});
+            return visitRecursiveImpl(std::forward<V>(v), std::forward<F>(f), pack, indices);
     }
 
     template<class V, class F, size_t... Is>

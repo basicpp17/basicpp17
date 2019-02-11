@@ -2,6 +2,7 @@
 #include "TypePack.h"
 
 #include "Type.h"
+#include "Type.wrap.h"
 
 namespace meta17 {
 
@@ -20,9 +21,9 @@ constexpr auto typeHead(TypePack<H, Ts...> = {}) -> Type<H> {
     return {};
 }
 template<class TP>
-using TypeHead = decltype(typeHead(TP{}));
+using TypeHead = UnwrapType<decltype(typeHead(TP{}))>;
 template<class TP>
-constexpr auto type_head = TypeHead<TP>{};
+constexpr auto type_head = typeHead(TP{});
 
 /// return TypePack excluding the first Type
 /// note: only valid if typePack has at least one type (typeCount >= 1)

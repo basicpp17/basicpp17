@@ -5,21 +5,16 @@
 namespace meta17 {
 
 /// Comparison and Ordering
-#define BOOL_OP_TRUE(OP)                                                                                               \
-    constexpr bool operator OP(const None&, const None&) { return true; }
+#define BOOL_OP(OP)                                                                                                    \
+    constexpr bool operator OP(const None&, const None&) { return 0 OP 0; }
 
-/// Comparison and Ordering
-#define BOOL_OP_FALSE(OP)                                                                                              \
-    constexpr bool operator OP(const None&, const None&) { return false; }
+BOOL_OP(==)
+BOOL_OP(!=)
+BOOL_OP(<)
+BOOL_OP(>)
+BOOL_OP(<=)
+BOOL_OP(>=)
 
-BOOL_OP_TRUE(==)
-BOOL_OP_FALSE(!=)
-BOOL_OP_FALSE(<)
-BOOL_OP_FALSE(>)
-BOOL_OP_TRUE(<=)
-BOOL_OP_TRUE(>=)
-
-#undef BOOL_OP_TRUE
-#undef BOOL_OP_FALSE
+#undef BOOL_OP
 
 } // namespace meta17

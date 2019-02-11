@@ -17,11 +17,11 @@ using RemoveType = decltype(removeType<T>(TP{}));
 
 template<class N, class... Ns, class... Ts>
 constexpr auto removeTypes(TypePack<Ts...>, TypePack<N, Ns...> = {}) {
-    return removeType(removeTypes(TypePack<Ts...>{}, TypePack<Ns...>{}), Type<N>{});
+    return removeType(removeTypes(type_pack<Ts...>, type_pack<Ns...>), type<N>);
 }
 template<class... Ts>
 constexpr auto removeTypes(TypePack<Ts...>, TypePack<> = {}) {
-    return TypePack<Ts...>{};
+    return type_pack<Ts...>;
 }
 template<class NP, class TP>
 using RemoveTypes = decltype(removeTypes(TP{}, NP{}));

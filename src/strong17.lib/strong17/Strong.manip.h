@@ -20,7 +20,7 @@ using meta17::UnwrapType;
 template<class Add, class V, class... Tags>
 constexpr auto addStrongTag(Type<Strong<V, Tags...>>, Type<Add> = {}) {
     static_assert(!(std::is_same_v<Tags, Add> || ...), "Added Tag is already present!");
-    return Type<Strong<V, Tags..., Add>>{};
+    return type<Strong<V, Tags..., Add>>;
 }
 template<class T, class S>
 using AddStrongTag = UnwrapType<decltype(addStrongTag<T>(type<S>))>;
@@ -30,7 +30,7 @@ template<class... Adds, class V, class... Tags>
 constexpr auto addStrongTags(Type<Strong<V, Tags...>>, TypePack<Adds...> = {}) {
     using AddPack = TypePack<Adds...>;
     static_assert(!(meta17::contains_of<Tags, AddPack> || ...), "One of the added Tags is already present!");
-    return Type<Strong<V, Tags..., Adds...>>{};
+    return type<Strong<V, Tags..., Adds...>>;
 }
 template<class TP, class S>
 using AddStrongTags = UnwrapType<decltype(addStrongTags(type<S>, TP{}))>;

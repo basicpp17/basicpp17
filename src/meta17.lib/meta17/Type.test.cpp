@@ -13,8 +13,8 @@ static_assert(!is_type<int>);
 static_assert(std::is_same_v<UnwrapType<Type<int>>, UnwrapType<int>>);
 
 // equality
-static_assert(Type<int>{} == Type<signed int>{});
-static_assert(Type<float>{} != Type<double>{});
+static_assert(type<int> == type<signed int>);
+static_assert(type<float> != Type<double>{});
 
 // wrapping
 static_assert(to_type<int> == to_type<Type<int>>);

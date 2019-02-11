@@ -22,7 +22,7 @@ constexpr auto makeIndexTypePack(TypePack<Ts...> = {}, Index<I> = {}) {
             constexpr auto next = extract_index<IT> + index<1>;
             return TypePack<IT>{} + makeIndexTypePack(type_tail<P>, next);
         };
-        using H = UnwrapType<TypeHead<P>>;
+        using H = TypeHead<P>;
         if constexpr (is_index_type<H>)
             return recurse(H{});
         else
