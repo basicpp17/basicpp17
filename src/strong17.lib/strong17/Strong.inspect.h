@@ -9,15 +9,17 @@
 
 namespace strong17 {
 
+using meta17::Type;
+
 /// tag inspection
 template<class CandidateTag, class Value, class... Tags>
-constexpr auto hasTag(meta17::Type<Strong<Value, Tags...>>, meta17::Type<CandidateTag> = {}) {
+constexpr auto hasTag(Type<Strong<Value, Tags...>>, Type<CandidateTag> = {}) {
     return (std::is_same_v<CandidateTag, Tags> || ...);
 }
 
 /// tag inspection
 template<class CandidateTag, class Value, class... Tags>
-constexpr auto contains(meta17::Type<Strong<Value, Tags...>>, meta17::Type<CandidateTag> = {}) {
+constexpr auto contains(Type<Strong<Value, Tags...>>, Type<CandidateTag> = {}) {
     return (std::is_same_v<CandidateTag, Tags> || ...);
 }
 
