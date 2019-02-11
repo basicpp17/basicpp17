@@ -5,6 +5,7 @@ StaticLibrary {
     Depends { name: "tuple17" }
 
     files: [
+        "Strong.base.h",
         "Strong.cpp",
         "Strong.extract.h",
         "Strong.h",
@@ -12,6 +13,7 @@ StaticLibrary {
         "Strong.inspect.h",
         "Strong.make.h",
         "Strong.manip.h",
+        "Strong.opaque.h",
         "Strong.ops.h",
         "Strong.ostream.h",
         "Strong.trait.h",
