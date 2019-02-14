@@ -61,6 +61,6 @@ TEST(Partial, byType) {
 
     auto x = Partial<char, int, float>{}; //
     if (x.has(meta17::Type<char>{})) {
-        auto y = x.get(type<char>);
+        x.get(type<char>);
     }
 }
