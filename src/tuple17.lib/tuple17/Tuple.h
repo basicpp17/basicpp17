@@ -9,6 +9,9 @@
 #include <meta17/TypePack.wrap.h>
 #include <meta17/align.h> // AlignedOffsetsFor
 
+#include <meta17/TemplateOfTypes.extract.h>
+#include <meta17/TemplateOfValues.extract.h>
+
 #include <cinttypes> // uint8_t
 #include <new> // aligned_storage
 #include <type_traits> // std::is_reference_v / std::is_const_v
@@ -41,6 +44,36 @@ constexpr auto noConst() {
     return (!std::is_const_v<Ts> && ... && true);
 }
 
+/// Helper Types to formulate Debug Helpers / Visualizers for MSVC
+
+template<class Hd, class O, class Tl>
+struct DebugType {
+
+    using Head = Hd;
+    using Tail = Tl;
+
+    constexpr static auto Offset = meta17::toValue(O{});
+};
+
+// termination condition
+template<class T, auto O>
+auto makeDebugTypes(meta17::TypePack<T>, meta17::ConstPack<O>) {
+    return DebugType<T, meta17::Const<O>, void>{};
+}
+
+// recursion
+template<class Types, class Offsets>
+auto makeDebugTypes(Types, Offsets) {
+    using TailTypes = UnwrapType<meta17::ExtractTailTypePack<Types>>;
+    using TailOffset = UnwrapType<meta17::ExtractTailConstPack<Offsets>>;
+
+    using Head = UnwrapType<meta17::ExtractHeadType<Types>>;
+    using Offset = UnwrapType<meta17::ExtractHeadConst<Offsets>>;
+    using Tail = decltype(makeDebugTypes(TailTypes{}, TailOffset{}));
+
+    return DebugType<Head, Offset, Tail>{};
+}
+
 /** \brief storage type for all given types
  *
  * features:
@@ -61,7 +94,12 @@ struct Tuple {
     enum : size_t {
         size = sizeOfTypePack<0>(pack),
         max_align = maxAlignOf<Ts...>(),
+        npos = sizeof...(Ts),
     };
+
+#ifndef NDEBUG
+    using DebugTypes = decltype(makeDebugTypes(pack, offsets));
+#endif
 
 private:
     std::aligned_storage_t<(size == 0 ? 1 : size), max_align> m;
