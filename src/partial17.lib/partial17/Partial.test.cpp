@@ -9,6 +9,8 @@
 
 using namespace partial17;
 
+using meta17::type;
+
 TEST(Partial, basic) {
     auto x = Partial<char, int, float>{}; //
     auto y = x; // copy constructor
@@ -59,8 +61,8 @@ TEST(Partial, fromArgs) {
 
 TEST(Partial, byType) {
 
-    auto x = Partial<char, int, float>{}; //
-    if (x.has(meta17::Type<char>{})) {
-        x.get(type<char>);
+    auto x = Partial<char, int, float>{'\x23'}; //
+    if (x.has(type<char>)) {
+        ASSERT_EQ(35, x.get(type<char>));
     }
 }
