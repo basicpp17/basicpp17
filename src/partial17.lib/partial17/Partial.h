@@ -19,6 +19,7 @@
 namespace partial17 {
 
 using meta17::alignOffset;
+using meta17::checkedIndexOf;
 using meta17::Const;
 using meta17::contains_of;
 using meta17::index;
@@ -30,6 +31,7 @@ using meta17::IndexPackFor;
 using meta17::sizeOfTypePack;
 using meta17::ToTypePack;
 using meta17::type;
+using meta17::Type;
 using meta17::type_pack;
 using meta17::TypeAt;
 using meta17::TypePack;
@@ -170,6 +172,12 @@ public:
     }
     auto has(size_t i) const { return m_bits[i]; }
 
+    template<class T>
+    auto has(Type<T> = {}) const {
+        constexpr size_t index = checkedIndexOf<T, Pack, Indices>();
+        return has<index>();
+    }
+
     template<size_t I>
     auto get(Index<I> = {}) -> UnwrapType<TypeAt<Index<I>, Pack>>& {
         using T = UnwrapType<TypeAt<Index<I>, Pack>>;
@@ -179,6 +187,12 @@ public:
     auto get(Index<I> = {}) const -> const UnwrapType<TypeAt<Index<I>, Pack>>& {
         using T = UnwrapType<TypeAt<Index<I>, Pack>>;
         return *std::launder(reinterpret_cast<const T*>(alignPointer<max_align>(m_data.get()) + offsetAt<I>()));
+    }
+
+    template<class T>
+    auto get(Type<T> = {}) const {
+        constexpr size_t index = checkedIndexOf<T, Pack, Indices>();
+        return get<index>();
     }
 
     template<class F>
