@@ -56,14 +56,13 @@ struct DebugType {
 };
 
 // termination condition
-template<class T, auto O>
-auto makeDebugTypes(meta17::TypePack<T>, meta17::ConstPack<O>) {
-    return DebugType<T, meta17::Const<O>, void>{};
+constexpr auto makeDebugTypes(meta17::TypePack<>, meta17::ConstPack<>) {
+    return DebugType<void, meta17::Const<0>, void>{};
 }
 
 // recursion
 template<class Types, class Offsets>
-auto makeDebugTypes(Types, Offsets) {
+constexpr auto makeDebugTypes(Types, Offsets) {
     using TailTypes = UnwrapType<meta17::ExtractTailTypePack<Types>>;
     using TailOffset = UnwrapType<meta17::ExtractTailConstPack<Offsets>>;
 
