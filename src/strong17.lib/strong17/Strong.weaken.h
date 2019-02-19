@@ -1,4 +1,5 @@
 #pragma once
+#include "Strong.extract.h"
 #include "Strong.h"
 #include "Strong.trait.h"
 
@@ -6,6 +7,8 @@
 #include <meta17/TypePack.h>
 
 #include <meta17/Type.wrap.h> // UnwrapType
+
+#include <type_traits>
 
 namespace strong17 {
 
@@ -15,12 +18,12 @@ using meta17::TypePack;
 using meta17::UnwrapType;
 
 /// like extractValue, but does nothing for non-strong types
-template<class V, class... Tags>
-constexpr auto weakenType(Type<Strong<V, Tags...>> = {}) -> Type<V> {
+template<class S>
+constexpr auto weakenType(Type<S> = {}) -> std::enable_if_t<is_strong<S>.v, Type<ExtractValue<Base<S>>>> {
     return {};
 }
 template<class T>
-constexpr auto weakenType(Type<T> = {}) -> Type<T> {
+constexpr auto weakenType(Type<T> = {}) -> std::enable_if_t<!is_strong<T>.v, Type<T>> {
     return {};
 }
 template<class S>
