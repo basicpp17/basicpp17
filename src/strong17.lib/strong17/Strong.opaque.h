@@ -9,12 +9,9 @@
 
 #define STRONG_OPAQUE(name, type, ...)                                                                                 \
     struct name;                                                                                                       \
-    struct name##Tag;                                                                                                  \
-    constexpr auto makeStrongType(                                                                                     \
-        meta17::TypeTail<meta17::TypePack<void, __VA_ARGS__, name##Tag>> = {}, meta17::Type<type> = {})                \
-        ->meta17::Type<name> {                                                                                         \
+    constexpr auto makeOpaqueType(meta17::Type<strong17::Strong<type, ##__VA_ARGS__>>)->meta17::Type<name> {           \
         return {};                                                                                                     \
     }                                                                                                                  \
-    struct name : strong17::Strong<type, ##__VA_ARGS__, name##Tag> {                                                   \
+    struct name : strong17::Strong<type, ##__VA_ARGS__> {                                                              \
         using Strong::Strong;                                                                                          \
     }

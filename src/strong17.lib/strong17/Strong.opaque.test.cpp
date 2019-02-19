@@ -12,8 +12,10 @@
 
 using namespace strong17;
 
-STRONG_OPAQUE(Pos, int);
-STRONG_OPAQUE(Dist, int);
+using PosRaw = Strong<int, struct PosTag>;
+
+STRONG_OPAQUE(Pos, int, struct PosTag);
+STRONG_OPAQUE(Dist, int, struct DistTag);
 
 static_assert(is_strong<Pos>);
 static_assert(!is_strong<int>);
@@ -22,7 +24,7 @@ auto operator+(Pos a, Dist d) -> Pos { return Pos{a.v + d.v}; }
 
 static_assert(std::is_assignable_v<Hasher<Pos>, std::hash<Base<Pos>>>);
 
-static_assert(make_strong_type<int, TypePack<PosTag>> == type<Pos>);
+static_assert(make_opaque_type<Strong<int, PosTag>> == type<Pos>);
 
 TEST(StrongOpaque, basic) {
     auto x = Pos{};
