@@ -8,7 +8,7 @@
 namespace strong17 {
 
 template<class T, class... Tags>
-auto getHasher(Strong<T, Tags...>) -> std::hash<T>;
+auto getHasher(Strong<T, Tags...>) -> std::hash<Strong<T, Tags...>>;
 
 template<class T>
 using Hasher = decltype(getHasher(Base<T>{}));
@@ -18,6 +18,8 @@ using Hasher = decltype(getHasher(Base<T>{}));
 namespace std {
 
 template<class T, class... Tags>
-struct hash<strong17::Strong<T, Tags...>> : std::hash<T> {};
+struct hash<strong17::Strong<T, Tags...>> {
+    size_t operator()(strong17::Strong<T, Tags...> a) const { return std::hash<T>{}(a.v); }
+};
 
 } // namespace std
