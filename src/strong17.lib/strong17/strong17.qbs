@@ -24,5 +24,12 @@ StaticLibrary {
         Depends { name: "cpp" }
         cpp.includePaths: [".."]
         Depends { name: "tuple17" }
+
+        Properties {
+            condition: qbs.toolchain.contains('clang')
+            cpp.cxxFlags: [
+                "-Wno-gnu-zero-variadic-macro-arguments" // accept this extensions for opaque strong types
+            ]
+        }
     }
 }
