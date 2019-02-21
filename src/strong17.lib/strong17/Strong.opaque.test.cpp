@@ -20,6 +20,9 @@ STRONG_OPAQUE(Dist, int, struct DistTag);
 static_assert(is_strong<Pos>);
 static_assert(!is_strong<int>);
 
+static_assert(is_opaque<Pos>);
+static_assert(!is_opaque<PosRaw>);
+
 auto operator+(Pos a, Dist d) -> Pos { return Pos{a.v + d.v}; }
 
 static_assert(std::is_assignable_v<Hasher<Pos>, std::hash<Base<Pos>>>);
