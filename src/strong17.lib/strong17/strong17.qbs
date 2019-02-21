@@ -5,6 +5,7 @@ StaticLibrary {
     Depends { name: "tuple17" }
 
     files: [
+        "Strong.base.h",
         "Strong.cpp",
         "Strong.extract.h",
         "Strong.h",
@@ -12,6 +13,7 @@ StaticLibrary {
         "Strong.inspect.h",
         "Strong.make.h",
         "Strong.manip.h",
+        "Strong.opaque.h",
         "Strong.ops.h",
         "Strong.ostream.h",
         "Strong.trait.h",
@@ -22,5 +24,12 @@ StaticLibrary {
         Depends { name: "cpp" }
         cpp.includePaths: [".."]
         Depends { name: "tuple17" }
+
+        Properties {
+            condition: qbs.toolchain.contains('clang')
+            cpp.cxxFlags: [
+                "-Wno-gnu-zero-variadic-macro-arguments" // accept this extensions for opaque strong types
+            ]
+        }
     }
 }

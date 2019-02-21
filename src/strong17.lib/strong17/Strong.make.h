@@ -26,4 +26,17 @@ constexpr auto make_strong_type = MakeStrongType<V, Tags>{};
 template<class V, class Tags>
 using MakeStrong = UnwrapType<MakeStrongType<V, Tags>>;
 
+template<class Value, class... Tags>
+constexpr auto makeOpaqueType(Type<Strong<Value, Tags...>>) -> Type<Strong<Value, Tags...>> {
+    return {};
+}
+template<class S>
+using MakeOpaqueType = decltype(makeOpaqueType(type<S>));
+
+template<class S>
+constexpr auto make_opaque_type = MakeOpaqueType<S>{};
+
+template<class S>
+using MakeOpaque = UnwrapType<MakeOpaqueType<S>>;
+
 } // namespace strong17

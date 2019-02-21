@@ -10,6 +10,7 @@ Application {
     Depends { name: "googletest" }
 
     files: [
+        "Strong.opaque.test.cpp",
         "Strong.test.cpp",
     ]
 }
