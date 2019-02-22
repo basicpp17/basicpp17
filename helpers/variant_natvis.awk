@@ -8,7 +8,7 @@ function repeat( str, n,    rep, i )
 
 function viewer(i)
 {
-    return "{*($T"i+1" *)&amp;(m)}"
+    return "*($T"i+1" *)&amp;(m)"
 }
 
 BEGIN {
@@ -23,9 +23,19 @@ BEGIN {
 
  for (i = 0; i < 64; i++) {
    printf "  <DisplayString Condition=\"which() == "(i)"\" Optional=\"true\">"
-   printf viewer(i)
+   printf "{" viewer(i) "}"
    print "  </DisplayString>"
  }
+
+ 
+ print "  <Expand>"
+ print "  <Item Name=\"which\">which()</Item>"
+ for (i = 0; i < 64; i++) {
+   printf "    <Item Name=\"[value]\" Condition=\"which() == " i "\" Optional=\"true\">"
+   printf viewer(i)
+   print "    </Item>"
+ }
+ print "</Expand>"
 
  print "</Type>"
 
