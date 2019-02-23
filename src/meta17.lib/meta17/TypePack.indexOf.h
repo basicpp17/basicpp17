@@ -36,7 +36,7 @@ constexpr auto indexOf(TP = {}, Type<T> = {}) {
     return indexOf<T>(TP{}, IP{});
 }
 template<class T, class TP>
-constexpr auto index_of = indexOf(TP{}, type<T>);
+constexpr auto index_of = indexOf<T, TP>();
 
 /// statically asserts that the returned index is valid
 template<class T, class TP, class IP>
@@ -51,5 +51,7 @@ constexpr auto checkedIndexOf(TP = {}, Type<T> = {}) {
     using IP = IndexPackFor<TP>;
     return checkedIndexOf<T>(TP{}, IP{});
 }
+template<class T, class TP>
+constexpr auto checked_index_of = checkedIndexOf<T, TP>();
 
 } // namespace meta17

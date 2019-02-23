@@ -12,8 +12,4 @@ constexpr auto toValue(Bool<B>) -> bool {
 template<class T>
 constexpr auto to_value = toValue(T{});
 
-/// Wrapping convenience
-using True = Bool<true>;
-using False = Bool<false>;
-
 } // namespace meta17

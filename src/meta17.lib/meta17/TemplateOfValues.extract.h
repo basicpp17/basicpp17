@@ -13,7 +13,7 @@ constexpr auto countValues(Type<Template<Vs...>> = {}) -> size_t {
     return sizeof...(Vs);
 }
 template<class T>
-constexpr auto count_values = countTypes(to_type<T>);
+constexpr auto count_values = countValues(to_type<T>);
 
 /// extract template value arguments as ConstPack
 template<template<auto...> class Template, auto... Vs>

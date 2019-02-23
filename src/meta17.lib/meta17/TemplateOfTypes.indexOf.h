@@ -1,6 +1,8 @@
 #pragma once
 #include "Type.h"
 
+#include "Type.ops.h" // type == type
+
 namespace meta17 {
 
 template<class T, template<typename...> class Template, class... Ts>

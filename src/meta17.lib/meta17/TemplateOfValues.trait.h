@@ -21,4 +21,7 @@ struct IsValueTemplate<Template, Template<Vs...>> : True {};
 template<class T, template<auto...> class Template>
 using IsValueTemplate = trait::IsValueTemplate<Template, std::remove_const_t<T>>;
 
+template<class T, template<auto...> class Template>
+constexpr auto is_value_template = IsValueTemplate<T, Template>{};
+
 } // namespace meta17

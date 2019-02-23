@@ -1,5 +1,6 @@
 #include "meta17/IndexPack.for.h"
-#include "meta17/IndexPack.ops.h"
+
+#include "meta17/IndexPack.ops.h" // index_pack == index_pack
 
 using namespace meta17;
 

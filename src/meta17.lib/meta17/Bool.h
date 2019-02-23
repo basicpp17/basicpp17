@@ -10,4 +10,8 @@ struct Bool {
     constexpr explicit operator bool() const { return B; }
 };
 
+/// instances
+using True = Bool<true>;
+using False = Bool<false>;
+
 } // namespace meta17

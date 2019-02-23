@@ -4,14 +4,15 @@
 
 namespace meta17 {
 
-/// Iteration
+/// invoke callable with all types of the TypePack
 template<class Callable, class... Ts>
-constexpr void ForEach(Callable&& callable, TypePack<Ts...>) {
-    (..., callable(type<Ts>));
+constexpr auto forEachType(TypePack<Ts...>, Callable&& callable) {
+    return (..., callable(type<Ts>));
 }
 
+/// return true if callable is true for every type of TypePack
 template<class Callable, class... Ts>
-constexpr bool AllOf(Callable&& callable, TypePack<Ts...>) {
+constexpr bool allTypesOf(TypePack<Ts...>, Callable&& callable) {
     return (... && callable(type<Ts>));
 }
 

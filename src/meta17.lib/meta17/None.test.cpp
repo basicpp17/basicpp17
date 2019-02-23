@@ -1,7 +1,5 @@
 #include "None.h"
 
-#include "None.ops.h"
-#include "None.ostream.h"
+using namespace meta17;
 
-static_assert(none == none);
-static_assert(!(none != none));
+constexpr auto testNone() { return none; }

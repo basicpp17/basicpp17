@@ -6,7 +6,7 @@
 namespace meta17 {
 
 template<auto... Vs>
-constexpr auto max(ConstPack<Vs...>) {
+constexpr auto max(ConstPack<Vs...> = {}) {
     return std::max({Vs...});
 }
 

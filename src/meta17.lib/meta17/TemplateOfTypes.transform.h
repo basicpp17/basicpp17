@@ -7,7 +7,7 @@
 namespace meta17 {
 
 template<template<class...> class To, template<class...> class From, class... Ts>
-auto transformTemplate(Type<From<Ts...>>, TemplateOfTypes<To> = {}) -> Type<To<Ts...>> {
+constexpr auto transformTemplate(Type<From<Ts...>>, TemplateOfTypes<To> = {}) -> Type<To<Ts...>> {
     return {};
 }
 
