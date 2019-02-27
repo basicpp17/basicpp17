@@ -28,6 +28,7 @@ using meta17::index_of;
 using meta17::index_pack;
 using meta17::IndexPack;
 using meta17::IndexPackFor;
+using meta17::maxAlignOf;
 using meta17::sizeOfTypePack;
 using meta17::ToTypePack;
 using meta17::type;
@@ -48,8 +49,8 @@ struct Partial {
     using Pack = ToTypePack<Ts...>;
     using Indices = IndexPackFor<Pack>;
     enum {
-        max_count = sizeof...(Ts),
-        max_align = std::max({alignof(Ts)...}),
+        max_count = sizeOfTypePack<0>(Pack{}),
+        max_align = maxAlignOf<Ts...>(),
     };
 
 private:

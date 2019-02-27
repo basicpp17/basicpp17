@@ -23,19 +23,13 @@ using meta17::ConstPack;
 using meta17::index;
 using meta17::IndexPack;
 using meta17::IndexPackFor;
+using meta17::maxAlignOf;
 using meta17::sizeOfTypePack;
 using meta17::to_type_pack;
 using meta17::ToTypePack;
 using meta17::Type;
 using meta17::type;
 using meta17::UnwrapType;
-
-template<class... Ts>
-constexpr auto maxAlignOf() {
-    auto r = size_t{1};
-    ((alignof(Ts) > r ? (r = alignof(Ts), 0) : 0), ...);
-    return r;
-}
 
 template<class... Ts>
 constexpr auto noReference() {

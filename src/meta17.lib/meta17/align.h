@@ -65,4 +65,11 @@ constexpr auto sizeOfTypePack(TypePack<Ts...>, Const<Offset> = {}) -> size_t {
 template<class P>
 using AlignedOffsetsFor = decltype(alignTypePack<0>(P{}));
 
+template<class... Ts>
+constexpr auto maxAlignOf() {
+    auto r = size_t{1};
+    ((alignof(Ts) > r ? (r = alignof(Ts), 0) : 0), ...);
+    return r;
+}
+
 } // namespace meta17
