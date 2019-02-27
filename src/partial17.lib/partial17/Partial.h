@@ -49,7 +49,7 @@ struct Partial {
     using Pack = ToTypePack<Ts...>;
     using Indices = IndexPackFor<Pack>;
     enum {
-        max_count = sizeOfTypePack<0>(Pack{}),
+        max_count = sizeof...(Ts),
         max_align = maxAlignOf<Ts...>(),
     };
 
