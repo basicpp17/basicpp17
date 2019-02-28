@@ -10,6 +10,10 @@ Application {
     Depends { name: "googletest" }
 
     files: [
+        "Variant.make.test.cpp",
+        "Variant.ops.test.cpp",
+        "Variant.ostream.test.cpp",
         "Variant.test.cpp",
+        "Variant.trait.test.cpp",
     ]
 }
