@@ -10,7 +10,16 @@ Application {
     Depends { name: "googletest" }
 
     files: [
-        "Strong.opaque.test.cpp",
+        "Strong.base.test.cpp",
+        "Strong.extract.test.cpp",
+        "Strong.hash.test.cpp",
+        "Strong.inspect.test.cpp",
+        "Strong.make.test.cpp",
+        "Strong.manip.test.cpp",
+        "Strong.ops.test.cpp",
+        "Strong.ostream.cpp",
         "Strong.test.cpp",
+        "Strong.trait.test.cpp",
+        "Strong.weaken.test.cpp",
     ]
 }
