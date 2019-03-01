@@ -25,12 +25,12 @@ TEST(Variant, construction) {
         EXPECT_EQ(value, 23);
     });
 
-    // TODO CK: Why does this not work?
-    //    auto v4 = Variant<char, int, float>(index<0>, 23.14f);
-    //    v4.visit([](auto value) {
-    //        ASSERT_EQ(sizeof(value), sizeof(int));
-    //        ASSERT_EQ(value, 23);
-    //    });
+    // Inplace creation with index
+    auto v4 = Variant<char, int, float>(index<1>, 23.14f);
+    v4.visit([](auto value) {
+        ASSERT_EQ(sizeof(value), sizeof(int));
+        ASSERT_EQ(value, 23);
+    });
 
     // Type without default
     struct S {

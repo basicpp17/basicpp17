@@ -107,9 +107,9 @@ TEST(Tuple, complex) {
     static_assert(T::offset_at<2> == offset2);
 
     // Access by type does not work for Inner because types used multiple times
-    // static_assert(T::offset_of<Inner> == 0);
+    // static_assert(T::offset_of<Inner> == offset0);
     static_assert(T::offset_of<char> == offset1);
-    // static_assert(T::offset_of<Inner> == 0);
+    // static_assert(T::offset_of<Inner> == offset2);
 
     static_assert(T::type_at<0> == type<Inner>);
     static_assert(T::type_at<1> == type<char>);
@@ -159,6 +159,14 @@ TEST(Tuple, construction) {
     SingleArg s1(s0); // Test that it won't use the argument forward constructor
 
     EXPECT_EQ(s0, s1);
+
+    using Ambiguous = Tuple<char, int, int>;
+    auto a0 = Ambiguous{};
+    // TODO CK: Tuple is sorted, should accept only sorted list
+    // Cannot assign due to ambiguous type index association int int
+    // auto a1 = Ambiguous{'c'};
+    // auto a2 = Ambiguous{'c', 23};
+    // auto a3 = Ambiguous{'c', 23, 32};
 }
 
 TEST(Tuple, broaden) {
@@ -171,14 +179,6 @@ TEST(Tuple, broaden) {
     EXPECT_EQ((l.of<double>()), 4.2);
     EXPECT_EQ((l.of<int>()), 23);
     EXPECT_EQ((l.of<float>()), 0);
-}
-
-TEST(Tuple, broadenTODO_1) {
-    using Small = Tuple<char, int, int>;
-    // TODO CK: Why does this not compile - the arguments are positional
-    /*
-     * Small{'c', 23, 32};
-     */
 }
 
 TEST(Tuple, broadenTODO_2) {

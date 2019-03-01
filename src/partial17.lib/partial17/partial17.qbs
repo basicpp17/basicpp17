@@ -8,6 +8,8 @@ StaticLibrary {
         "Partial.cpp",
         "Partial.h",
         "Partial.make.h",
+        "Partial.ops.h",
+        "Partial.ostream.h",
         "Partial.trait.h",
     ]
 

@@ -21,12 +21,16 @@ TEST(StrongOpaque, hasTag) {
     static_assert(!hasTag(type<Base<Type134Opaque>>, type<struct SecondTag>));
 }
 
-TEST(Strong, contains) {
-    static_assert(contains(type<Type124Explicit>, type<struct FirstTag>));
-    static_assert(!contains(type<Type124Explicit>, type<struct ThirdTag>));
+TEST(Strong, hasType) {
+    static_assert(!hasType(type<Type124Explicit>, type<struct FirstTag>));
+    static_assert(!hasType(type<Type124Explicit>, type<struct ThirdTag>));
+    static_assert(hasType(type<Type124Explicit>, type<int>));
+    static_assert(!hasType(type<Type124Explicit>, type<float>));
 }
 
-TEST(StrongOpaque, contains) {
-    static_assert(contains(type<Base<Type134Opaque>>, type<struct ThirdTag>));
-    static_assert(!contains(type<Base<Type134Opaque>>, type<struct SecondTag>));
+TEST(StrongOpaque, hasType) {
+    static_assert(!hasType(type<Base<Type134Opaque>>, type<struct ThirdTag>));
+    static_assert(!hasType(type<Base<Type134Opaque>>, type<struct SecondTag>));
+    static_assert(hasType(type<Base<Type134Opaque>>, type<int>));
+    static_assert(!hasType(type<Base<Type134Opaque>>, type<float>));
 }

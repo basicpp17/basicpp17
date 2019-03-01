@@ -1,6 +1,7 @@
 #include "Partial.h"
 
 #include "Partial.make.h"
+#include "Partial.ops.h"
 #include "Partial.trait.h"
 
 #include <meta17/Const.ops.h> // index == index
@@ -17,6 +18,7 @@ TEST(Partial, construction) {
     ASSERT_FALSE(p0.has<0>());
     ASSERT_FALSE(p0.has<1>());
     ASSERT_FALSE(p0.has<2>());
+    // TODO CK: Should this be possible? - crashes, would suggest a graceful value for production
     //    EXPECT_EQ(p0.get<0>(), '\0');
     //    EXPECT_EQ(p0.get<1>(), 0);
     //    EXPECT_EQ(p0.get<2>(), 0);
@@ -24,22 +26,17 @@ TEST(Partial, construction) {
     auto p1 = P{'c', 2.3f};
     auto p2 = p1; // copy constructor
     auto p3 = P{std::move(p2)}; // move construct
-    // TODO CK: We need a better way to check for equality!
-    //   EXPECT_EQ(p0, p2);
-    ASSERT_TRUE(p1.has<0>());
-    ASSERT_FALSE(p1.has<1>());
-    ASSERT_TRUE(p1.has<2>());
-    EXPECT_EQ(p1.count(), 2);
-
-    ASSERT_TRUE(p3.has<0>());
-    ASSERT_FALSE(p3.has<1>());
-    ASSERT_TRUE(p3.has<2>());
-    EXPECT_EQ(p3.count(), 2);
 
     EXPECT_EQ(p1.get<0>(), 'c');
     EXPECT_EQ(p1.get<2>(), 2.3f);
-    EXPECT_EQ(p3.get<0>(), 'c');
-    EXPECT_EQ(p3.get<2>(), 2.3f);
+    EXPECT_EQ(p1.countInitialized(), 2);
+    EXPECT_EQ(p1.countAll(), 3);
+    // TODO CK: Consider alignment - does this need to consider the size of the bitset
+    EXPECT_EQ(p1.size(), sizeof(int) + sizeof(float));
+    EXPECT_EQ(p3.countInitialized(), 2);
+    EXPECT_EQ(p3.countAll(), 3);
+    EXPECT_EQ(p1.size(), sizeof(int) + sizeof(float));
+    EXPECT_EQ(p1, p3);
 }
 
 TEST(Partial, assignment) {
@@ -49,20 +46,10 @@ TEST(Partial, assignment) {
     p1 = p0; // copy operator
     auto p2 = P{};
     p2 = std::move(p1); // move operator
-    // TODO CK: We need a better way to check for equality!
-    //    EXPECT_EQ(p0, p2);
-    ASSERT_TRUE(p0.has<0>());
-    ASSERT_FALSE(p0.has<1>());
-    ASSERT_TRUE(p0.has<2>());
-
-    ASSERT_TRUE(p2.has<0>());
-    ASSERT_FALSE(p2.has<1>());
-    ASSERT_TRUE(p2.has<2>());
 
     EXPECT_EQ(p0.get<0>(), 'c');
     EXPECT_EQ(p0.get<2>(), 2.3f);
-    EXPECT_EQ(p2.get<0>(), 'c');
-    EXPECT_EQ(p2.get<2>(), 2.3f);
+    EXPECT_EQ(p0, p2);
 }
 
 TEST(Partial, fromFactory) {
@@ -98,16 +85,11 @@ TEST(Partial, type) {
     ASSERT_EQ(23, p.get(type<int>));
     EXPECT_EQ(23, p.get(index<1>));
 
-    // TODO CK: Does prevent valid compilation - why? Primary error is thrown in unrelated test construction!
-    //    auto m = Partial<int, int>{23, 32};
-    //    // not allowed due to used TypePack
-    //    // ASSERT_TRUE(m.has(type<int>));
-    //    // ASSERT_EQ(23, m.get(type<int>));
-    //    // TODO CK: API is confusing - has with size_t direct, get needs another abstraction?
-    //    ASSERT_TRUE(m.has(0));
-    //    EXPECT_EQ(23, m.get(index<0>));
-    //    ASSERT_TRUE(m.has(1));
-    //    EXPECT_EQ(32, m.get(index<1>));
+    // TODO CK: Does prevent valid compilation? Microsoft Visual C++ BUG?
+    // auto m = Partial<int, int>{23, 32};
+    // not allowed due to used TypePack
+    // ASSERT_TRUE(m.has(type<int>));
+    // ASSERT_EQ(23, m.get(type<int>));
 }
 
 TEST(Partial, merge) {
@@ -139,4 +121,41 @@ TEST(Partial, merge) {
     ASSERT_FALSE(p6.has<2>());
 
     EXPECT_EQ(p6.get<1>(), 2);
+}
+
+TEST(Partial, visitAll) {
+    using P = Partial<char, int, float>;
+    auto p = P{'\x23'};
+
+    ASSERT_EQ(p.countInitialized(), 1);
+    ASSERT_EQ(p.countAll(), 3);
+
+    int count = 0;
+    p.visitAll([&](auto i, auto t) {
+        ++count;
+        if (i == 0) {
+            EXPECT_TRUE(p.has(i));
+            EXPECT_EQ(t, type<char>);
+        }
+        else {
+            EXPECT_FALSE(p.has(i));
+            EXPECT_NE(t, type<char>);
+        }
+    });
+    EXPECT_EQ(count, p.countAll());
+}
+
+TEST(Partial, visitInitialized) {
+    using P = Partial<char, int, float>;
+    auto p = P{'\x23', 2.3f};
+
+    ASSERT_EQ(p.countInitialized(), 2);
+    ASSERT_EQ(p.countAll(), 3);
+
+    int count = 0;
+    p.visitInitialized([&](auto v) {
+        ++count;
+        EXPECT_TRUE(type<decltype(v)> == type<char> || type<decltype(v)> == type<float>);
+    });
+    EXPECT_EQ(count, p.countInitialized());
 }

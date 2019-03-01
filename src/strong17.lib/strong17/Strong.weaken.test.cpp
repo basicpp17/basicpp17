@@ -21,16 +21,12 @@ TEST(Strong, weakenType) {
 }
 
 TEST(StrongOpaque, weakenType) {
-    // TODO CK: I have no idea how to test this part! Assertion fails! What is the difference between ExtractValue and
-    // Weaken?
-    // static_assert(std::is_same_v<WeakenType<PositionExplicit>, int>);
-
     static_assert(weakenType<PositionOpaque>() == type<int>);
     static_assert(weaken_type<PositionOpaque> == type<int>);
     static_assert(std::is_same_v<WeakenType<PositionOpaque>, Type<int>>);
     static_assert(weaken(PositionOpaque{0}) == 0);
 }
 
-TEST(StrongMixed, weakenType) {
+TEST(StrongMixed, weakenType) { //
     static_assert(weaken(0) == 0);
 }

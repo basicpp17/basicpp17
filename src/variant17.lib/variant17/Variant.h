@@ -184,8 +184,8 @@ public:
 
     template<size_t I, class... Args>
     Variant(Index<I>, Args&&... args) {
-        static_assert(I >= npos, "index not part of variant");
-        constexpr auto t = typeAt<I>(pack, indices);
+        static_assert(I < npos, "index not part of variant");
+        constexpr auto t = typeAt<I>();
         constructOf(t, std::forward<Args>(args)...);
         whichValue = I;
     }

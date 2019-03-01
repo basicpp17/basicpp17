@@ -1,5 +1,6 @@
 #include "Strong.trait.h"
 
+#include "Strong.base.h"
 #include "Strong.opaque.h"
 
 #include <gtest/gtest.h>
@@ -20,4 +21,6 @@ TEST(StrongMixed, is_strong) {
 TEST(StrongMixed, is_opaque) {
     static_assert(is_opaque<PositionOpaque>);
     static_assert(!is_opaque<PositionExplicit>);
+    static_assert(is_strong<Base<PositionOpaque>>);
+    static_assert(is_strong<PositionOpaque>);
 }

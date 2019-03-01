@@ -15,6 +15,8 @@ TEST(Strong, extractValue) {
     static_assert(std::is_same_v<ExtractValue<PositionExplicit>, int>);
     static_assert(!std::is_same_v<ExtractValue<PositionExplicit>, struct PositionTag>);
     static_assert(!std::is_same_v<ExtractValue<PositionExplicit>, char>);
+    // ExtractValue is only defined on Strong!
+    // static_assert(!std::is_same_v<ExtractValue<int>, int>);
 }
 
 TEST(StrongOpaque, extractValue) {
