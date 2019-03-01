@@ -29,12 +29,12 @@ TEST(Partial, construction) {
 
     EXPECT_EQ(p1.get<0>(), 'c');
     EXPECT_EQ(p1.get<2>(), 2.3f);
-    EXPECT_EQ(p1.countInitialized(), 2);
-    EXPECT_EQ(p1.countAll(), 3);
+    EXPECT_EQ(p1.countInitialized(), 2ul);
+    EXPECT_EQ(p1.countAll(), 3ul);
     // TODO CK: Consider alignment - does this need to consider the size of the bitset
     EXPECT_EQ(p1.size(), sizeof(int) + sizeof(float));
-    EXPECT_EQ(p3.countInitialized(), 2);
-    EXPECT_EQ(p3.countAll(), 3);
+    EXPECT_EQ(p3.countInitialized(), 2ul);
+    EXPECT_EQ(p3.countAll(), 3ul);
     EXPECT_EQ(p1.size(), sizeof(int) + sizeof(float));
     EXPECT_EQ(p1, p3);
 }
@@ -127,10 +127,10 @@ TEST(Partial, visitAll) {
     using P = Partial<char, int, float>;
     auto p = P{'\x23'};
 
-    ASSERT_EQ(p.countInitialized(), 1);
-    ASSERT_EQ(p.countAll(), 3);
+    ASSERT_EQ(p.countInitialized(), 1ul);
+    ASSERT_EQ(p.countAll(), 3ul);
 
-    int count = 0;
+    size_t count = 0;
     p.visitAll([&](auto i, auto t) {
         ++count;
         if (i == 0) {
@@ -149,10 +149,10 @@ TEST(Partial, visitInitialized) {
     using P = Partial<char, int, float>;
     auto p = P{'\x23', 2.3f};
 
-    ASSERT_EQ(p.countInitialized(), 2);
-    ASSERT_EQ(p.countAll(), 3);
+    ASSERT_EQ(p.countInitialized(), 2ul);
+    ASSERT_EQ(p.countAll(), 3ul);
 
-    int count = 0;
+    size_t count = 0;
     p.visitInitialized([&](auto v) {
         ++count;
         EXPECT_TRUE(type<decltype(v)> == type<char> || type<decltype(v)> == type<float>);
