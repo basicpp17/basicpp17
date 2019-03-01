@@ -204,11 +204,11 @@ public:
 
     template<class F>
     auto visitAll(F&& f) {
-        visitIndexTypes(f, Indices{});
+        visitIndexTypes(std::forward<F>(f), Indices{});
     }
     template<class F>
     auto visitAll(F&& f) const {
-        visitIndexTypes(f, Indices{});
+        visitIndexTypes(std::forward<F>(f), Indices{});
     }
 
     [[nodiscard]] auto merge(const Partial& o) const -> Partial {
