@@ -27,16 +27,17 @@ TEST(Strong, manip) {
 STRONG_OPAQUE(PositionOpaque, int, PositionTag);
 STRONG_OPAQUE(DistanceOpaque, int, DistanceTag);
 
-// TODO CK: Should it be possible to manipulate Opaque Strongs?
-// TEST(StrongOpaque, manip) {
-//    static_assert(type<AddStrongTags<TypePack<>, PositionOpaque>> == type<PositionOpaque>);
+TEST(StrongOpaque, manip) {
+    // To manipulate an StrongOpaque, it should be reduced to a standard Strong using Base<> and needs to be
+    // made opaque afterwards
+    static_assert(type<AddStrongTags<TypePack<>, Base<PositionOpaque>>> == type<PositionExplicit>);
 
-//    static_assert(
-//        type<AddStrongTags<TypePack<struct ComputedTag, struct UnusedTag>, PositionOpaque>> ==
-//        type<Strong<int, PositionTag, ComputedTag, UnusedTag>>);
+    static_assert(
+        type<AddStrongTags<TypePack<struct ComputedTag, struct UnusedTag>, Base<PositionOpaque>>> ==
+        type<Strong<int, PositionTag, ComputedTag, UnusedTag>>);
 
-//    static_assert(
-//        type<AddStrongTag<DistanceTag, RemoveStrongTag<PositionTag, PositionOpaque>>> == type<DistanceOpaque>);
-//    static_assert(type<ChangeStrongValue<float, PositionOpaque>> == type<Strong<float, PositionTag>>);
-//    static_assert(type<ReplaceStrongTag<PositionTag, DistanceTag, PositionOpaque>> == type<DistanceOpaque>);
-//}
+    static_assert(
+        type<AddStrongTag<DistanceTag, RemoveStrongTag<PositionTag, Base<PositionOpaque>>>> == type<DistanceExplicit>);
+    static_assert(type<ChangeStrongValue<float, Base<PositionOpaque>>> == type<Strong<float, PositionTag>>);
+    static_assert(type<ReplaceStrongTag<PositionTag, DistanceTag, Base<PositionOpaque>>> == type<DistanceExplicit>);
+}
