@@ -25,21 +25,21 @@ Project {
 
             Properties {
                 condition: qbs.toolchain.contains('msvc')
-                cpp.cxxFlags: [
+                cpp.cxxFlags: base.concat(
                     "/permissive-", "/Zc:__cplusplus", // best C++ compatibility
                     "/diagnostics:caret", // better errors
                     "/wd4068", // ignore unknown pragmas
-                    "/D_ENABLE_EXTENDED_ALIGNED_STORAGE", // use real alignments
-                ]
+                    "/D_ENABLE_EXTENDED_ALIGNED_STORAGE" // use real alignments
+                )
             }
             Properties {
                 condition: qbs.toolchain.contains('clang')
-                cpp.cxxFlags: [
+                cpp.cxxFlags: base.concat(
                     "--pedantic", // best C++ compatibility
                     "-Wall", "-Wextra", // enable more warnings
                     "-ftemplate-backtrace-limit=0", // do not cut template backtraces
                     "-Wno-gnu-zero-variadic-macro-arguments" // accept this extensions for opaque strong types
-                ]
+                )
                 cpp.cxxStandardLibrary: "libc++"
                 cpp.staticLibraries: ["c++", "c++abi"]
             }

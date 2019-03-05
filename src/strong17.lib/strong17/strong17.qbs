@@ -27,9 +27,9 @@ StaticLibrary {
 
         Properties {
             condition: qbs.toolchain.contains('clang')
-            cpp.cxxFlags: [
+            cpp.cxxFlags: base.concat(
                 "-Wno-gnu-zero-variadic-macro-arguments" // accept this extensions for opaque strong types
-            ]
+            )
         }
     }
 }

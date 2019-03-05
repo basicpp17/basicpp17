@@ -52,7 +52,7 @@ Project {
 
         Properties {
             condition: qbs.toolchain.contains('clang')
-            cpp.cxxFlags: ["-Wno-unused-parameter"]
+            cpp.cxxFlags: base.concat("-Wno-unused-parameter")
             cpp.cxxStandardLibrary: "libc++"
         }
 
@@ -66,8 +66,8 @@ Project {
 
             Properties {
                 condition: qbs.toolchain.contains('clang')
-                cpp.cxxFlags: ["-Wno-unused-parameter"]
-                cpp.linkerFlags: ["-lpthread"]
+                cpp.cxxFlags: base.concat("-Wno-unused-parameter")
+                cpp.linkerFlags: base.concat("-lpthread")
             }
 
             property bool useMain: true
