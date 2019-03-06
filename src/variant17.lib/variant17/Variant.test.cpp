@@ -1,62 +1,118 @@
 #include "Variant.h"
 
-#include "Variant.make.h"
+#include "Variant.ops.h"
+
+#include <meta17/Index.h>
+#include <meta17/Type.ops.h>
 
 #include <gtest/gtest.h>
 
 using namespace variant17;
 
-TEST(Variant, basic) {
-    auto x = Variant<char, int, float>{};
-    auto y = x; // copy constructor
-    x = y; // copy operator
-    x = std::move(y); // move operator
-    auto z = Variant<char, int, float>{std::move(x)}; // move construct
+TEST(Variant, construction) {
+    using meta17::index;
+    // Standard
+    using V = Variant<char, int, double>;
+    auto v0 = V{};
+    auto v1 = v0; // copy
+    auto v2 = std::move(v1); // move copy
+    EXPECT_EQ(v0, v2);
 
-    ASSERT_EQ(z.which(), type<char>);
-}
-
-TEST(Variant, basicVisit) {
-    auto x = MakeVariant<TypePack<char, int, float>>{};
-
-    auto s = x.visit([](auto v) { return sizeof(v); });
-    ASSERT_EQ(s, size_t{1});
-}
-
-TEST(Variant, add) {
-    auto x = Variant<char, int, float>(3.14f);
-
-    x.visit([](auto& v) { v += 3.2f; });
-
-    x.visit([](auto v) {
-        ASSERT_EQ(sizeof(v), sizeof(float));
-        ASSERT_EQ(v, 3.14f + 3.2f);
+    // Inplace creation with type
+    auto v3 = Variant<char, int, float>(type<int>, 23.14f);
+    v3.visit([](auto value) {
+        EXPECT_EQ(sizeof(value), sizeof(int));
+        EXPECT_EQ(value, 23);
     });
-}
 
-TEST(Variant, emplace) {
-    auto x = Variant<char, int, float>(type<int>, 23.14f);
-
-    x.visit([](auto v) {
-        ASSERT_EQ(sizeof(v), sizeof(int));
-        ASSERT_EQ(v, 23);
+    // Inplace creation with index
+    auto v4 = Variant<char, int, float>(index<1>, 23.14f);
+    v4.visit([](auto value) {
+        ASSERT_EQ(sizeof(value), sizeof(int));
+        ASSERT_EQ(value, 23);
     });
-}
 
-TEST(Variant, nonDefault) {
-    struct X {
-        X() = delete;
-        X(int) {}
+    // Type without default
+    struct S {
+        S() = delete;
+        S(int) {}
     };
+    auto v5 = Variant<S>(type<S>, 2);
+    v5.visit([](auto value) { EXPECT_EQ(sizeof(value), sizeof(S)); });
+}
 
-    auto x = Variant<X>(type<X>, 2);
-    // auto y = Variant<X>{}; // won't compile
+TEST(Variant, which) {
+    using V = Variant<char, int, float>;
+    V v{};
 
-    x.visit([](auto v) { ASSERT_EQ(sizeof(v), sizeof(X)); });
+    ASSERT_EQ(v.which(), type<char>);
+    ASSERT_NE(v.which(), type<int>);
+    ASSERT_NE(v.which(), type<float>);
+
+    v = 3.2f;
+
+    ASSERT_NE(v.which(), type<char>);
+    ASSERT_NE(v.which(), type<int>);
+    ASSERT_EQ(v.which(), type<float>);
+
+    static_assert(V::whichOf<char>() == type<char>);
+    // Should not compile due to double is not part of V
+    // static_assert(V::whichOf<double>() == type<double>);
+}
+
+TEST(Variant, type) {
+    using V = Variant<char, int, float>;
+    static_assert(V::typeAt<0>() == type<char>);
+    static_assert(V::typeAt<1>() == type<int>);
+    static_assert(V::typeAt<2>() == type<float>);
+    // Should not compile due to double is not part of V
+    static_assert(V::typeAt<2>() != type<double>);
+    // Should not compile since V has only 3 options
+    // static_assert(V::typeAt<3>() == type<float>);
+}
+
+TEST(Variant, visit) {
+    auto v = Variant<char, int, float>{};
+
+    auto size0 = v.visit([](auto value) { return sizeof(value); });
+    EXPECT_EQ(size0, sizeof(char));
+
+    v = 3.2f;
+
+    auto size1 = v.visit([](auto value) { return sizeof(value); });
+    EXPECT_EQ(size1, sizeof(float));
+}
+
+TEST(Variant, manip) {
+    using V = Variant<char, int, float>;
+    V v1(3.14f), v2('c');
+
+    v1.visit([](auto& value) { value += 3.2f; });
+    v1.visit([](int& value) { value -= 1; }, [](char&) {}, [](float& value) { value += 1; });
+
+    v1.visit([](auto value) {
+        EXPECT_EQ(sizeof(value), sizeof(float));
+        EXPECT_EQ(value, 3.14f + 3.2f + 1);
+    });
+
+    v2.visit([](auto& value) { value += 3.2f; });
+    v2.visit([](int& value) { value -= 1; }, [](char&) {}, [](float& value) { value += 1; });
+    v2.visit([](auto value) {
+        EXPECT_EQ(sizeof(value), sizeof(char));
+        EXPECT_EQ(value, 'f');
+    });
 }
 
 TEST(Variant, overloaded) {
-    auto x = Variant<char, int, float>{};
+    auto v = Variant<char, int, float>{};
 
-    ASSERT_EQ(1, x.visit([](char) { return 1; }, [](int) { return 2; }, [](float) { return 3; }));
+    auto charVisitor = [](char) { return 1; };
+    auto intVisitor = [](int) { return 2; };
+    auto floatVisitor = [](float) { return 3; };
+
+    EXPECT_EQ(1, v.visit(charVisitor, intVisitor, floatVisitor));
+    v = 1;
+    EXPECT_EQ(2, v.visit(charVisitor, intVisitor, floatVisitor));
+    v = 3.2f;
+    EXPECT_EQ(3, v.visit(charVisitor, intVisitor, floatVisitor));
 }

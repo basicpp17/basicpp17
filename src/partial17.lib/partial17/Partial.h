@@ -152,15 +152,13 @@ public:
 
     auto bitset() const -> std::bitset<max_count> { return m_bits; }
 
-    auto count() const {
-        auto acc = size_t{};
-        visitAll([&](auto&) { acc++; });
-        return acc;
-    }
+    auto countInitialized() const { return m_bits.count(); }
+
+    auto countAll() const { return m_bits.size(); }
 
     auto size() const {
         auto acc = size_t{};
-        visitAll([&](auto& v) {
+        visitInitialized([&](auto& v) {
             using T = decltype(v);
             acc = alignOffset<alignof(T)>(acc) + sizeof(v);
         });
@@ -197,12 +195,21 @@ public:
     }
 
     template<class F>
+    auto visitInitialized(F&& f) {
+        visitInitializedInternal(std::forward<F>(f), m_data.get());
+    }
+    template<class F>
+    auto visitInitialized(F&& f) const {
+        visitInitializedInternal(std::forward<F>(f), m_data.get());
+    }
+
+    template<class F>
     auto visitAll(F&& f) {
-        visitInitialized(std::forward<F>(f), m_data.get());
+        visitIndexTypes(std::forward<F>(f), Indices{});
     }
     template<class F>
     auto visitAll(F&& f) const {
-        visitInitialized(std::forward<F>(f), m_data.get());
+        visitIndexTypes(std::forward<F>(f), Indices{});
     }
 
     [[nodiscard]] auto merge(const Partial& o) const -> Partial {
@@ -213,7 +220,7 @@ public:
 
 private:
     void destructAll() {
-        visitAll([](auto& v) {
+        visitInitialized([](auto& v) {
             using T = std::remove_reference_t<decltype(v)>;
             v.~T();
         });
@@ -235,7 +242,7 @@ private:
     }
 
     template<class F, class Ptr>
-    auto visitInitialized(F&& f, Ptr* ptr) const {
+    auto visitInitializedInternal(F&& f, Ptr* ptr) const {
         ptr = alignPointer<max_align>(ptr);
         visitIndexTypes(
             [&](auto index, auto type) {

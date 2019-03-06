@@ -10,6 +10,10 @@ Application {
     Depends { name: "googletest" }
 
     files: [
+        "Partial.make.test.cpp",
+        "Partial.ops.test.cpp",
+        "Partial.ostream.test.cpp",
         "Partial.test.cpp",
+        "Partial.trait.test.cpp",
     ]
 }

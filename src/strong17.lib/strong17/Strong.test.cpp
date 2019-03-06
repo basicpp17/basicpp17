@@ -1,5 +1,6 @@
 #include "Strong.h"
 #include "Strong.manip.h"
+#include "Strong.opaque.h"
 #include "Strong.ops.h"
 #include "Strong.ostream.h"
 
@@ -7,33 +8,34 @@
 
 using namespace strong17;
 
-using Pos = Strong<int, struct PosTag>;
-using Dist = Strong<int, struct DistTag>;
+using Position = Strong<int, struct PositionTag>;
+using Distance = Strong<int, struct DistanceTag>;
 
-auto operator+(Pos a, Dist d) -> Pos { return Pos{a.v + d.v}; }
+auto operator+(Position a, Distance d) -> Position { return Position{a.v + d.v}; }
 
-TEST(Strong, basic) {
-    auto x = Pos{};
-    ASSERT_EQ(x.v, 0);
+TEST(Strong, usage) {
+    auto p = Position{};
+    EXPECT_EQ(p.v, 0);
 
-    auto d = Dist{1};
-    // ASSERT_NE(x, d); // no compile
-    ASSERT_EQ(d.v, 1);
+    auto d = Distance{1};
+    EXPECT_EQ(d.v, 1);
 
-    auto y = x + d;
-    ASSERT_NE(x, y);
-    // ASSERT_EQ(x, y); // fail - use ostream
-    ASSERT_EQ(y.v, 1);
+    auto r = p + d;
+    EXPECT_EQ(r.v, 1);
 }
 
-TEST(Strong, manip) {
-    static_assert(type<AddStrongTags<TypePack<>, Pos>> == type<Pos>);
+STRONG_OPAQUE(PositionOpaque, int, struct PositionTag);
+STRONG_OPAQUE(DistanceOpaque, int, struct DistanceTag);
 
-    static_assert(
-        type<AddStrongTags<TypePack<struct ComputedTag, struct UnusedTag>, Pos>> ==
-        type<Strong<int, PosTag, ComputedTag, UnusedTag>>);
+auto operator+(PositionOpaque a, DistanceOpaque d) -> PositionOpaque { return PositionOpaque{a.v + d.v}; }
 
-    static_assert(type<AddStrongTag<DistTag, RemoveStrongTag<PosTag, Pos>>> == type<Dist>);
-    static_assert(type<ChangeStrongValue<float, Pos>> == type<Strong<float, PosTag>>);
-    static_assert(type<ReplaceStrongTag<PosTag, DistTag, Pos>> == type<Dist>);
+TEST(StrongOpaque, usage) {
+    auto p = PositionOpaque{};
+    EXPECT_EQ(p.v, 0);
+
+    auto d = DistanceOpaque{1};
+    EXPECT_EQ(d.v, 1);
+
+    auto r = p + d;
+    EXPECT_EQ(r.v, 1);
 }

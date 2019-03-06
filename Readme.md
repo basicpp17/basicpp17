@@ -130,9 +130,15 @@ Fold & indexOf
 
 ## License
 
-This project usses the MIT License - see LICENSE file.
+This project uses the MIT License - see LICENSE file.
 
 ## Contributions
 
 Please report your ideas and bugs as issues!
 Pull requests are also welcome.
+
+## Development
+
+Checkout the repository, then run the `git_clone_googletest.sh` from within the folder *thirdparty* to checkout the required google test framework.
+
+The BasiC idea behind the libary part is, that each component can be used standalone. Optional functionality can be introduced by including the dedicated header file.

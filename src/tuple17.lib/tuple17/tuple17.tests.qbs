@@ -11,6 +11,10 @@ Application {
     Depends { name: "googletest" }
 
     files: [
+        "Tuple.make.test.cpp",
+        "Tuple.ops.cpp",
+        "Tuple.ostream.test.cpp",
         "Tuple.test.cpp",
+        "Tuple.trait.test.cpp",
     ]
 }
