@@ -8,7 +8,7 @@ bool constexpr operator==(const Partial<Ts...>& a, const Partial<Ts...>& b) {
     if (a.bitset() != b.bitset()) return false;
 
     bool equal = true;
-    a.visitAll([&](auto i, auto) { equal &= (a.has(i) == b.has(i)) && (!a.has(i) || a.get(i) == b.get(i)); });
+    a.visitAll([&](auto i, auto) { equal &= (!a.has(i) || a.get(i) == b.get(i)); });
     return equal;
 }
 
