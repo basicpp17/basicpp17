@@ -27,7 +27,7 @@ constexpr auto weakenType(Type<T> = {}) -> std::enable_if_t<!is_strong<T>.v, Typ
     return {};
 }
 template<class S>
-using WeakenType = decltype(weakenType(type<S>));
+using WeakenType = decltype(strong17::weakenType(type<S>));
 template<class S>
 constexpr auto weaken_type = WeakenType<S>{};
 template<class S>
