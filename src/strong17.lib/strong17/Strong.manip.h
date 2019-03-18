@@ -32,6 +32,12 @@ constexpr auto addStrongTags(Type<Strong<V, Tags...>>, TypePack<Adds...> = {}) {
     static_assert(!(meta17::contains_of<Tags, AddPack> || ...), "One of the added Tags is already present!");
     return type<Strong<V, Tags..., Adds...>>;
 }
+template<class... Adds, class V, class... Tags>
+constexpr auto prefixStrongTags(Type<Strong<V, Tags...>>, TypePack<Adds...> = {}) {
+    using AddPack = TypePack<Adds...>;
+    static_assert(!(meta17::contains_of<Tags, AddPack> || ...), "One of the added Tags is already present!");
+    return type<Strong<V, Adds..., Tags...>>;
+}
 template<class TP, class S>
 using AddStrongTags = UnwrapType<decltype(addStrongTags(type<S>, TP{}))>;
 
