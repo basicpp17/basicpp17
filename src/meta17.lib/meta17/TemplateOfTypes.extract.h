@@ -33,6 +33,8 @@ constexpr auto extractHeadType(Type<Template<H, Ts...>> = {}) -> Type<H> {
 template<class T>
 using ExtractHeadType = decltype(extractHeadType(to_type<T>));
 template<class T>
+using ExtractHead = UnwrapType<decltype(extractHeadType(to_type<T>))>;
+template<class T>
 constexpr auto extract_head_type = ExtractHeadType<T>{};
 
 /// extract tailing template arguments
