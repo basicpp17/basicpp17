@@ -212,6 +212,17 @@ public:
         visitIndexTypes(std::forward<F>(f), Indices{});
     }
 
+    template<class F, class Ptr>
+    auto visitInitializedIndexTypes(F&& f) const {
+        visitIndexTypes(
+            [&](auto index, auto type) {
+                if (has(index)) {
+                    f(index, type);
+                }
+            },
+            Indices{});
+    }
+
     [[nodiscard]] auto merge(const Partial& o) const -> Partial {
         auto hasValue = [&](auto i) { return has(i) || o.has(i); };
         auto factory = [&](auto i) { return o.has(i) ? o.get(i) : get(i); };
