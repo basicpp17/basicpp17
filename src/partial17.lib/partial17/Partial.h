@@ -98,8 +98,8 @@ public:
         destructAll();
 
         // force compiler to include these arrays in debug build
-        auto foo = alignments[0];
-        auto bar = sizes[0];
+        auto foo [[maybe_unused]] = alignments[0];
+        auto bar [[maybe_unused]] = sizes[0];
     }
 
     // copy
