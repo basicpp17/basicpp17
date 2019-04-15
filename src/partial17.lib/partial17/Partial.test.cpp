@@ -25,7 +25,8 @@ TEST(Partial, construction) {
 
     auto p1 = P{'c', 2.3f};
     auto p2 = p1; // copy constructor
-    auto p3 = P{std::move(p2)}; // move construct
+    auto p4 = p1; // preparation for move construct
+    auto p3 = P{std::move(p4)}; // move construct
 
     EXPECT_EQ(p1.at<0>(), 'c');
     EXPECT_EQ(p1.at<2>(), 2.3f);
