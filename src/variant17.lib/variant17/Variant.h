@@ -213,21 +213,21 @@ public:
         return std::launder(reinterpret_cast<const T*>(&m));
     }
     template<class F>
-    constexpr auto visit(F&& f) {
+    constexpr auto visit(F&& f) -> decltype(auto) {
         return visitImpl(*this, std::forward<F>(f));
     }
     template<class F>
-    constexpr auto visit(F&& f) const {
+    constexpr auto visit(F&& f) const -> decltype(auto) {
         return visitImpl(*this, std::forward<F>(f));
     }
 
     /// overloaded visitor
     template<class F, class F2, class... Fs>
-    constexpr auto visit(F&& f, F2&& f2, Fs&&... fs) {
+    constexpr auto visit(F&& f, F2&& f2, Fs&&... fs) -> decltype(auto) {
         return visit(Overloaded{std::forward<F>(f), std::forward<F2>(f2), std::forward<Fs>(fs)...});
     }
     template<class F, class F2, class... Fs>
-    constexpr auto visit(F&& f, F2&& f2, Fs&&... fs) const {
+    constexpr auto visit(F&& f, F2&& f2, Fs&&... fs) const -> decltype(auto) {
         return visit(Overloaded{std::forward<F>(f), std::forward<F2>(f2), std::forward<Fs>(fs)...});
     }
 
@@ -244,7 +244,7 @@ private:
     }
 
     template<class V, class F>
-    static constexpr auto visitImpl(V&& v, F&& f) {
+    static constexpr auto visitImpl(V&& v, F&& f) -> decltype(auto) {
         using R = std::remove_cv_t<decltype(f(v.first()))>;
         if constexpr (type<R> == type<void>)
             visitVoidImpl(std::forward<V>(v), std::forward<F>(f), indices);
@@ -257,7 +257,7 @@ private:
         return (void)((Is == v.whichValue ? (f(*v.asPtr(type<Ts>)), true) : false) || ...);
     }
     template<class V, class F, class T, class... TTs, size_t I, size_t... Is>
-    static constexpr auto visitRecursiveImpl(V&& v, F&& f, TypePack<T, TTs...>, IndexPack<I, Is...>) {
+    static constexpr auto visitRecursiveImpl(V&& v, F&& f, TypePack<T, TTs...>, IndexPack<I, Is...>) -> decltype(auto) {
         if (I == v.whichValue) {
             return f(*v.asPtr(type<T>));
         }
