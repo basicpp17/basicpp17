@@ -18,7 +18,7 @@ Project {
 
         Probe {
             id: googletestProbe
-            property pathList searchPathes: ["./googletest"]
+            property pathList searchPathes: ["./googletest", "../../googletest"]
 
             property path basePath // valid if fount
 
