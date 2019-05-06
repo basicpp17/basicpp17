@@ -20,7 +20,7 @@ Project {
             id: googletestProbe
             property pathList searchPathes: ["./googletest", "../../googletest"]
 
-            property path basePath // valid if fount
+            property path basePath // valid if found
 
             configure: {
                 for (var i=0; i < searchPathes.length; i++) {
