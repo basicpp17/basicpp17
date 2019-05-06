@@ -30,6 +30,7 @@ using meta17::IndexPack;
 using meta17::IndexPackFor;
 using meta17::maxAlignOf;
 using meta17::sizeOfTypePack;
+using meta17::to_type_pack;
 using meta17::ToTypePack;
 using meta17::type;
 using meta17::Type;
@@ -46,16 +47,45 @@ constexpr auto alignPointer(Ptr* ptr, Const<Align> = {}) -> Ptr* {
 
 template<class... Ts>
 struct Partial {
+    static constexpr auto pack = to_type_pack<Ts...>;
+    static constexpr auto indices = indexPackFor(pack);
     using Pack = ToTypePack<Ts...>;
-    using Indices = IndexPackFor<Pack>;
     enum {
         max_count = sizeof...(Ts),
         max_align = maxAlignOf<Ts...>(),
     };
+    using WhichBits = std::bitset<max_count>;
+
+    struct Which {
+        constexpr explicit Which(WhichBits b)
+            : bits(b) {}
+
+        constexpr operator WhichBits() const { return bits; }
+
+        constexpr bool operator==(const Which& o) const { return bits == o.bits; }
+        constexpr bool operator!=(const Which& o) const { return bits != o.bits; }
+
+        constexpr auto count() const { return bits.count(); }
+
+        template<size_t I>
+        constexpr auto at(Index<I> = {}) const {
+            return bits[I];
+        }
+        constexpr auto at(size_t i) const { return bits[i]; }
+
+        template<class T>
+        constexpr auto of(Type<T> = {}) const {
+            constexpr size_t index = checkedIndexOf<T>(pack, indices);
+            return at<index>();
+        }
+
+    private:
+        WhichBits bits;
+    };
 
 private:
-    std::bitset<max_count> m_bits{};
-    std::unique_ptr<uint8_t[]> m_data{};
+    WhichBits whichBits{};
+    std::unique_ptr<uint8_t[]> pointer{};
 
 public:
     constexpr Partial() = default;
@@ -63,30 +93,30 @@ public:
 
     // copy
     Partial(const Partial& o) {
-        auto hasValue = [&](auto i) { return o.has(i); };
-        auto factory = [&](auto i) { return o.get(i); };
+        auto hasValue = [&](auto i) { return o.which().at(i); };
+        auto factory = [&](auto i) { return o.at(i); };
         *this = fromFactory(hasValue, factory);
     }
     auto operator=(const Partial& o) -> Partial& {
         destructAll();
-        m_bits.reset();
-        auto hasValue = [&](auto i) { return o.has(i); };
-        auto factory = [&](auto i) { return o.get(i); };
+        whichBits.reset();
+        auto hasValue = [&](auto i) { return o.which().at(i); };
+        auto factory = [&](auto i) { return o.at(i); };
         *this = fromFactory(hasValue, factory);
         return *this;
     }
 
     // move
     Partial(Partial&& o) noexcept
-        : m_bits(o.m_bits)
-        , m_data(std::move(o.m_data)) {
-        o.m_bits.reset();
+        : whichBits(o.whichBits)
+        , pointer(std::move(o.pointer)) {
+        o.whichBits.reset();
     }
     auto operator=(Partial&& o) noexcept -> Partial& {
         destructAll();
-        m_bits = o.m_bits;
-        m_data = std::move(o.m_data);
-        o.m_bits.reset();
+        whichBits = o.whichBits;
+        pointer = std::move(o.pointer);
+        o.whichBits.reset();
         return *this;
     }
 
@@ -98,7 +128,7 @@ public:
     Partial(Vs&&... vs) {
         auto size = sizeOfTypePack<0>(type_pack<std::remove_cv_t<std::remove_reference_t<Vs>>...>);
         auto ptr = new uint8_t[size + max_align - 1];
-        m_data.reset(ptr);
+        pointer.reset(ptr);
         ptr = alignPointer<max_align>(ptr);
 
         auto make = [&](auto t, auto&& v) {
@@ -108,7 +138,7 @@ public:
                 auto iv = index_of<T, Pack>;
                 ptr = alignPointer<alignof(T)>(ptr);
                 new (ptr) T(std::forward<V>(v));
-                m_bits.set(iv);
+                whichBits.set(iv);
                 ptr += sizeof(T);
             }
         };
@@ -128,9 +158,9 @@ public:
                     size = alignOffset<alignof(T)>(size) + sizeof(T);
                 }
             },
-            Indices{});
+            indices);
         auto ptr = new uint8_t[size + max_align - 1];
-        r.m_data.reset(ptr);
+        r.pointer.reset(ptr);
         ptr = alignPointer<max_align>(ptr);
         visitIndexTypes(
             [&](auto i, auto t) {
@@ -139,22 +169,25 @@ public:
                 if (hasValue(iv)) {
                     ptr = alignPointer<alignof(T)>(ptr);
                     new (ptr) T(factory(index<iv>));
-                    r.m_bits.set(iv);
+                    r.whichBits.set(iv);
                     ptr += sizeof(T);
                 }
             },
-            Indices{});
+            indices);
 
         return r;
     }
 
-    auto data() const { return alignPointer<max_align>(m_data.get()); }
+    template<class... Ts>
+    constexpr static auto whichOf(TypePack<Ts...> = {}) -> Which {
+        auto bits = WhichBits{};
+        (bits.set(meta17::checkedIndexOf<Ts>(pack, indices)), ...);
+        return Which{bits};
+    }
 
-    auto bitset() const -> std::bitset<max_count> { return m_bits; }
+    constexpr auto which() const -> Which { return Which{whichBits}; }
 
-    auto countInitialized() const { return m_bits.count(); }
-
-    auto countAll() const { return m_bits.size(); }
+    auto countAll() const { return whichBits.size(); }
 
     auto size() const {
         auto acc = size_t{};
@@ -166,66 +199,54 @@ public:
     }
 
     template<size_t I>
-    auto has(Index<I> = {}) const {
-        return m_bits[I];
-    }
-    auto has(size_t i) const { return m_bits[i]; }
-
-    template<class T>
-    auto has(Type<T> = {}) const {
-        constexpr size_t index = checkedIndexOf<T, Pack, Indices>();
-        return has<index>();
-    }
-
-    template<size_t I>
-    auto get(Index<I> = {}) -> UnwrapType<TypeAt<Index<I>, Pack>>& {
+    auto at(Index<I> = {}) -> UnwrapType<TypeAt<Index<I>, Pack>>& {
         using T = UnwrapType<TypeAt<Index<I>, Pack>>;
-        return *std::launder(reinterpret_cast<T*>(alignPointer<max_align>(m_data.get()) + offsetAt<I>()));
+        return *std::launder(reinterpret_cast<T*>(alignPointer<max_align>(pointer.get()) + offsetAt<I>()));
     }
     template<size_t I>
-    auto get(Index<I> = {}) const -> const UnwrapType<TypeAt<Index<I>, Pack>>& {
+    auto at(Index<I> = {}) const -> const UnwrapType<TypeAt<Index<I>, Pack>>& {
         using T = UnwrapType<TypeAt<Index<I>, Pack>>;
-        return *std::launder(reinterpret_cast<const T*>(alignPointer<max_align>(m_data.get()) + offsetAt<I>()));
+        return *std::launder(reinterpret_cast<const T*>(alignPointer<max_align>(pointer.get()) + offsetAt<I>()));
     }
 
     template<class T>
-    auto get(Type<T> = {}) const {
-        constexpr size_t index = checkedIndexOf<T, Pack, Indices>();
-        return get<index>();
+    auto of(Type<T> = {}) const -> decltype(auto) {
+        constexpr size_t index = checkedIndexOf<T>(pack, indices);
+        return at<index>();
     }
 
     template<class F>
     auto visitInitialized(F&& f) {
-        visitInitializedInternal(std::forward<F>(f), m_data.get());
+        visitInitializedInternal(std::forward<F>(f), pointer.get());
     }
     template<class F>
     auto visitInitialized(F&& f) const {
-        visitInitializedInternal(std::forward<F>(f), m_data.get());
+        visitInitializedInternal(std::forward<F>(f), pointer.get());
     }
 
     template<class F>
     auto visitAll(F&& f) {
-        visitIndexTypes(std::forward<F>(f), Indices{});
+        visitIndexTypes(std::forward<F>(f), indices);
     }
     template<class F>
     auto visitAll(F&& f) const {
-        visitIndexTypes(std::forward<F>(f), Indices{});
+        visitIndexTypes(std::forward<F>(f), indices);
     }
 
     template<class F, class Ptr>
     auto visitInitializedIndexTypes(F&& f) const {
         visitIndexTypes(
             [&](auto index, auto type) {
-                if (has(index)) {
+                if (which().at(index)) {
                     f(index, type);
                 }
             },
-            Indices{});
+            indices);
     }
 
     [[nodiscard]] auto merge(const Partial& o) const -> Partial {
-        auto hasValue = [&](auto i) { return has(i) || o.has(i); };
-        auto factory = [&](auto i) { return o.has(i) ? o.get(i) : get(i); };
+        auto hasValue = [&](auto i) { return which().at(i) || o.which().at(i); };
+        auto factory = [&](auto i) { return o.which().at(i) ? o.at(i) : at(i); };
         return fromFactory(hasValue, factory);
     }
 
@@ -242,13 +263,13 @@ private:
         auto offset = size_t{};
         visitIndexTypes(
             [&](auto index, auto type) {
-                if (has(index)) {
+                if (which().at(index)) {
                     using T = UnwrapType<decltype(type)>;
                     if (index <= I) offset = alignOffset<alignof(T)>(offset);
                     if (index < I) offset += sizeof(T);
                 }
             },
-            Indices{});
+            indices);
         return offset;
     }
 
@@ -257,14 +278,14 @@ private:
         ptr = alignPointer<max_align>(ptr);
         visitIndexTypes(
             [&](auto index, auto type) {
-                if (has(index)) {
+                if (which().at(index)) {
                     using T = UnwrapType<decltype(type)>;
                     ptr = alignPointer<alignof(T)>(ptr);
                     f(*std::launder(reinterpret_cast<T*>(ptr)));
                     ptr += sizeof(T);
                 }
             },
-            Indices{});
+            indices);
     }
 
     template<class F, size_t... Is>
