@@ -178,10 +178,10 @@ public:
         return r;
     }
 
-    template<class... Ts>
-    constexpr static auto whichOf(TypePack<Ts...> = {}) -> Which {
+    template<class... Ws>
+    constexpr static auto whichOf(TypePack<Ws...> = {}) -> Which {
         auto bits = WhichBits{};
-        (bits.set(meta17::checkedIndexOf<Ts>(pack, indices)), ...);
+        (bits.set(meta17::checkedIndexOf<Ws>(pack, indices)), ...);
         return Which{bits};
     }
 
