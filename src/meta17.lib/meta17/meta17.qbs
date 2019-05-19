@@ -131,6 +131,14 @@ Product {
             "TypePack.wrap.h",
         ]
     }
+    Group {
+        name: "Value"
+        files: [
+            "Value.const.h",
+            "Value.h",
+            "Value.ref.h",
+        ]
+    }
 
     files: [
         "Arguments.fold.h",

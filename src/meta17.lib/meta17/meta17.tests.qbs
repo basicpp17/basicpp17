@@ -136,6 +136,15 @@ Application {
             "TypePack.wrap.test.cpp",
         ]
     }
+    Group {
+        name: "Value"
+        files: [
+            "Value.const.test.cpp",
+            "Value.ref.test.cpp",
+            "Value.test.cpp",
+        ]
+    }
+
     files: [
         "Arguments.fold.test.cpp",
         "align.test.cpp",

@@ -7,6 +7,7 @@ Project {
         "thirdparty",
         "src/meta17.lib",
         "src/tuple17.lib",
+        "src/string17.lib",
         "src/strong17.lib",
         "src/partial17.lib",
         "src/variant17.lib",

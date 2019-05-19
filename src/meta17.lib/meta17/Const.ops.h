@@ -40,7 +40,7 @@ BOOL_OP(>=)
 //        return {}; \
 //    }
 
-// MSVC 2017 14.16.27023 cannot compile [auto]*[auto]
+// MSVC 2017/2019 <16.0.28714.193 cannot compile [auto]*[auto]
 // this is a simple workaround:
 #define CALC_OP(OP)                                                                                                    \
     template<auto A, auto B>                                                                                           \
