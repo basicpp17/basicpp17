@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstddef> // size_t
+
 namespace string17 {
 
 template<size_t N>
