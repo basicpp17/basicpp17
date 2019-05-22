@@ -233,7 +233,7 @@ public:
         visitIndexTypes(std::forward<F>(f), indices);
     }
 
-    template<class F, class Ptr>
+    template<class F>
     auto visitInitializedIndexTypes(F&& f) const {
         visitIndexTypes(
             [&](auto index, auto type) {
