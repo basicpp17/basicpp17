@@ -76,7 +76,7 @@ struct Variant {
         explicit constexpr Which(WhichValue v)
             : value(v) {}
 
-        operator WhichValue() const { return value; }
+        constexpr operator WhichValue() const { return value; }
 
         constexpr bool operator==(Which w) const { return w.value == value; }
         constexpr bool operator!=(Which w) const { return w.value != value; }
