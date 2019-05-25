@@ -88,8 +88,19 @@ private:
     std::unique_ptr<uint8_t[]> pointer{};
 
 public:
+    // Debugging helpers
+    static constexpr size_t alignments[max_count] = {alignof(Ts)...};
+    static constexpr size_t sizes[max_count] = {sizeof(Ts)...};
+
+public:
     constexpr Partial() = default;
-    ~Partial() { destructAll(); }
+    ~Partial() {
+        destructAll();
+
+        // force compiler to include these arrays in debug build
+        auto foo [[maybe_unused]] = alignments[0];
+        auto bar [[maybe_unused]] = sizes[0];
+    }
 
     // copy
     Partial(const Partial& o) {

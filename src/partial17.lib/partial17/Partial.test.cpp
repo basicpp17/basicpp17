@@ -25,7 +25,8 @@ TEST(Partial, construction) {
 
     auto p1 = P{'c', 2.3f};
     auto p2 = p1; // copy constructor
-    auto p3 = P{std::move(p2)}; // move construct
+    auto p4 = p1; // preparation for move construct
+    auto p3 = P{std::move(p4)}; // move construct
 
     EXPECT_EQ(p1.at<0>(), 'c');
     EXPECT_EQ(p1.at<2>(), 2.3f);
@@ -37,6 +38,8 @@ TEST(Partial, construction) {
     EXPECT_EQ(p3.countAll(), 3ul);
     EXPECT_EQ(p1.size(), sizeof(int) + sizeof(float));
     EXPECT_EQ(p1, p3);
+    EXPECT_EQ(p1, p2);
+    EXPECT_EQ(p2, p3);
 }
 
 TEST(Partial, assignment) {
@@ -44,7 +47,9 @@ TEST(Partial, assignment) {
     auto p0 = P{'c', 2.3f};
     auto p1 = P{};
     p1 = p0; // copy operator
+    EXPECT_EQ(p0, p1);
     auto p2 = P{};
+    EXPECT_EQ(p2, P{});
     p2 = std::move(p1); // move operator
 
     EXPECT_EQ(p0.at<0>(), 'c');
