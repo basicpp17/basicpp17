@@ -5,7 +5,7 @@ namespace string17 {
 
 constexpr bool operator==(StringView a, StringView b) noexcept {
     if (a.size() != b.size()) return false;
-    for (auto i = 0; i < a.size(); i++) {
+    for (auto i = 0u; i < a.size(); i++) {
         if (a[i] != b[i]) return false;
     }
     return true;

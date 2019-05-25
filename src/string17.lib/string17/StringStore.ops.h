@@ -10,7 +10,7 @@ constexpr bool operator==(const StringStore<N>&, const StringStore<M>&) {
 
 template<size_t N>
 constexpr bool operator==(const StringStore<N>& a, const StringStore<N>& b) {
-    for (int i = 0; i < N; ++i) {
+    for (auto i = 0u; i < N; ++i) {
         if (a[i] != b[i]) return false;
     }
     return true;
