@@ -10,8 +10,8 @@ The goal is to write ISO Standard conforming C++17.
 Everything that does not conform to the standard is a bug.
 
 Additionally the code has to compile at least at the latest stable releases of:
-* Clang
-* Visual Studio C++
+* Clang >=8.0
+* Visual Studio C++ 2017 >=15.9 / 2019 >=16.0
 
 GCC has long standing compiler bugs that allow no workarounds,
 therefore it is not a goal.
@@ -36,7 +36,8 @@ For formatting `clang-format` is used with the `.clang-format`
 * `cpp17` - configures the compilers
 * `meta17` - everything without runtime code or data
 * `tuple17` - simple & fast replacement for `std::tuple`
-* `strong17` - simple opinionated strong typedefs
+* `string17` - constexpr enabled string store and view
+* `strong17` - simple strong and opaque typedefs
 * `variant17` - simple & fast relacement for `std::variant`
 * `partial17` - a heap allocated & packed `tuple<optional<T>...>`
 
@@ -103,6 +104,10 @@ Fold & indexOf
 `Bool<>`
 - required special const, because Const<false> == Const<0>
 - convinient implicit cast to bool allows usage in if constexpr conditions
+
+`Value<F>`
+- user defined structs as constexpr values (eg. strings)
+- values are taken by function or reference
 
 `Index<I>`
 - specialisation of Const for size_t
