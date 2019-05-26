@@ -10,8 +10,8 @@ The goal is to write ISO Standard conforming C++17.
 Everything that does not conform to the standard is a bug.
 
 Additionally the code has to compile at least at the latest stable releases of:
-* Clang >=8.0
-* Visual Studio C++ 2017 >=15.9 / 2019 >=16.0
+* Clang
+* Visual Studio C++ 2017 / 2019
 
 GCC has long standing compiler bugs that allow no workarounds,
 therefore it is not a goal.
