@@ -13,7 +13,7 @@ constexpr auto append(char*& o, const char* p, size_t n) {
 }
 
 template<class T>
-constexpr auto append(char*& o, T& p, size_t n)
+constexpr auto append(char*& o, T& p, size_t)
     -> std::enable_if_t<std::is_same_v<decltype(p[p.size() - 1]), decltype(p[0])>> {
     for (auto i = 0u; i < p.size(); ++i) *o++ = p[i];
 }
