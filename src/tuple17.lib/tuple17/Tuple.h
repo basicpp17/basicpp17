@@ -277,21 +277,35 @@ private:
 template<class... Ts>
 Tuple(Ts&&...)->Tuple<std::remove_cv_t<std::remove_reference_t<Ts>>...>;
 
+template<size_t I, class... Ts>
+auto constexpr get(Tuple<Ts...>& tuple) -> decltype(auto) {
+    return tuple.at(_const<I>);
+}
+template<size_t I, class... Ts>
+auto constexpr get(const Tuple<Ts...>& tuple) -> decltype(auto) {
+    return tuple.at(_const<I>);
+}
+template<class T, class... Ts>
+auto constexpr get(tuple17::Tuple<Ts...>& tuple, ::meta17::Type<T> = {}) -> decltype(auto) {
+    return tuple.template of<T>();
+}
+template<class T, class... Ts>
+auto constexpr get(const tuple17::Tuple<Ts...>& tuple, ::meta17::Type<T> = {}) -> decltype(auto) {
+    return tuple.template of<T>();
+}
+
 } // namespace tuple17
 
 /// for c++17 structured bindings support
 namespace std {
+
 template<class... Ts>
 class tuple_size<tuple17::Tuple<Ts...>> : public std::integral_constant<std::size_t, sizeof...(Ts)> {};
 
-template<std::size_t N, class... Ts>
-class tuple_element<N, tuple17::Tuple<Ts...>> {
+template<size_t I, class... Ts>
+class tuple_element<I, tuple17::Tuple<Ts...>> {
 public:
-    using type = decltype(std::declval<tuple17::Tuple<Ts...>>().template at<N>());
+    using type = typename tuple17::Tuple<Ts...>::template UnwrapTypeAt<I>;
 };
 
-template<class T, class... Ts>
-auto constexpr get(tuple17::Tuple<Ts...>& tuple, ::meta17::Type<T> = {}) {
-    return tuple.template of<T>();
-}
 } // namespace std
