@@ -52,13 +52,16 @@ Project {
 
         Properties {
             condition: qbs.toolchain.contains('clang')
-            cpp.cxxFlags: base.concat("-Wno-unused-parameter")
+            cpp.cxxFlags: base.concat(
+                "-Wno-unused-parameter",
+                "-Wno-missing-field-initializers"
+            )
             cpp.cxxStandardLibrary: "libc++"
         }
 
         Export {
             Depends { name: "cpp" }
-            cpp.includePaths: [
+            cpp.systemIncludePaths: [
                 FileInfo.joinPaths(googletestProbe.basePath, "googlemock/include"),
                 FileInfo.joinPaths(googletestProbe.basePath, "googletest/include")
             ]
