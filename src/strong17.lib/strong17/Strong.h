@@ -18,9 +18,15 @@ struct Strong {
         : v(v) {}
 };
 
-template<class V, class... InnerTags, class... Tags>
-struct Strong<Strong<V, InnerTags...>, Tags...> {
-    static_assert(std::is_same_v<Strong<V, InnerTags...>, void>, "Do not nest Strong types!");
+template<typename V, class... Tags>
+void take_strong(Strong<V, Tags...>&&);
+
+template<typename T, typename = decltype(take_strong(T{}))>
+using enable_if_strong = T;
+
+template<class O>
+struct Strong<enable_if_strong<O>> {
+    static_assert(std::is_same_v<O, void>, "Do not nest Strong types!");
 };
 
 } // namespace strong17
