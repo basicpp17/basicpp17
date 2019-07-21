@@ -61,12 +61,12 @@ struct SizedComplete {
 
 TEST(Strong, value) {
     (void)Strong<SizedComplete, struct SomeTag>{};
-    // (void)Strong<EmptyComplete, struct SomeTag>{}; // <- should not compile
+    (void)Strong<EmptyComplete, struct SomeTag>{};
     // (void)Strong<Incomplete, struct SomeTag>{}; // <- should not compile
 
     static_assert(checkStrongArgs<SizedComplete, struct SomeTag>());
-    static_assert(!checkStrongArgs<EmptyComplete, struct SomeTag>());
-    static_assert(!checkStrongArgs<Incomplete, struct SomeTag>());
+    static_assert(checkStrongArgs<EmptyComplete, struct SomeTag>());
+    // static_assert(checkStrongArgs<Incomplete, struct SomeTag>()); // no static_assert necessary!
 }
 
 TEST(Strong, tags) {
