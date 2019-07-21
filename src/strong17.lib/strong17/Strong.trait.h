@@ -1,7 +1,5 @@
 #pragma once
-
 #include "Strong.base.h"
-#include "Strong.h"
 
 #include "meta17/TemplateOfTypes.trait.h"
 
@@ -26,3 +24,5 @@ template<class T>
 constexpr auto is_opaque = IsOpaque<std::remove_cv_t<T>>{};
 
 } // namespace strong17
+
+#include "Strong.h"

@@ -1,7 +1,9 @@
 #pragma once
-#include "Strong.h"
 
 namespace strong17 {
+
+template<class V, class...>
+struct Strong;
 
 /// Allows to peek through the inheritance of an OPAQUE Strong
 /// note: fails to compile for non-Strong types
@@ -12,3 +14,5 @@ template<class T>
 using Base = decltype(base(T{}));
 
 } // namespace strong17
+
+#include "Strong.trait.h"

@@ -19,7 +19,7 @@ TEST(Strong, manip) {
         type<Strong<int, PositionTag, ComputedTag, UnusedTag>>);
 
     static_assert(
-        type<AddStrongTag<DistanceTag, RemoveStrongTag<PositionTag, PositionExplicit>>> == type<DistanceExplicit>);
+        type<RemoveStrongTag<PositionTag, AddStrongTag<DistanceTag, PositionExplicit>>> == type<DistanceExplicit>);
     static_assert(type<ChangeStrongValue<float, PositionExplicit>> == type<Strong<float, PositionTag>>);
     static_assert(type<ReplaceStrongTag<PositionTag, DistanceTag, PositionExplicit>> == type<DistanceExplicit>);
 }
@@ -37,7 +37,7 @@ TEST(StrongOpaque, manip) {
         type<Strong<int, PositionTag, ComputedTag, UnusedTag>>);
 
     static_assert(
-        type<AddStrongTag<DistanceTag, RemoveStrongTag<PositionTag, Base<PositionOpaque>>>> == type<DistanceExplicit>);
+        type<RemoveStrongTag<PositionTag, AddStrongTag<DistanceTag, Base<PositionOpaque>>>> == type<DistanceExplicit>);
     static_assert(type<ChangeStrongValue<float, Base<PositionOpaque>>> == type<Strong<float, PositionTag>>);
     static_assert(type<ReplaceStrongTag<PositionTag, DistanceTag, Base<PositionOpaque>>> == type<DistanceExplicit>);
 }
