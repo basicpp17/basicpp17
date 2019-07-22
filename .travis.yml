@@ -9,9 +9,9 @@ matrix:
         - thirdparty/git_clone_googletest.sh
       script:
         - docker run -v${PWD}:/build
-            arbmind/qbs-clang7:1 
+            arbmind/qbs-clang8:1
             build --file /build/BasiC++17.qbs --build-directory /tmp/build 
-            -p autotest-runner
+            -p autotest-runner config:release config:debug
 
     - os: windows
       install:
@@ -22,4 +22,4 @@ matrix:
       script:
         - qbs
             build profile:MSVC2017-x64 --file BasiC++17.qbs --build-directory ${TMP}/build
-            -p autotest-runner
+            -p autotest-runner config:release config:debug

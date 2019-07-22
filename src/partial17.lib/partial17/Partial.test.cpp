@@ -2,6 +2,7 @@
 
 #include "Partial.make.h"
 #include "Partial.ops.h"
+#include "Partial.ostream.h"
 #include "Partial.trait.h"
 
 #include <meta17/Const.ops.h> // index == index
