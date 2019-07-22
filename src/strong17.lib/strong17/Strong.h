@@ -10,7 +10,7 @@ struct IsValidTag : std::true_type {};
 template<class T>
 struct IsValidTag<T, std::enable_if_t<std::is_enum_v<T>>> : std::true_type {};
 template<class T>
-struct IsValidTag<T, std::enable_if_t<!std::is_class_v<T>>> : std::false_type {};
+struct IsValidTag<T, std::enable_if_t<!std::is_enum_v<T> && !std::is_class_v<T>>> : std::false_type {};
 template<class T>
 struct IsValidTag<T, std::enable_if_t<std::is_class_v<T> && (sizeof(T) == sizeof(T))>> : std::is_empty<T> {};
 

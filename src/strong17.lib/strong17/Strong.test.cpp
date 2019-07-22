@@ -58,6 +58,7 @@ struct EmptyComplete {};
 struct SizedComplete {
     int x;
 };
+enum MyEnum { x };
 
 TEST(Strong, value) {
     (void)Strong<SizedComplete, struct SomeTag>{};
@@ -72,11 +73,13 @@ TEST(Strong, value) {
 TEST(Strong, tags) {
     (void)Strong<int, Incomplete>{};
     (void)Strong<int, EmptyComplete>{};
+    (void)Strong<int, MyEnum>{};
     // (void)Strong<int, int>{}; // <- should not compile
     // (void)Strong<int, SizedComplete>{}; // <- should not compile
 
     static_assert(checkStrongArgs<int, Incomplete>());
     static_assert(checkStrongArgs<int, EmptyComplete>());
+    static_assert(checkStrongArgs<int, MyEnum>());
     static_assert(!checkStrongArgs<int, int>());
     static_assert(!checkStrongArgs<int, SizedComplete>());
 }
