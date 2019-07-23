@@ -6,11 +6,11 @@ Project {
     references: [
         "thirdparty",
         "src/meta17.lib",
-        "src/tuple17.lib",
-        "src/string17.lib",
-        "src/strong17.lib",
+        //"src/tuple17.lib",
+        //"src/string17.lib",
+        //"src/strong17.lib",
         "src/partial17.lib",
-        "src/variant17.lib",
+        //"src/variant17.lib",
     ]
 
     AutotestRunner {}
@@ -39,8 +39,10 @@ Project {
                     "--pedantic", // best C++ compatibility
                     "-Wall", "-Wextra", // enable more warnings
                     "-ftemplate-backtrace-limit=0", // do not cut template backtraces
-                    "-Wno-gnu-zero-variadic-macro-arguments" // accept this extensions for opaque strong types
+                    "-Wno-gnu-zero-variadic-macro-arguments", // accept this extensions for opaque strong types
+                    "-g", "-mllvm", "-opt-bisect-limit=7531"
                 )
+                //cpp.driverFlags: ["-fsanitize=address,undefined"]
                 cpp.cxxStandardLibrary: "libc++"
                 cpp.staticLibraries: ["c++", "c++abi"]
             }

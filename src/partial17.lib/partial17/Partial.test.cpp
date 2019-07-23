@@ -35,9 +35,16 @@ TEST(Partial, construction) {
     EXPECT_EQ(p1.countAll(), 3ul);
     // TODO CK: Consider alignment - does this need to consider the size of the bitset
     EXPECT_EQ(p1.size(), sizeof(int) + sizeof(float));
+    EXPECT_EQ(p2.at<0>(), 'c');
+    EXPECT_EQ(p2.at<2>(), 2.3f);
+    EXPECT_EQ(p2.which().count(), 2ul);
+    EXPECT_EQ(p2.countAll(), 3ul);
+    EXPECT_EQ(p2.size(), sizeof(int) + sizeof(float));
+    EXPECT_EQ(p3.at<0>(), 'c');
+    EXPECT_EQ(p3.at<2>(), 2.3f);
     EXPECT_EQ(p3.which().count(), 2ul);
     EXPECT_EQ(p3.countAll(), 3ul);
-    EXPECT_EQ(p1.size(), sizeof(int) + sizeof(float));
+    EXPECT_EQ(p3.size(), sizeof(int) + sizeof(float));
     EXPECT_EQ(p1, p3);
     EXPECT_EQ(p1, p2);
     EXPECT_EQ(p2, p3);

@@ -104,8 +104,10 @@ public:
 
     // copy
     Partial(const Partial& o) {
-        auto hasValue = [&](auto i) { return o.which().at(i); };
-        auto factory = [&](auto i) { return o.at(i); };
+        auto hasValue = [&o](auto i) { //
+            return o.which().at(i);
+        };
+        auto factory = [&o](auto i) { return o.at(i); };
         *this = fromFactory(hasValue, factory);
     }
     auto operator=(const Partial& o) -> Partial& {
@@ -162,7 +164,7 @@ public:
         auto r = Partial{};
         auto size = size_t{};
         visitIndexTypes(
-            [&](auto i, auto t) {
+            [&size, &hasValue](auto i, auto t) {
                 constexpr auto iv = toValue(i);
                 using T = UnwrapType<decltype(t)>;
                 if (hasValue(iv)) {
