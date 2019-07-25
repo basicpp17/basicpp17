@@ -9,7 +9,7 @@ namespace meta17 {
 
 /// return number of occurences of type T in the TypePack
 template<class T, class... Ts>
-constexpr auto countOf(TypePack<Ts...>, Type<T> = {}) -> size_t {
+constexpr auto countOf(TypePack<Ts...> = {}, Type<T> = {}) -> size_t {
     return ((type<Ts> == type<T> ? 1 : 0) + ... + 0);
 }
 template<class T, class TP>
@@ -26,8 +26,12 @@ constexpr auto contains_of = containsOf(TP{}, type<T>);
 /// return index of type T in TypePack or size of TypePack if index is not part or occurs multiple times
 template<class T, class... Ts, size_t... Is>
 constexpr auto indexOf(TypePack<Ts...>, IndexPack<Is...>, Type<T> = {}) -> size_t {
-    constexpr auto tp = type_pack<Ts...>;
-    return 1 == countOf<T>(tp) ? (((type<Ts> == type<T>) ? Is : 0) + ...) : sizeof...(Ts);
+    if constexpr (1 == countOf<T, Ts...>()) {
+        return (((type<Ts> == type<T>) ? Is : 0) + ...);
+    }
+    else {
+        return sizeof...(Ts);
+    }
 }
 
 template<class T, class TP>
