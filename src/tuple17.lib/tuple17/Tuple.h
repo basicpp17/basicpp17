@@ -1,7 +1,8 @@
 #pragma once
 
+#include <meta17/Const.wrap.h>
 #include <meta17/ConstPack.access.h> // constLast
-#include <meta17/IndexPack.for.h> //
+#include <meta17/IndexPack.for.h> // IndexPackFor
 #include <meta17/Type.ops.h> // type == type
 #include <meta17/TypePack.access.h> // typeAt
 #include <meta17/TypePack.indexOf.h> // checkedIndexOf
@@ -9,8 +10,10 @@
 #include <meta17/TypePack.wrap.h>
 #include <meta17/align.h> // AlignedOffsetsFor
 
-#include <meta17/TemplateOfTypes.extract.h>
-#include <meta17/TemplateOfValues.extract.h>
+#if defined(_MSC_VER) && !defined(NDEBUG)
+#    include <meta17/ConstPack.recurse.h> // const_head, const_tail
+#    include <meta17/TypePack.recurse.h> // TypeHead, type_tail
+#endif
 
 #include <cinttypes> // uint8_t
 #include <new> // aligned_storage
@@ -22,14 +25,11 @@ namespace tuple17 {
 using meta17::_const;
 using meta17::alignTypePack;
 using meta17::Const;
-using meta17::ConstPack;
-using meta17::index;
 using meta17::IndexPack;
 using meta17::IndexPackFor;
 using meta17::maxAlignOf;
 using meta17::sizeOfTypePack;
 using meta17::to_type_pack;
-using meta17::ToTypePack;
 using meta17::Type;
 using meta17::type;
 using meta17::UnwrapType;
@@ -44,34 +44,27 @@ constexpr auto noConst() {
     return (!std::is_const_v<Ts> && ... && true);
 }
 
-/// Helper Types to formulate Debug Helpers / Visualizers for MSVC
-
-template<class Hd, class O, class Tl>
+#if defined(_MSC_VER) && !defined(NDEBUG) /// Helper Types to formulate Debug Helpers / Visualizers for MSVC
+template<class Hd, size_t O, class Tl>
 struct DebugType {
-
     using Head = Hd;
     using Tail = Tl;
-
-    constexpr static auto Offset = meta17::toValue(O{});
+    constexpr static auto Offset = O;
 };
 
-// termination condition
-constexpr auto makeDebugTypes(meta17::TypePack<>, meta17::ConstPack<>) {
-    return DebugType<void, meta17::Const<0>, void>{};
-}
-
-// recursion
 template<class Types, class Offsets>
 constexpr auto makeDebugTypes(Types, Offsets) {
-    using TailTypes = UnwrapType<meta17::ExtractTailTypePack<Types>>;
-    using TailOffset = UnwrapType<meta17::ExtractTailConstPack<Offsets>>;
-
-    using Head = UnwrapType<meta17::ExtractHeadType<Types>>;
-    using Offset = UnwrapType<meta17::ExtractHeadConst<Offsets>>;
-    using Tail = decltype(makeDebugTypes(TailTypes{}, TailOffset{}));
-
-    return DebugType<Head, Offset, Tail>{};
+    if constexpr (0 == meta17::type_count<Types> || 0 == meta17::const_count<Offsets>) {
+        return DebugType<void, 0, void>{};
+    }
+    else {
+        return DebugType<
+            meta17::TypeHead<Types>,
+            meta17::toValue(meta17::const_head<Offsets>),
+            decltype(makeDebugTypes(meta17::type_tail<Types>, meta17::const_tail<Offsets>))>{};
+    }
 }
+#endif
 
 /** \brief storage type for all given types
  *
@@ -96,7 +89,7 @@ struct Tuple {
         npos = sizeof...(Ts),
     };
 
-#ifndef NDEBUG
+#if defined(_MSC_VER) && !defined(NDEBUG)
     using DebugTypes = decltype(makeDebugTypes(pack, offsets));
 #endif
 
