@@ -7,7 +7,7 @@ template<bool B>
 struct Bool {
     constexpr static bool v = B;
     /// allow using instances in conditions
-    constexpr explicit operator bool() const { return B; }
+    constexpr operator bool() const { return B; }
 };
 
 /// instances
