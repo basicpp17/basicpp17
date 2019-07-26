@@ -132,6 +132,7 @@ TEST(Tuple, complex) {
 }
 
 TEST(Tuple, access) {
+    using meta17::index;
     using T = Tuple<char, int, double>;
     auto t = T{};
 
