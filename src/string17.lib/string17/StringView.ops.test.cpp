@@ -9,8 +9,11 @@
 using namespace string17;
 
 TEST(StringViewOps, simple) {
-    constexpr auto x = viewLiteral("Hello");
-    constexpr auto y = viewCString("Hello");
+    constexpr auto cx = viewLiteral("Hello");
+    constexpr auto cy = viewCString("Hello");
+    static_assert(cx == cy);
 
+    auto x = viewLiteral("Hello");
+    auto y = viewCString("Hello");
     EXPECT_EQ(x, y);
 }
