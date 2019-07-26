@@ -69,9 +69,9 @@ struct Partial {
 
         template<size_t I>
         constexpr auto at(Index<I> = {}) const {
-            return bits[I];
+            return bits.test(I);
         }
-        constexpr auto at(size_t i) const { return bits[i]; }
+        constexpr auto at(size_t i) const { return bits.test(i); }
 
         template<class T>
         constexpr auto of(Type<T> = {}) const {
