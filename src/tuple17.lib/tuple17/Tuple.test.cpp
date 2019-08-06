@@ -146,6 +146,11 @@ TEST(Tuple, access) {
     EXPECT_EQ(get<double>(t), 4.2);
 }
 
+TEST(Tuple, empty) {
+    using T = Tuple<>;
+    auto t = T{};
+}
+
 TEST(Tuple, construction) {
     using MultiArg = Tuple<char, int, double>;
     auto m0 = MultiArg{};
