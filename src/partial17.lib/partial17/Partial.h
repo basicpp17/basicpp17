@@ -200,6 +200,8 @@ public:
 
     auto countAll() const { return whichBits.size(); }
 
+    auto countInitialized() const { return whichBits.count(); }
+
     auto size() const {
         auto acc = size_t{};
         visitInitialized([&](auto& v) {
