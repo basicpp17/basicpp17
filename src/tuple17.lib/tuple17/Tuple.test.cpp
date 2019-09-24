@@ -175,35 +175,16 @@ TEST(Tuple, construction) {
     // auto a3 = Ambiguous{'c', 23, 32};
 }
 
-TEST(Tuple, broaden) {
+TEST(Tuple, fromTuple) {
     using Small = Tuple<char, int, double>;
     using Large = Tuple<int, double, char, float>;
     auto s = Small{'c', 23, 4.2};
-    auto l = Large(s);
+    auto l = Large::fromTuple(s);
 
     EXPECT_EQ((l.of<char>()), 'c');
     EXPECT_EQ((l.of<double>()), 4.2);
     EXPECT_EQ((l.of<int>()), 23);
     EXPECT_EQ((l.of<float>()), 0);
-}
-
-TEST(Tuple, broadenTODO_2) {
-    using Small = Tuple<char, int>;
-    using Large = Tuple<int, float, char, int>;
-
-    auto s = Small{'c', 23};
-    // other order / bigger
-    // TODO CK: Why does this compile when  broaden chack1 does not compile?
-    auto l = Large(s);
-
-    EXPECT_EQ((l.of<char>()), 'c');
-    EXPECT_EQ((l.of<float>()), 0);
-
-    EXPECT_EQ((l.at<0>()), 23);
-    EXPECT_EQ((l.at<1>()), 0);
-    EXPECT_EQ((l.at<2>()), 'c');
-    // TODO CK: Value 23 - what is expected? I think it should prevent the creation as incompatible!
-    // ASSERT_EQ((l.at<3>()), 0);
 }
 
 TEST(Tuple, shrink) {

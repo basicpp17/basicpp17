@@ -6,6 +6,7 @@
 #include <meta17/Type.ops.h> // type == type
 #include <meta17/TypePack.access.h> // typeAt
 #include <meta17/TypePack.indexOf.h> // checkedIndexOf
+#include <meta17/TypePack.iterate.h> // forEachType
 #include <meta17/TypePack.ops.h> // type_pack + type_pack
 #include <meta17/TypePack.wrap.h>
 #include <meta17/align.h> // AlignedOffsetsFor
@@ -132,29 +133,23 @@ public:
         return *this;
     }
 
-    template<
-        class... Args,
-        class = std::enable_if_t< //
-            sizeof...(Args) == sizeof...(Ts) //
-            && typeHead(to_type_pack<std::remove_reference_t<std::remove_cv_t<Args>>...>) != type<Tuple>>>
-    constexpr Tuple(Args&&... args) {
-        (new (ptrOf<Ts>()) Ts(std::forward<Args>(args)), ...);
+    template<class... Os>
+    static auto from(Os&&... os) -> Tuple {
+        auto res = Tuple{};
+        ((res.of(type<std::remove_const_t<std::remove_reference_t<Os>>>) = std::forward<Os>(os)), ...);
+        return res;
     }
 
     template<class... Os>
-    constexpr Tuple(const Tuple<Os...>& o) {
-        static_assert((hasType<Os>() && ...), "not all types are stored here!");
-        using O = std::remove_cv_t<std::remove_reference_t<decltype(o)>>;
-        visitIndexTypes(indices, [&](auto i, auto t) {
-            using T = UnwrapType<decltype(t)>;
-            auto p = ptrAt(i);
-            if constexpr (O::template hasType<T>()) {
-                new (p) T(o.template of<T>());
-            }
-            else {
-                new (p) T();
-            }
-        });
+    static auto fromTuple(const Tuple<Os...>& os) -> Tuple {
+        auto res = Tuple{};
+        ((res.of(type<Os>) = os.of(type<Os>)), ...);
+        return res;
+    }
+
+    template<class = std::enable_if_t<sizeof...(Ts) != 0>>
+    constexpr Tuple(const Ts&... ts) {
+        ((new (this->ptrOf<Ts>()) Ts(ts)), ...);
     }
 
     template<class T>
@@ -267,8 +262,8 @@ private:
 };
 
 // Deduction guide to allow easy in-place construction
-template<class... Ts>
-Tuple(Ts&&...)->Tuple<std::remove_cv_t<std::remove_reference_t<Ts>>...>;
+// template<class... Ts>
+// Tuple(Ts&&...)->Tuple<std::remove_cv_t<std::remove_reference_t<Ts>>...>;
 
 template<size_t I, class... Ts>
 auto constexpr get(Tuple<Ts...>& tuple) -> decltype(auto) {
