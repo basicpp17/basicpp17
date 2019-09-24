@@ -147,7 +147,9 @@ public:
         return res;
     }
 
-    template<class = std::enable_if_t<sizeof...(Ts) != 0>>
+    template<
+        bool workaround_to_enable_sfinae = sizeof...(Ts) >= 1,
+        class = typename std::enable_if<workaround_to_enable_sfinae>>
     constexpr Tuple(const Ts&... ts) {
         ((new (this->ptrOf<Ts>()) Ts(ts)), ...);
     }
