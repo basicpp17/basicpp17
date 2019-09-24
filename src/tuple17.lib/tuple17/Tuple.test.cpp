@@ -146,33 +146,43 @@ TEST(Tuple, access) {
     EXPECT_EQ(get<double>(t), 4.2);
 }
 
-TEST(Tuple, empty) {
-    using T = Tuple<>;
-    auto t = T{};
-}
-
-TEST(Tuple, construction) {
+TEST(Tuple, copy_move) {
     using MultiArg = Tuple<char, int, double>;
     auto m0 = MultiArg{};
     auto m1 = m0; // copy
     auto m2 = std::move(m1); // move copy
 
     EXPECT_EQ(m0, m2);
-
+}
+TEST(Tuple, construct_empty) {
+    using T = Tuple<>;
+    auto t = T{};
+    t.visitAll([]() {});
+}
+TEST(Tuple, construct_single) {
     using SingleArg = Tuple<int>;
 
-    SingleArg s0{23};
+    auto s0 = SingleArg{23};
     SingleArg s1(s0); // Test that it won't use the argument forward constructor
 
     EXPECT_EQ(s0, s1);
+}
+TEST(Tuple, construct_two) {
+    using TwoArgs = Tuple<int, float>;
+    auto s0 = TwoArgs{1, 2.3f};
+    auto s1 = TwoArgs{s0};
 
+    EXPECT_EQ(s0, s1);
+}
+TEST(Tuple, ambigious) {
     using Ambiguous = Tuple<char, int, int>;
     auto a0 = Ambiguous{};
-    // TODO CK: Tuple is sorted, should accept only sorted list
-    // Cannot assign due to ambiguous type index association int int
-    // auto a1 = Ambiguous{'c'};
-    // auto a2 = Ambiguous{'c', 23};
-    // auto a3 = Ambiguous{'c', 23, 32};
+    auto a1 = Ambiguous::from('c');
+    // auto a1b = Ambiguous::from('c', 23, 32); // not allowed! - arguments are treated out of order!
+    auto a2 = Ambiguous{'c', 23, 32};
+
+    EXPECT_EQ((a2.at<1>()), 23);
+    EXPECT_EQ((a2.at<2>()), 32);
 }
 
 TEST(Tuple, fromTuple) {

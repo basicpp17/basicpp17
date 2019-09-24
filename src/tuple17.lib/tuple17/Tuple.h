@@ -145,10 +145,15 @@ public:
         ((res.of(type<Os>) = os.of(type<Os>)), ...);
         return res;
     }
-
-    constexpr Tuple(const Ts&... ts) {
-        ((new (this->ptrOf<Ts>()) Ts(ts)), ...);
+    template<class... Os>
+    static auto fromTuple(Tuple<Os...>&& os) -> Tuple {
+        auto res = Tuple{};
+        ((res.of(type<Os>) = std::move(os.of(type<Os>))), ...);
+        return res;
     }
+
+    constexpr Tuple(const Ts&... ts) { indexedInitialize(indices, ts...); }
+    constexpr Tuple(Ts&&... ts) { indexedInitialize(indices, std::move(ts)...); }
 
     template<class T>
     static constexpr auto hasType(Type<T> = {}) -> bool {
@@ -228,6 +233,15 @@ public:
     }
 
 private:
+    template<size_t... Is>
+    void indexedInitialize(IndexPack<Is...>, const Ts&... ts) {
+        ((new (this->ptrAt<Is>()) Ts(ts)), ...);
+    }
+    template<size_t... Is, class = std::enable_if_t<(sizeof...(Is) > 0)>>
+    void indexedInitialize(IndexPack<Is...>, Ts&&... ts) {
+        ((new (this->ptrAt<Is>()) Ts(std::move(ts))), ...);
+    }
+
     template<class F, size_t... Is>
     constexpr auto visitIndexTypes(IndexPack<Is...>, F&& f) {
         (f(_const<Is>, typeAt<Is>()), ...);
