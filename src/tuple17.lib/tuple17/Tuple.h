@@ -263,10 +263,6 @@ private:
     }
 };
 
-// Deduction guide to allow easy in-place construction
-// template<class... Ts>
-// Tuple(Ts&&...)->Tuple<std::remove_cv_t<std::remove_reference_t<Ts>>...>;
-
 template<size_t I, class... Ts>
 auto constexpr get(Tuple<Ts...>& tuple) -> decltype(auto) {
     return tuple.at(_const<I>);
