@@ -94,7 +94,7 @@ struct Tuple {
 #endif
 
 private:
-    std::aligned_storage_t<(size == 0 ? 1 : size), max_align> m;
+    std::aligned_storage_t<size, max_align> m;
 
 public:
     constexpr Tuple() {
@@ -146,9 +146,6 @@ public:
         return res;
     }
 
-    template<
-        bool workaround_to_enable_sfinae = sizeof...(Ts) >= 1,
-        class = typename std::enable_if<workaround_to_enable_sfinae>>
     constexpr Tuple(const Ts&... ts) {
         ((new (this->ptrOf<Ts>()) Ts(ts)), ...);
     }
@@ -260,6 +257,86 @@ private:
     constexpr auto ptrOf(Type<T> = {}) const& -> const void* {
         return reinterpret_cast<const uint8_t*>(&m) + offsetOf<T>();
     }
+};
+
+template<>
+struct Tuple<> {
+    static constexpr auto pack = meta17::type_pack<>;
+    static constexpr auto indices = meta17::index_pack<>;
+    static constexpr auto offsets = meta17::const_pack<>;
+    enum : size_t {
+        size = 0,
+        max_align = 1,
+        npos = 1,
+    };
+    static auto from() -> Tuple { return {}; }
+    static auto fromTuple(const Tuple& os) -> Tuple { return {}; }
+
+    template<class T>
+    static constexpr auto hasType(Type<T> = {}) -> bool {
+        return false;
+    }
+
+    template<size_t I>
+    static constexpr auto offsetAt(Const<I> = {}) -> size_t {
+        static_assert(I == 0 && I != 0);
+    }
+    template<size_t I>
+    static constexpr auto offset_at = offsetAt<I>();
+
+    template<class T>
+    static constexpr auto offsetOf(Type<T> = {}) -> size_t {
+        static_assert(type<T> == type<void>);
+    }
+    template<class T>
+    static constexpr auto offset_of = offsetOf<T>();
+
+    template<size_t I>
+    static constexpr auto typeAt(Const<I> = {}) {
+        static_assert(I == 0 && I != 0);
+    }
+    template<size_t I>
+    using TypeAt = decltype(typeAt<I>());
+    template<size_t I>
+    static constexpr auto type_at = TypeAt<I>{};
+
+    template<size_t I>
+    using UnwrapTypeAt = UnwrapType<TypeAt<I>>;
+
+    template<size_t I>
+    constexpr auto at(Const<I> = {}) & -> UnwrapTypeAt<I>& {
+        static_assert(I == 0 && I != 0);
+    }
+
+    template<size_t I>
+    constexpr auto at(Const<I> = {}) && -> UnwrapTypeAt<I> {
+        static_assert(I == 0 && I != 0);
+    }
+
+    template<size_t I>
+    constexpr auto at(Const<I> = {}) const& -> const UnwrapTypeAt<I>& {
+        static_assert(I == 0 && I != 0);
+    }
+
+    template<class T>
+    constexpr auto of(Type<T> = {}) & -> T& {
+        static_assert(type<T> == type<void>);
+    }
+
+    template<class T>
+    constexpr auto of(Type<T> = {}) && -> T {
+        static_assert(type<T> == type<void>);
+    }
+
+    template<class T>
+    constexpr auto of(Type<T> = {}) const& -> const T& {
+        static_assert(type<T> == type<void>);
+    }
+
+    template<class F>
+    auto visitAll(F&& f) & {}
+    template<class F>
+    auto visitAll(F&& f) const& {}
 };
 
 template<size_t I, class... Ts>
