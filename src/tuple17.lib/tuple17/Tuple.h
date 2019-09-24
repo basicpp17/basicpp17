@@ -6,7 +6,6 @@
 #include <meta17/Type.ops.h> // type == type
 #include <meta17/TypePack.access.h> // typeAt
 #include <meta17/TypePack.indexOf.h> // checkedIndexOf
-#include <meta17/TypePack.iterate.h> // forEachType
 #include <meta17/TypePack.ops.h> // type_pack + type_pack
 #include <meta17/TypePack.wrap.h>
 #include <meta17/align.h> // AlignedOffsetsFor
