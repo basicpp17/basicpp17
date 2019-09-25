@@ -94,7 +94,7 @@ struct Tuple {
 #endif
 
 private:
-    std::aligned_storage_t<size, max_align> m;
+    std::aligned_storage_t<(size == 0 ? 1 : size), max_align> m;
 
 public:
     constexpr Tuple() {
