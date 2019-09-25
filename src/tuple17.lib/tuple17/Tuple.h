@@ -152,8 +152,8 @@ public:
         return res;
     }
 
-    constexpr Tuple(const Ts&... ts) { indexedInitialize(indices, ts...); }
-    constexpr Tuple(Ts&&... ts) { indexedInitialize(indices, std::move(ts)...); }
+    constexpr explicit Tuple(const Ts&... ts) { indexedInitialize(indices, ts...); }
+    constexpr explicit Tuple(Ts&&... ts) { indexedInitialize(indices, std::move(ts)...); }
 
     template<class T>
     static constexpr auto hasType(Type<T> = {}) -> bool {
@@ -224,11 +224,11 @@ public:
     }
 
     template<class F>
-    auto visitAll(F&& f) & {
+    void visitAll(F&& f) & {
         visitIndexTypes(indices, [&](auto i, auto) { f(at(i)); });
     }
     template<class F>
-    auto visitAll(F&& f) const& {
+    void visitAll(F&& f) const& {
         visitIndexTypes(indices, [&](auto i, auto) { f(at(i)); });
     }
 
@@ -243,12 +243,12 @@ private:
     }
 
     template<class F, size_t... Is>
-    constexpr auto visitIndexTypes(IndexPack<Is...>, F&& f) {
+    constexpr void visitIndexTypes(IndexPack<Is...>, F&& f) {
         (f(_const<Is>, typeAt<Is>()), ...);
     }
 
     template<class F, size_t... Is>
-    constexpr auto visitIndexTypes(IndexPack<Is...>, F&& f) const {
+    constexpr void visitIndexTypes(IndexPack<Is...>, F&& f) const {
         (f(_const<Is>, typeAt<Is>()), ...);
     }
 
@@ -284,73 +284,18 @@ struct Tuple<> {
         npos = 1,
     };
     static auto from() -> Tuple { return {}; }
-    static auto fromTuple(const Tuple& os) -> Tuple { return {}; }
+    static auto fromTuple(const Tuple&) -> Tuple { return {}; }
 
     template<class T>
     static constexpr auto hasType(Type<T> = {}) -> bool {
         return false;
     }
 
-    template<size_t I>
-    static constexpr auto offsetAt(Const<I> = {}) -> size_t {
-        static_assert(I == 0 && I != 0);
-    }
-    template<size_t I>
-    static constexpr auto offset_at = offsetAt<I>();
-
-    template<class T>
-    static constexpr auto offsetOf(Type<T> = {}) -> size_t {
-        static_assert(type<T> == type<void>);
-    }
-    template<class T>
-    static constexpr auto offset_of = offsetOf<T>();
-
-    template<size_t I>
-    static constexpr auto typeAt(Const<I> = {}) {
-        static_assert(I == 0 && I != 0);
-    }
-    template<size_t I>
-    using TypeAt = decltype(typeAt<I>());
-    template<size_t I>
-    static constexpr auto type_at = TypeAt<I>{};
-
-    template<size_t I>
-    using UnwrapTypeAt = UnwrapType<TypeAt<I>>;
-
-    template<size_t I>
-    constexpr auto at(Const<I> = {}) & -> UnwrapTypeAt<I>& {
-        static_assert(I == 0 && I != 0);
-    }
-
-    template<size_t I>
-    constexpr auto at(Const<I> = {}) && -> UnwrapTypeAt<I> {
-        static_assert(I == 0 && I != 0);
-    }
-
-    template<size_t I>
-    constexpr auto at(Const<I> = {}) const& -> const UnwrapTypeAt<I>& {
-        static_assert(I == 0 && I != 0);
-    }
-
-    template<class T>
-    constexpr auto of(Type<T> = {}) & -> T& {
-        static_assert(type<T> == type<void>);
-    }
-
-    template<class T>
-    constexpr auto of(Type<T> = {}) && -> T {
-        static_assert(type<T> == type<void>);
-    }
-
-    template<class T>
-    constexpr auto of(Type<T> = {}) const& -> const T& {
-        static_assert(type<T> == type<void>);
-    }
+    template<class F>
+    void visitAll(F&&) & {}
 
     template<class F>
-    auto visitAll(F&& f) & {}
-    template<class F>
-    auto visitAll(F&& f) const& {}
+    void visitAll(F&&) const& {}
 };
 
 template<size_t I, class... Ts>
