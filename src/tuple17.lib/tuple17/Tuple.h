@@ -152,8 +152,8 @@ public:
         return res;
     }
 
-    constexpr explicit Tuple(const Ts&... ts) { indexedInitialize(indices, ts...); }
-    constexpr explicit Tuple(Ts&&... ts) { indexedInitialize(indices, std::move(ts)...); }
+    constexpr Tuple(const Ts&... ts) { indexedInitialize(indices, ts...); }
+    constexpr Tuple(Ts&&... ts) { indexedInitialize(indices, std::move(ts)...); }
 
     template<class T>
     static constexpr auto hasType(Type<T> = {}) -> bool {
