@@ -165,7 +165,7 @@ public:
         return toValue(meta17::constAt<I>(offsets, indices));
     }
     template<size_t I>
-    static constexpr auto offset_at = offsetAt<I>();
+    static constexpr size_t offset_at = offsetAt<I>();
 
     template<class T>
     static constexpr auto offsetOf(Type<T> = {}) -> size_t {
@@ -173,7 +173,7 @@ public:
         return offsetAt<I>();
     }
     template<class T>
-    static constexpr auto offset_of = offsetOf<T>();
+    static constexpr size_t offset_of = offsetOf<T>();
 
     template<size_t I>
     static constexpr auto typeAt(Const<I> = {}) {
@@ -182,7 +182,7 @@ public:
     template<size_t I>
     using TypeAt = decltype(typeAt<I>());
     template<size_t I>
-    static constexpr auto type_at = TypeAt<I>{};
+    static constexpr TypeAt<I> type_at = TypeAt<I>{};
 
     template<size_t I>
     using UnwrapTypeAt = UnwrapType<TypeAt<I>>;
