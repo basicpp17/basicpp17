@@ -18,11 +18,11 @@
 
 namespace partial17 {
 
+using meta17::_index;
 using meta17::alignOffset;
 using meta17::checkedIndexOf;
 using meta17::Const;
 using meta17::contains_of;
-using meta17::index;
 using meta17::Index;
 using meta17::index_of;
 using meta17::index_pack;
@@ -179,7 +179,7 @@ public:
                 using T = UnwrapType<decltype(t)>;
                 if (hasValue(iv)) {
                     ptr = alignPointer<alignof(T)>(ptr);
-                    new (ptr) T(factory(index<iv>));
+                    new (ptr) T(factory(_index<iv>));
                     r.whichBits.set(iv);
                     ptr += sizeof(T);
                 }
@@ -301,7 +301,7 @@ private:
 
     template<class F, size_t... Is>
     constexpr static auto visitIndexTypes(F&& f, IndexPack<Is...>) {
-        (f(index<Is>, type<Ts>), ...);
+        (f(_index<Is>, type<Ts>), ...);
     }
 };
 
