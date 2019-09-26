@@ -61,13 +61,13 @@ TEST(Partial, fromFactory) {
     const auto p = Partial<char, int, float>::fromFactory(
         [](size_t i) { return (0 == i % 2); },
         [](auto i) {
-            if constexpr (i == index<0>) {
+            if constexpr (i == _index<0>) {
                 return 'a';
             }
-            if constexpr (i == index<1>) {
+            if constexpr (i == _index<1>) {
                 return 23;
             }
-            if constexpr (i == index<2>) {
+            if constexpr (i == _index<2>) {
                 return 3.14f;
             }
         });
@@ -84,11 +84,11 @@ TEST(Partial, type) {
     ASSERT_TRUE(p.which().of(type<char>));
     ASSERT_TRUE(p.which().at(0));
     EXPECT_EQ(0x23, p.of(type<char>));
-    EXPECT_EQ(0x23, p.at(index<0>));
+    EXPECT_EQ(0x23, p.at(_index<0>));
     ASSERT_TRUE(p.which().of(type<int>));
     ASSERT_TRUE(p.which().at(1));
     ASSERT_EQ(23, p.of(type<int>));
-    EXPECT_EQ(23, p.at(index<1>));
+    EXPECT_EQ(23, p.at(_index<1>));
 
     // TODO CK: Does prevent valid compilation? Microsoft Visual C++ BUG?
     // auto m = Partial<int, int>{23, 32};
