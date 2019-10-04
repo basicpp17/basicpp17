@@ -13,8 +13,8 @@ namespace meta17 {
 
 template<size_t Align, class O>
 constexpr auto alignOffset(O offset, Const<Align> = {}) -> O {
-    // MSVC needs the static_cast in some cases where O = size_t, clang does not. Compiler bug? #workaround 1
-    return 0 == offset * Align ? offset : static_cast<O>((((offset - 1) / Align) + 1) * Align);
+    // workaround: MSVC2017 needs the static_cast in cases where O = size_t
+    return static_cast<O>(((offset + Align - 1) / Align) * Align);
 }
 
 template<size_t Offset, size_t Align>
