@@ -17,8 +17,13 @@ constexpr auto accumulateArguments(A a, T... t) -> decltype((a + ... + t)) {
 template<class A, class... T>
 constexpr auto accumulateInstances = (A{} + ... + T{});
 
-template<class... T>
-using AccumulateInstances = std::decay_t<decltype(accumulateInstances<T...>)>;
+template<class A, class... T>
+constexpr auto accumulateDeclVal() {
+    return (std::declval<A>() + ... + std::declval<T>());
+}
+
+template<class... Ts>
+using AccumulateInstances = decltype(accumulateDeclVal<Ts...>());
 
 /// true if all arguments convert to true
 /// note: allArguments() == true (no argument was false!)
