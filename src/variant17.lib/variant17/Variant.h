@@ -167,7 +167,7 @@ public:
     template<
         class T,
         class BT = std::remove_cv_t<std::remove_reference_t<T>>,
-        class = std::enable_if_t<type<BT> != type<Variant>>>
+        class = std::enable_if_t<(!std::is_base_of_v<Variant, BT>)>>
     Variant(T&& t) {
         static_assert(containsOf<BT>(pack), "type not part of variant");
         constructOf(type<BT>, std::forward<T>(t));
