@@ -230,3 +230,23 @@ TEST(Tuple, constStructuredBinding) {
     EXPECT_EQ(a, 'c');
     EXPECT_EQ(b, 23);
 }
+
+TEST(Tuple, forStructuredBinding) {
+    struct X {
+        int v;
+        constexpr X() = default;
+        constexpr explicit X(int v)
+            : v(v) {}
+    };
+    using T = std::vector<Tuple<char, X>>;
+    const auto v = T{{'c', X{23}}};
+    const auto& r = v;
+    for (const auto& [a, b] : r) {
+#if !defined(_MSC_VER) || _MSC_VER >= 1920
+        static_assert(std::is_same_v<decltype(a), const char>);
+        static_assert(type<decltype(b)> == type<const X>);
+#endif
+        EXPECT_EQ(a, 'c');
+        EXPECT_EQ(b.v, 23);
+    }
+}
