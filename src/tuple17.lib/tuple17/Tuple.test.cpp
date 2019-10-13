@@ -233,7 +233,7 @@ TEST(Tuple, constStructuredBinding) {
 
 TEST(Tuple, forStructuredBinding) {
     struct X {
-        int v;
+        int v{};
         constexpr X() = default;
         constexpr explicit X(int v)
             : v(v) {}

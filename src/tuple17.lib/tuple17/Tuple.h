@@ -325,17 +325,12 @@ auto constexpr get(const tuple17::Tuple<Ts...>& tuple, ::meta17::Type<T> = {}) -
 namespace std {
 
 template<class... Ts>
-struct tuple_size<tuple17::Tuple<Ts...>> : std::integral_constant<size_t, sizeof...(Ts)> {};
-template<class... Ts>
-struct tuple_size<tuple17::Tuple<Ts...>&> : std::integral_constant<size_t, sizeof...(Ts)> {};
+class tuple_size<tuple17::Tuple<Ts...>> : public std::integral_constant<size_t, sizeof...(Ts)> {};
 
 template<size_t I, class... Ts>
-struct tuple_element<I, tuple17::Tuple<Ts...>> {
+class tuple_element<I, tuple17::Tuple<Ts...>> {
+public:
     using type = typename tuple17::Tuple<Ts...>::template UnwrapTypeAt<I>;
-};
-template<size_t I, class... Ts>
-struct tuple_element<I, tuple17::Tuple<Ts...>&> {
-    using type = typename tuple17::Tuple<Ts...>::template UnwrapTypeAt<I>&;
 };
 
 } // namespace std
