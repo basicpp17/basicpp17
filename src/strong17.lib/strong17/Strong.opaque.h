@@ -20,5 +20,5 @@
     struct NAME;                                                                                                       \
     constexpr auto makeOpaqueType(meta17::Type<STRONG_TYPE>)->meta17::Type<NAME> { return {}; }                        \
     struct NAME : STRONG_TYPE {                                                                                        \
-        using Strong::Strong;                                                                                          \
+        using STRONG_TYPE::Strong;                                                                                     \
     }
