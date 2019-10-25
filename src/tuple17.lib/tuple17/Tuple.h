@@ -319,6 +319,9 @@ auto constexpr get(const tuple17::Tuple<Ts...>& tuple, ::meta17::Type<T> = {}) -
     return tuple.template of<T>();
 }
 
+template<class... Ts>
+Tuple(Ts...)->Tuple<Ts...>;
+
 } // namespace tuple17
 
 /// for c++17 structured bindings support
