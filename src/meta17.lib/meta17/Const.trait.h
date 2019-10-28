@@ -1,14 +1,12 @@
 #pragma once
 #include "Const.h"
 
-#include "TemplateOfValues.trait.h"
-
 namespace meta17 {
 
 template<class T>
-using IsConst = IsValueTemplate<T, Const>;
+constexpr auto is_const = false;
 
-template<class T>
-constexpr auto is_const = IsConst<T>{};
+template<auto V>
+constexpr auto is_const<Const<V>> = true;
 
 } // namespace meta17

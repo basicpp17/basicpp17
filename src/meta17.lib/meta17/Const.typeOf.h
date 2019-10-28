@@ -5,14 +5,12 @@
 namespace meta17 {
 
 template<auto V>
-constexpr auto typeOf(Const<V>) -> Type<decltype(V)> {
-    return {};
-}
+constexpr auto constTypeOf(Const<V>) -> decltype(V);
 
 template<class T>
-using TypeOf = decltype(typeOf(T{}));
+using ConstTypeOf = decltype(constTypeOf(T{}));
 
 template<class T>
-constexpr auto type_of = TypeOf<T>{};
+constexpr auto const_type_of = type<ConstTypeOf<T>>;
 
 } // namespace meta17

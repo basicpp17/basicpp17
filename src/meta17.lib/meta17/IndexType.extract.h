@@ -18,12 +18,11 @@ constexpr auto extract_index = ExtractIndex<T>{};
 
 /// Extract Type
 template<size_t I, class T>
-constexpr auto extractType(IndexType<I, T>) -> Type<T> {
-    return {};
-}
+constexpr auto extractType(IndexType<I, T>) -> T;
+
 template<class T>
 using ExtractType = decltype(extractType(T{}));
 template<class T>
-constexpr auto extract_type = ExtractType<T>{};
+constexpr auto extract_type = type<ExtractType<T>>;
 
 } // namespace meta17

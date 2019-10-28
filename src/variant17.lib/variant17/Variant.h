@@ -1,16 +1,16 @@
 #pragma once
-#include <meta17/IndexPack.h>
-#include <meta17/Type.h>
+#include "meta17/IndexPack.h"
+#include "meta17/Type.h"
 
-#include <meta17/ConstPack.fold.h> // max(Pack)
-#include <meta17/IndexPack.for.h> // indexPackFor
-#include <meta17/Type.ops.h> // type == type
-#include <meta17/Type.wrap.h> // UnwrapType
-#include <meta17/TypePack.access.h> // TypeAt
-#include <meta17/TypePack.indexOf.h> // indexOf
-#include <meta17/TypePack.recurse.h> // ExtractHead
-#include <meta17/TypePack.wrap.h> // to_type_pack
-#include <meta17/Unreachable.h> // unreachable
+#include "meta17/ConstPack.fold.h" // max(Pack)
+#include "meta17/IndexPack.for.h" // indexPackFor
+#include "meta17/Type.ops.h" // type == type
+#include "meta17/Type.wrap.h" // UnwrapType
+#include "meta17/TypePack.access.h" // indexedTypeAt
+#include "meta17/TypePack.indexOf.h" // indexOf
+#include "meta17/TypePack.recurse.h" // ExtractHead
+#include "meta17/TypePack.wrap.h" // to_type_pack
+#include "meta17/Unreachable.h" // unreachable
 
 #include <cstdint> // uint8_t, …
 #include <limits> // std::numeric_limits
@@ -18,18 +18,18 @@
 
 namespace variant17 {
 
-using meta17::checkedIndexOf;
+using meta17::_const;
 using meta17::containsOf;
 using meta17::Index;
 using meta17::index_pack;
+using meta17::indexedTypeAt;
+using meta17::indexedTypePackIndexOf;
 using meta17::IndexPack;
 using meta17::indexPackFor;
-using meta17::max;
 using meta17::to_type_pack;
 using meta17::type;
 using meta17::Type;
 using meta17::type_pack;
-using meta17::typeAt;
 using meta17::TypeHead;
 using meta17::TypePack;
 using meta17::UnwrapType;
@@ -185,20 +185,20 @@ public:
     template<size_t I, class... Args>
     Variant(Index<I>, Args&&... args) {
         static_assert(I < npos, "index not part of variant");
-        constexpr auto t = typeAt<I>();
+        constexpr auto t = type_at<I>;
         constructOf(t, std::forward<Args>(args)...);
         whichValue = I;
     }
 
     template<class T>
     constexpr static auto whichOf(Type<T> = {}) -> Which {
-        return Which{static_cast<WhichValue>(meta17::checkedIndexOf<T>(pack, indices))};
+        return Which{static_cast<WhichValue>(indexedTypePackIndexOf<T>(pack, indices))};
     }
 
     template<size_t I>
-    static constexpr auto typeAt(meta17::Const<I> = {}) {
-        return meta17::indexedTypeAt<I>(pack, indices);
-    }
+    using TypeAt = decltype(indexedTypeAt<I>(pack, indices));
+    template<size_t I>
+    constexpr static auto type_at = type<TypeAt<I>>;
 
     constexpr auto which() const -> Which { return Which{whichValue}; }
 

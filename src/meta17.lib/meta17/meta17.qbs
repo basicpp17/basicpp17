@@ -22,11 +22,13 @@ Product {
         name: "ConstPack"
         files: [
             "ConstPack.access.h",
+            "ConstPack.extract.h",
             "ConstPack.fold.h",
             "ConstPack.h",
             "ConstPack.indexOf.h",
             "ConstPack.ops.h",
             "ConstPack.recurse.h",
+            "ConstPack.sizeof.h",
             "ConstPack.trait.h",
             "ConstPack.wrap.h",
         ]
@@ -81,11 +83,11 @@ Product {
     Group {
         name: "TemplateOfTypes"
         files: [
-            "TemplateOfTypes.extract.h",
             "TemplateOfTypes.h",
             "TemplateOfTypes.indexOf.h",
             "TemplateOfTypes.iterate.h",
             "TemplateOfTypes.manip.h",
+            "TemplateOfTypes.recurse.h",
             "TemplateOfTypes.trait.h",
             "TemplateOfTypes.transform.h",
             "TemplateOfTypes.wrap.h",
@@ -94,8 +96,8 @@ Product {
     Group {
         name: "TemplateOfValues"
         files: [
-            "TemplateOfValues.extract.h",
             "TemplateOfValues.h",
+            "TemplateOfValues.recurse.h",
             "TemplateOfValues.trait.h",
         ]
     }
@@ -121,6 +123,7 @@ Product {
         name: "TypePack"
         files: [
             "TypePack.access.h",
+            "TypePack.extract.h",
             "TypePack.h",
             "TypePack.indexOf.h",
             "TypePack.iterate.h",
@@ -145,6 +148,7 @@ Product {
         "DeferStaticError.h",
         "Unreachable.h",
         "align.h",
+        "same.h",
     ]
 
     Export {

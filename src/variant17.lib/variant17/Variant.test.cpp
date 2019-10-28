@@ -2,8 +2,8 @@
 
 #include "Variant.ops.h"
 
-#include <meta17/Index.h>
-#include <meta17/Type.ops.h>
+#include "meta17/Index.h"
+#include "meta17/Type.ops.h"
 
 #include <gtest/gtest.h>
 
@@ -62,13 +62,13 @@ TEST(Variant, which) {
 
 TEST(Variant, type) {
     using V = Variant<char, int, float>;
-    static_assert(V::typeAt<0>() == type<char>);
-    static_assert(V::typeAt<1>() == type<int>);
-    static_assert(V::typeAt<2>() == type<float>);
+    static_assert(V::type_at<0> == type<char>);
+    static_assert(V::type_at<1> == type<int>);
+    static_assert(V::type_at<2> == type<float>);
     // Should not compile due to double is not part of V
-    static_assert(V::typeAt<2>() != type<double>);
+    static_assert(V::type_at<2> != type<double>);
     // Should not compile since V has only 3 options
-    // static_assert(V::typeAt<3>() == type<float>);
+    // static_assert(V::type_at<3> == type<float>);
 }
 
 TEST(Variant, visit) {

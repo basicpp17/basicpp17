@@ -9,20 +9,18 @@
 
 namespace meta17 {
 
-namespace trait {
+/// true only if given type is a template of types
+template<class T>
+constexpr auto is_template_of_types = false;
 
-template<template<class...> class, class>
-struct IsTypeTemplate : ::meta17::False {};
+template<class... Ts, template<class...> class Template>
+constexpr auto is_template_of_types<Template<Ts...>> = true;
 
-template<template<class...> class Template, class... Ts>
-struct IsTypeTemplate<Template, Template<Ts...>> : ::meta17::True {};
-
-} // namespace trait
-
+/// true only if given type is the given template
 template<class T, template<class...> class Template>
-using IsTypeTemplate = trait::IsTypeTemplate<Template, std::remove_const_t<T>>;
+constexpr auto is_type_template = false;
 
-template<class T, template<class...> class Template>
-constexpr auto is_type_template = IsTypeTemplate<T, Template>{};
+template<class... Vs, template<class...> class Template>
+constexpr auto is_type_template<Template<Vs...>, Template> = true;
 
 } // namespace meta17

@@ -5,7 +5,7 @@
 namespace string17 {
 
 template<size_t N>
-constexpr auto byteCount(AdlType<StringStore<N>>) -> size_t {
+constexpr auto byteCount(ADL, StringStore<N>) -> size_t {
     return N;
 }
 

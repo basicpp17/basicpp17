@@ -1,4 +1,4 @@
-#include <meta17/TemplateOfValues.trait.h>
+#include "TemplateOfValues.trait.h"
 
 using namespace meta17;
 

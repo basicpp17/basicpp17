@@ -1,10 +1,9 @@
 #pragma once
 #include "Strong.h"
 
-#include <meta17/Type.h>
-#include <meta17/TypePack.h>
-
-#include <meta17/Type.wrap.h> // UnwrapType
+#include "meta17/Type.h"
+#include "meta17/Type.wrap.h" // UnwrapType
+#include "meta17/TypePack.h"
 
 namespace strong17 {
 

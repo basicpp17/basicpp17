@@ -7,9 +7,7 @@ namespace meta17 {
 
 /// Unwrapping
 template<auto V>
-constexpr auto toValue(Const<V>) -> decltype(V) {
-    return V;
-}
+constexpr auto to_value<Const<V>> = V;
 
 /// Wrapping
 template<class T>

@@ -1,8 +1,7 @@
 #pragma once
 #include "Index.h"
 
-#include "Bool.wrap.h" // to_value
-#include "Const.wrap.h" // toValue
+#include "Const.wrap.h" // to_value
 
 namespace meta17 {
 

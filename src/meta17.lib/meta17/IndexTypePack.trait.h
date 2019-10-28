@@ -1,25 +1,15 @@
 #pragma once
 #include "IndexTypePack.h"
 
-#include "Arguments.fold.h" // allArguments
-#include "IndexType.trait.h" // is_index_type
-
 namespace meta17 {
 
-namespace trait {
-
 template<class T>
-struct IsIndexTypePack : False {};
+constexpr auto is_index_type_pack = false;
 
-template<class... Ts>
-struct IsIndexTypePack<TypePack<Ts...>> : Bool<allArguments(is_index_type<Ts>...)> {};
+template<>
+constexpr auto is_index_type_pack<TypePack<>> = true;
 
-} // namespace trait
-
-template<class T>
-using IsIndexTypePack = trait::IsIndexTypePack<std::remove_const_t<T>>;
-
-template<class T>
-constexpr auto is_index_type_pack = IsIndexTypePack<T>{};
+template<size_t... Is, class... Ts>
+constexpr auto is_index_type_pack<TypePack<IndexType<Is, Ts>...>> = true;
 
 } // namespace meta17

@@ -1,16 +1,12 @@
 #pragma once
 #include "Partial.h"
 
-#include <meta17/TemplateOfTypes.trait.h>
-
 namespace partial17 {
 
-using meta17::IsTypeTemplate;
-
 template<class T>
-using IsPartial = IsTypeTemplate<T, Partial>;
+constexpr auto is_partial = false;
 
-template<class T>
-constexpr auto is_partial = IsPartial<T>{};
+template<class... Ts>
+constexpr auto is_partial<Partial<Ts...>> = true;
 
 } // namespace partial17

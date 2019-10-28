@@ -2,17 +2,14 @@
 #include "TypePack.h"
 
 #include "Type.h"
-#include "Type.ops.h" // type == type
+#include "same.h"
 
 namespace meta17 {
 
 /// Equality
 template<class... As, class... Bs>
 constexpr bool operator==(TypePack<As...>, TypePack<Bs...>) {
-    if constexpr (sizeof...(As) != sizeof...(Bs))
-        return false;
-    else
-        return ((type<As> == type<Bs>)&&...);
+    return same<TypePack<As...>, TypePack<Bs...>>;
 }
 template<class... As, class... Bs>
 constexpr bool operator!=(TypePack<As...> a, TypePack<Bs...> b) {

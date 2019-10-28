@@ -1,16 +1,12 @@
 #pragma once
 #include "Tuple.h"
 
-#include <meta17/TemplateOfTypes.trait.h>
-
 namespace tuple17 {
 
-using meta17::IsTypeTemplate;
-
 template<class T>
-using IsTuple = IsTypeTemplate<T, Tuple>;
+constexpr auto is_tuple = false;
 
-template<class T>
-constexpr auto is_tuple = IsTuple<T>{};
+template<class... Ts>
+constexpr auto is_tuple<Tuple<Ts...>> = true;
 
 } // namespace tuple17

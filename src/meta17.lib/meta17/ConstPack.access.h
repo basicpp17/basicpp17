@@ -30,7 +30,7 @@ constexpr auto const_at = constAt<P, I>();
 /// returns the last value of a ConstPack
 template<class P, class IP>
 constexpr auto constLast(P = {}, IP = {}) {
-    constexpr auto lastIndex = index<constCount(P{})> - index<1>;
+    constexpr auto lastIndex = index<const_count<P>> - index<1>;
     return constAt(P{}, IP{}, lastIndex);
 }
 template<class P>

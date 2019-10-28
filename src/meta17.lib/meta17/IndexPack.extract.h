@@ -1,28 +1,22 @@
 #pragma once
 #include "IndexPack.h"
 
+#include "DeferStaticError.h"
+#include "same.h"
+
 namespace meta17 {
-
-namespace details {
-
-template<class>
-struct ExtractIndexPack;
-
-template<template<size_t...> class Template, size_t... Is>
-struct ExtractIndexPack<Template<Is...>> {
-    using Return = IndexPack<Is...>;
-};
-template<template<class, size_t...> class Template, size_t... Is>
-struct ExtractIndexPack<Template<size_t, Is...>> {
-    using Return = IndexPack<Is...>;
-};
-
-} // namespace details
 
 /// allow std::integer_sequence like constructs to be converted
 template<class T>
-using ExtractIndexPack = typename details::ExtractIndexPack<T>::Return;
+constexpr auto extract_index_pack = same<T, T>&& META17_DEFER_STATIC_ERROR("no index_pack to extract");
+
+template<template<size_t...> class Template, size_t... Is>
+constexpr auto extract_index_pack<Template<Is...>> = index_pack<Is...>;
+
+template<template<class, size_t...> class Template, size_t... Is>
+constexpr auto extract_index_pack<Template<size_t, Is...>> = index_pack<Is...>;
+
 template<class T>
-constexpr auto extract_index_pack = ExtractIndexPack<T>{};
+using ExtractIndexPack = decltype(extract_index_pack<T>);
 
 } // namespace meta17

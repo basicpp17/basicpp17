@@ -1,28 +1,24 @@
 #pragma once
 #include "IndexTypePack.h"
 
+#include "DeferStaticError.h"
 #include "IndexPack.extract.h" // ExtractIndexPack
+#include "same.h"
 
 namespace meta17 {
 
-namespace details {
-
 // add oveload for TypePack of IndexType
 template<size_t... Is, class... Ts>
-struct ExtractIndexPack<TypePack<IndexType<Is, Ts>...>> {
-    using Return = IndexPack<Is...>;
-};
-
-} // namespace details
+constexpr auto extract_index_pack<TypePack<IndexType<Is, Ts>...>> = index_pack<Is...>;
 
 /// extract TypePack from a TypePack of IndexType
+template<class T>
+constexpr auto extract_type_pack = same<T, T>&& META17_DEFER_STATIC_ERROR("no type_pack to extract");
+
 template<size_t... Is, class... Ts>
-constexpr auto extractTypePack(TypePack<IndexType<Is, Ts>...>) -> TypePack<Ts...> {
-    return {};
-}
+constexpr auto extract_type_pack<TypePack<IndexType<Is, Ts>...>> = type_pack<Ts...>;
+
 template<class T>
-using ExtractTypePack = decltype(extractTypePack(T{}));
-template<class T>
-constexpr auto extract_type_pack = ExtractTypePack<T>{};
+using ExtractTypePack = decltype(extract_type_pack<T>);
 
 } // namespace meta17

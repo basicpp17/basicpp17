@@ -1,7 +1,7 @@
 #pragma once
 #include "TypePack.h"
 
-#include "Type.h"
+#include "Type.ops.h"
 #include "TypePack.ops.h"
 
 #include <type_traits> // std::conditional_t

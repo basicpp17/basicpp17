@@ -9,10 +9,10 @@ template<class... Ts>
 constexpr auto concat(Ts... ts) {
     using namespace details;
 
-    constexpr size_t N = (byteCount(AdlType<Ts>{}) + ... + 0u);
+    constexpr size_t N = (byteCount(adl, Ts{}) + ... + 0u);
     auto r = StringStore<N>{};
     auto p = static_cast<char*>(r.data);
-    (append(p, ts, byteCount(AdlType<Ts>{})), ...);
+    (append(p, ts, byteCount(adl, Ts{})), ...);
     return r;
 }
 

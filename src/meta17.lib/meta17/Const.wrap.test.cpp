@@ -1,6 +1,6 @@
 #include "meta17/Const.wrap.h"
 
-#include <type_traits> // std::is_same_v
+#include "meta17/same.h"
 
 using namespace meta17;
 
@@ -8,4 +8,4 @@ using namespace meta17;
 static_assert(to_value<Const<23>> == 23);
 
 // wrap
-static_assert(std::is_same_v<ToConst<True>, Const<true>>);
+static_assert(same<ToConst<True>, Const<true>>);

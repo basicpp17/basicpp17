@@ -4,4 +4,4 @@
 
 using namespace meta17;
 
-static_assert(type_of<Const<3>> == type<int>);
+static_assert(const_type_of<Const<3>> == type<int>);

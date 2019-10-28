@@ -1,7 +1,7 @@
-#include <meta17/TemplateOfTypes.transform.h>
+#include "TemplateOfTypes.transform.h"
 
-#include <meta17/Type.ops.h>
-#include <meta17/TypePack.h>
+#include "Type.ops.h"
+#include "TypePack.h"
 
 using namespace meta17;
 

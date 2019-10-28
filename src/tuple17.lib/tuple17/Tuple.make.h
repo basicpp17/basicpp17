@@ -1,21 +1,14 @@
 #pragma once
 #include "Tuple.h"
 
-#include <meta17/Type.h>
-#include <meta17/TypePack.h>
-
-#include <meta17/Type.wrap.h> // UnwrapType
+#include <utility> // std::declval
 
 namespace tuple17 {
 
-using meta17::TypePack;
-using meta17::UnwrapType;
+template<class... Ts, template<class...> class Template>
+auto mapTemplateToTuple(Template<Ts...>) -> Tuple<Ts...>;
 
-template<class... Ts>
-auto makeTupleType(TypePack<Ts...> = {}) -> Type<Tuple<Ts...>> {
-    return {};
-}
 template<class P>
-using MakeTuple = UnwrapType<decltype(makeTupleType(P{}))>;
+using MakeTuple = decltype(mapTemplateToTuple(std::declval<P>()));
 
 } // namespace tuple17

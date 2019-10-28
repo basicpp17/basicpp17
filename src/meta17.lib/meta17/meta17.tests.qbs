@@ -89,10 +89,10 @@ Application {
     Group {
         name: "TemplateOfTypes"
         files: [
-            "TemplateOfTypes.extract.test.cpp",
             "TemplateOfTypes.indexOf.test.cpp",
             "TemplateOfTypes.iterate.test.cpp",
             "TemplateOfTypes.manip.test.cpp",
+            "TemplateOfTypes.recurse.test.cpp",
             "TemplateOfTypes.test.cpp",
             "TemplateOfTypes.trait.test.cpp",
             "TemplateOfTypes.transform.test.cpp",

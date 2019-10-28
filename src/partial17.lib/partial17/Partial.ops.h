@@ -4,7 +4,7 @@
 namespace partial17 {
 
 template<class... Ts>
-bool constexpr operator==(const Partial<Ts...>& a, const Partial<Ts...>& b) {
+bool operator==(const Partial<Ts...>& a, const Partial<Ts...>& b) {
     if (a.which() != b.which()) return false;
 
     bool equal = true;
@@ -13,7 +13,7 @@ bool constexpr operator==(const Partial<Ts...>& a, const Partial<Ts...>& b) {
 }
 
 template<class... Ts>
-bool constexpr operator!=(const Partial<Ts...>& a, const Partial<Ts...>& b) {
+bool operator!=(const Partial<Ts...>& a, const Partial<Ts...>& b) {
     return !(a == b);
 }
 

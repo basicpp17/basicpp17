@@ -1,4 +1,4 @@
-#include <meta17/TemplateOfTypes.trait.h>
+#include "TemplateOfTypes.trait.h"
 
 using namespace meta17;
 

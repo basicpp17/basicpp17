@@ -15,7 +15,7 @@ constexpr auto accumulateArguments(A a, T... t) -> decltype((a + ... + t)) {
 
 /// add all type instances
 template<class A, class... T>
-constexpr auto accumulateInstances = (A{} + ... + T{});
+constexpr auto accumulate_instances = (A{} + ... + T{});
 
 template<class A, class... T>
 constexpr auto accumulateDeclVal() {

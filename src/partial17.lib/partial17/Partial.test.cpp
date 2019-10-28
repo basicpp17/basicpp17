@@ -4,7 +4,7 @@
 #include "Partial.ops.h"
 #include "Partial.trait.h"
 
-#include <meta17/Const.ops.h> // index == index
+#include "meta17/Const.ops.h" // index == index
 
 #include <gtest/gtest.h>
 

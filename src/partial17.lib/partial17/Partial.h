@@ -1,14 +1,14 @@
 #pragma once
-#include <meta17/Index.h>
-#include <meta17/Type.h>
+#include "meta17/Index.h"
+#include "meta17/Type.h"
 
-#include <meta17/Index.wrap.h> // ToTypePack
-#include <meta17/IndexPack.for.h> // IndexPackFor
-#include <meta17/Type.wrap.h> // ToTypePack
-#include <meta17/TypePack.access.h> // TypeAt
-#include <meta17/TypePack.indexOf.h> // index_of, contains_of
-#include <meta17/TypePack.wrap.h> // ToTypePack
-#include <meta17/align.h> // sizeOfTypePack, alignOffset
+#include "meta17/Index.wrap.h" // ToTypePack
+#include "meta17/IndexPack.for.h" // IndexPackFor
+#include "meta17/Type.wrap.h" // ToTypePack
+#include "meta17/TypePack.access.h" // TypeAt
+#include "meta17/TypePack.indexOf.h" // index_of, contains_of
+#include "meta17/TypePack.wrap.h" // ToTypePack
+#include "meta17/align.h" // sizeOfTypePack, alignOffset
 
 #include <algorithm> // std::max
 #include <bitset>
@@ -19,17 +19,17 @@
 namespace partial17 {
 
 using meta17::_index;
+using meta17::align_offset;
 using meta17::alignOffset;
-using meta17::checkedIndexOf;
 using meta17::Const;
 using meta17::contains_of;
 using meta17::Index;
-using meta17::index_of;
 using meta17::index_pack;
+using meta17::indexedTypePackIndexOf;
 using meta17::IndexPack;
 using meta17::IndexPackFor;
 using meta17::maxAlignOf;
-using meta17::sizeOfTypePack;
+using meta17::sizeof_type_pack;
 using meta17::to_type_pack;
 using meta17::ToTypePack;
 using meta17::type;
@@ -75,7 +75,7 @@ struct Partial {
 
         template<class T>
         constexpr auto of(Type<T> = {}) const {
-            constexpr size_t index = checkedIndexOf<T>(pack, indices);
+            constexpr size_t index = indexedTypePackIndexOf<T>(pack, indices);
             return at<index>();
         }
 
@@ -135,18 +135,19 @@ public:
     template<
         class... Vs,
         class = std::enable_if_t<
-            (sizeof...(Vs) > 0) && (contains_of<std::remove_cv_t<std::remove_reference_t<Vs>>, Pack> && ...)>>
+            (sizeof...(Vs) > 0) && (contains_of<std::remove_const_t<std::remove_reference_t<Vs>>, Pack> && ...)>>
     Partial(Vs&&... vs) {
-        auto size = sizeOfTypePack<0>(type_pack<std::remove_cv_t<std::remove_reference_t<Vs>>...>);
+        using TP = TypePack<std::remove_const_t<std::remove_reference_t<Vs>>...>;
+        auto size = sizeof_type_pack<0, TP>;
         auto ptr = new uint8_t[size + max_align - 1];
         pointer.reset(ptr);
         ptr = alignPointer<max_align>(ptr);
 
         auto make = [&](auto t, auto&& v) {
             using V = decltype(v);
-            using T = std::remove_cv_t<std::remove_reference_t<V>>;
+            using T = std::remove_const_t<std::remove_reference_t<V>>;
             if constexpr (t == type<T>) {
-                auto iv = index_of<T, Pack>;
+                auto iv = indexedTypePackIndexOf<T>(pack, indices);
                 ptr = alignPointer<alignof(T)>(ptr);
                 new (ptr) T(std::forward<V>(v));
                 whichBits.set(iv);
@@ -192,7 +193,7 @@ public:
     template<class... Ws>
     constexpr static auto whichOf(TypePack<Ws...> = {}) -> Which {
         auto bits = WhichBits{};
-        (bits.set(meta17::checkedIndexOf<Ws>(pack, indices)), ...);
+        (bits.set(indexedTypePackIndexOf<Ws>(pack, indices)), ...);
         return Which{bits};
     }
 
@@ -210,19 +211,19 @@ public:
     }
 
     template<size_t I>
-    auto at(Index<I> = {}) -> UnwrapType<TypeAt<Index<I>, Pack>>& {
-        using T = UnwrapType<TypeAt<Index<I>, Pack>>;
+    auto at(Index<I> = {}) -> TypeAt<I, Pack>& {
+        using T = TypeAt<I, Pack>;
         return *std::launder(reinterpret_cast<T*>(alignPointer<max_align>(pointer.get()) + offsetAt<I>()));
     }
     template<size_t I>
-    auto at(Index<I> = {}) const -> const UnwrapType<TypeAt<Index<I>, Pack>>& {
-        using T = UnwrapType<TypeAt<Index<I>, Pack>>;
+    auto at(Index<I> = {}) const -> const TypeAt<I, Pack>& {
+        using T = TypeAt<I, Pack>;
         return *std::launder(reinterpret_cast<const T*>(alignPointer<max_align>(pointer.get()) + offsetAt<I>()));
     }
 
     template<class T>
     auto of(Type<T> = {}) const -> decltype(auto) {
-        constexpr size_t index = checkedIndexOf<T>(pack, indices);
+        constexpr size_t index = indexedTypePackIndexOf<T>(pack, indices);
         return at<index>();
     }
 

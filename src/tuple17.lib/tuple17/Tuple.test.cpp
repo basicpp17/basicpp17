@@ -3,12 +3,14 @@
 #include "Tuple.make.h"
 #include "Tuple.ops.h"
 
-#include <meta17/Type.ops.h>
+#include "meta17/Type.ops.h"
+#include "meta17/same.h"
 
 #include <gtest/gtest.h>
 
 using namespace tuple17;
 using meta17::Index;
+using meta17::same;
 
 namespace {
 template<typename Type>
@@ -243,7 +245,7 @@ TEST(Tuple, forStructuredBinding) {
     const auto& r = v;
     for (const auto& [a, b] : r) {
 #if !defined(_MSC_VER) || _MSC_VER >= 1920
-        static_assert(std::is_same_v<decltype(a), const char>);
+        static_assert(same<decltype(a), const char>);
         static_assert(type<decltype(b)> == type<const X>);
 #endif
         EXPECT_EQ(a, 'c');

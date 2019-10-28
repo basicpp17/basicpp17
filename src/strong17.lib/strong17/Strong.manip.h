@@ -3,14 +3,15 @@
 
 #include "Strong.make.h" // MakeStrongType
 
-#include <meta17/Type.h>
-
-#include <meta17/Type.wrap.h> // UnwrapType
-#include <meta17/TypePack.indexOf.h> // containsOf
-#include <meta17/TypePack.manip.h> // RemoveType, ReplaceType
+#include "meta17/Type.h"
+#include "meta17/Type.wrap.h" // UnwrapType
+#include "meta17/TypePack.indexOf.h" // containsOf
+#include "meta17/TypePack.manip.h" // RemoveType, ReplaceType
+#include "meta17/same.h"
 
 namespace strong17 {
 
+using meta17::same;
 using meta17::Type;
 using meta17::type;
 using meta17::TypePack;
@@ -19,7 +20,7 @@ using meta17::UnwrapType;
 /// add one additional tag to strong type
 template<class Add, class V, class... Tags>
 constexpr auto addStrongTag(Type<Strong<V, Tags...>>, Type<Add> = {}) {
-    static_assert(!(std::is_same_v<Tags, Add> || ...), "Added Tag is already present!");
+    static_assert(!(same<Tags, Add> || ...), "Added Tag is already present!");
     return type<Strong<V, Tags..., Add>>;
 }
 template<class T, class S>
@@ -44,7 +45,7 @@ using AddStrongTags = UnwrapType<decltype(addStrongTags(type<S>, TP{}))>;
 /// remove one tag
 template<class Remove, class V, class... Tags>
 constexpr auto removeStrongTag(Type<Strong<V, Tags...>>, Type<Remove> = {}) {
-    static_assert((std::is_same_v<Tags, Remove> || ...), "Removed Tag is not present!");
+    static_assert((same<Tags, Remove> || ...), "Removed Tag is not present!");
     return MakeStrongType<V, meta17::RemoveType<Remove, TypePack<Tags...>>>{};
 }
 template<class T, class S>
@@ -53,8 +54,8 @@ using RemoveStrongTag = UnwrapType<decltype(removeStrongTag<T>(type<S>))>;
 /// replace one tag
 template<class From, class To, class V, class... Tags>
 constexpr auto replaceStrongTag(Type<Strong<V, Tags...>>, Type<From> = {}, Type<To> = {}) {
-    static_assert((std::is_same_v<Tags, From> || ...), "Replaced Tag is not present!");
-    static_assert(!(std::is_same_v<Tags, To> || ...), "To Tag is already present!");
+    static_assert((same<Tags, From> || ...), "Replaced Tag is not present!");
+    static_assert(!(same<Tags, To> || ...), "To Tag is already present!");
     return MakeStrongType<V, meta17::ReplaceType<From, To, TypePack<Tags...>>>{};
 }
 template<class F, class T, class S>

@@ -3,10 +3,9 @@
 #include "Strong.h"
 #include "Strong.trait.h"
 
-#include <meta17/Type.h>
-#include <meta17/TypePack.h>
-
-#include <meta17/Type.wrap.h> // UnwrapType
+#include "meta17/Type.h"
+#include "meta17/Type.wrap.h" // UnwrapType
+#include "meta17/TypePack.h"
 
 #include <type_traits>
 

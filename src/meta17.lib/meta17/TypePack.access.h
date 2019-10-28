@@ -10,43 +10,39 @@
 #include "TypePack.ops.h" // type_pack + type_pack
 #include "TypePack.recurse.h" // typeHead, type_count & typeCount
 
-#include <utility> // std::conditional_t
+#include <utility> // std::conditional_t, std::declval
 
 namespace meta17 {
 
 template<size_t I, class... Ts, size_t... Is>
-constexpr auto indexedTypeAt(TypePack<Ts...>, IndexPack<Is...>, Index<I> = {}) {
-    constexpr auto p = accumulateInstances<std::conditional_t<(Is == I), TypePack<Ts>, TypePack<>>...>;
+constexpr auto indexedTypeAtPack(TypePack<Ts...>, IndexPack<Is...>) {
+    constexpr auto p = accumulate_instances<std::conditional_t<(Is == I), TypePack<Ts>, TypePack<>>...>;
     static_assert(1 == typeCount(p), "wrong index");
-    return typeHead(p);
+    return p;
 }
+template<size_t I, class TP, class IP>
+constexpr auto indexedTypeAt(TP, IP) -> decltype(typeHead(indexedTypeAtPack<I>(TP{}, IP{})));
 
-/// returns the type at index I of the TypePack
+template<size_t I, class TP, class IP>
+using IndexedTypeAt = decltype(typeHead(indexedTypeAtPack<I>(TP{}, IP{})));
+template<size_t I, class TP, class IP>
+constexpr auto indexed_type_at = type<IndexedTypeAt<I, TP, IP>>;
+
+/// the type at index I of the TypePack
 template<size_t I, class TP>
-constexpr auto typeAt(TP = {}, Index<I> = {}) {
-    using IP = IndexPackFor<TP>;
-    return indexedTypeAt<I>(TP{}, IP{});
-}
-template<class I, class TP>
-using TypeAt = decltype(typeAt(TP{}, I{}));
-template<class I, class TP>
-constexpr auto type_at = typeAt(TP{}, I{});
+using TypeAt = IndexedTypeAt<I, TP, IndexPackFor<TP>>;
+template<size_t I, class TP>
+constexpr auto type_at = type<TypeAt<I, TP>>;
 
 template<class TP, class IP>
-constexpr auto indexedTypeLast(TP = {}, IP = {}) {
-    constexpr auto lastIndex = index<type_count<TP>> - index<1>;
-    return indexedTypeAt(TP{}, IP{}, lastIndex);
-}
+using IndexedTypeLast = IndexedTypeAt<type_count<TP> - 1, TP, IP>;
 
-/// returns the last type of the TypePack
+/// last type of the TypePack
 template<class TP>
-constexpr auto typeLast(TP = {}) {
-    using IP = IndexPackFor<TP>;
-    return indexedTypeLast<TP, IP>();
-}
+constexpr auto typeLast(TP = {}) -> IndexedTypeLast<TP, IndexPackFor<TP>>;
 template<class TP>
 using TypeLast = decltype(typeLast<TP>());
 template<class TP>
-constexpr auto type_last = typeLast<TP>();
+constexpr auto type_last = type<TypeLast<TP>>;
 
 } // namespace meta17

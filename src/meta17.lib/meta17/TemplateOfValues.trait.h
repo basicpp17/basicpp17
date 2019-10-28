@@ -1,27 +1,19 @@
 #pragma once
-#include "TemplateOfValues.h"
-
-#include "Bool.wrap.h"
-#include "Type.h"
-
-#include <type_traits> // std::remove_const_t
 
 namespace meta17 {
 
-namespace trait {
+/// true only if given type is a template of values
+template<class T>
+constexpr auto is_template_of_values = false;
 
-template<template<auto...> class, class>
-struct IsValueTemplate : False {};
+template<auto... Vs, template<auto...> class Template>
+constexpr auto is_template_of_values<Template<Vs...>> = true;
 
-template<template<auto...> class Template, auto... Vs>
-struct IsValueTemplate<Template, Template<Vs...>> : True {};
-
-} // namespace trait
-
+/// true only if given type is the given template
 template<class T, template<auto...> class Template>
-using IsValueTemplate = trait::IsValueTemplate<Template, std::remove_const_t<T>>;
+constexpr auto is_value_template = false;
 
-template<class T, template<auto...> class Template>
-constexpr auto is_value_template = IsValueTemplate<T, Template>{};
+template<auto... Vs, template<auto...> class Template>
+constexpr auto is_value_template<Template<Vs...>, Template> = true;
 
 } // namespace meta17

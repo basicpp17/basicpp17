@@ -8,9 +8,7 @@ namespace meta17 {
 
 /// Allow singe value extraction
 template<auto V>
-constexpr auto toValue(ConstPack<V>) -> decltype(V) {
-    return V;
-}
+constexpr auto to_value<ConstPack<V>> = V;
 
 /// Wrapping
 template<class... Ts>

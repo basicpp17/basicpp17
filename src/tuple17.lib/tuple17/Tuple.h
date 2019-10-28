@@ -1,18 +1,18 @@
 #pragma once
 
-#include <meta17/Const.wrap.h>
-#include <meta17/ConstPack.access.h> // constLast
-#include <meta17/IndexPack.for.h> // IndexPackFor
-#include <meta17/Type.ops.h> // type == type
-#include <meta17/TypePack.access.h> // typeAt
-#include <meta17/TypePack.indexOf.h> // checkedIndexOf
-#include <meta17/TypePack.ops.h> // type_pack + type_pack
-#include <meta17/TypePack.wrap.h>
-#include <meta17/align.h> // AlignedOffsetsFor
+#include "meta17/Const.wrap.h"
+#include "meta17/ConstPack.access.h" // constLast
+#include "meta17/IndexPack.for.h" // IndexPackFor
+#include "meta17/Type.ops.h" // type == type
+#include "meta17/TypePack.access.h" // typeAt
+#include "meta17/TypePack.indexOf.h" // checkedIndexOf
+#include "meta17/TypePack.ops.h" // type_pack + type_pack
+#include "meta17/TypePack.wrap.h"
+#include "meta17/align.h" // AlignedOffsetsFor
 
 #if defined(_MSC_VER) && !defined(NDEBUG)
-#    include <meta17/ConstPack.recurse.h> // const_head, const_tail
-#    include <meta17/TypePack.recurse.h> // TypeHead, type_tail
+#    include "meta17/ConstPack.recurse.h" // const_head, const_tail
+#    include "meta17/TypePack.recurse.h" // TypeHead, type_tail
 #endif
 
 #include <cinttypes> // uint8_t
@@ -25,13 +25,26 @@ namespace tuple17 {
 using meta17::_const;
 using meta17::alignTypePack;
 using meta17::Const;
+using meta17::const_count;
+using meta17::const_head;
+using meta17::const_pack;
+using meta17::const_tail;
+using meta17::constAt;
+using meta17::index_pack;
+using meta17::indexedTypeAt;
+using meta17::indexedTypePackIndexOf;
 using meta17::IndexPack;
 using meta17::IndexPackFor;
 using meta17::maxAlignOf;
-using meta17::sizeOfTypePack;
+using meta17::sizeofTypePack;
 using meta17::to_type_pack;
+using meta17::toValue;
 using meta17::Type;
 using meta17::type;
+using meta17::type_count;
+using meta17::type_pack;
+using meta17::type_tail;
+using meta17::TypeHead;
 using meta17::UnwrapType;
 
 template<class... Ts>
@@ -54,14 +67,14 @@ struct DebugType {
 
 template<class Types, class Offsets>
 constexpr auto makeDebugTypes(Types, Offsets) {
-    if constexpr (0 == meta17::type_count<Types> || 0 == meta17::const_count<Offsets>) {
+    if constexpr (0 == type_count<Types> || 0 == const_count<Offsets>) {
         return DebugType<void, 0, void>{};
     }
     else {
         return DebugType<
-            meta17::TypeHead<Types>,
-            meta17::toValue(meta17::const_head<Offsets>),
-            decltype(makeDebugTypes(meta17::type_tail<Types>, meta17::const_tail<Offsets>))>{};
+            TypeHead<Types>,
+            const_head<Offsets>,
+            decltype(makeDebugTypes(type_tail<Types>, const_tail<Offsets>))>{};
     }
 }
 #endif
@@ -82,9 +95,9 @@ struct Tuple {
 
     static constexpr auto pack = to_type_pack<Ts...>;
     static constexpr auto indices = indexPackFor(pack);
-    static constexpr auto offsets = alignTypePack<0>(pack);
+    static constexpr auto offsets = alignTypePack(pack);
     enum : size_t {
-        size = sizeOfTypePack<0>(pack),
+        size = sizeofTypePack(pack),
         max_align = maxAlignOf<Ts...>(),
         npos = sizeof...(Ts),
     };
@@ -162,64 +175,57 @@ public:
 
     template<size_t I>
     static constexpr auto offsetAt(Const<I> = {}) -> size_t {
-        return toValue(meta17::constAt<I>(offsets, indices));
+        return toValue(constAt<I>(offsets, indices));
     }
     template<size_t I>
     static constexpr auto offset_at = offsetAt<I>();
 
     template<class T>
     static constexpr auto offsetOf(Type<T> = {}) -> size_t {
-        constexpr auto I = meta17::checkedIndexOf<T>(pack, indices);
+        constexpr auto I = indexedTypePackIndexOf<T>(pack, indices);
         return offsetAt<I>();
     }
     template<class T>
     static constexpr auto offset_of = offsetOf<T>();
 
     template<size_t I>
-    static constexpr auto typeAt(Const<I> = {}) {
-        return meta17::indexedTypeAt<I>(pack, indices);
-    }
+    using TypeAt = decltype(indexedTypeAt<I>(pack, indices));
     template<size_t I>
-    using TypeAt = decltype(typeAt<I>());
-    template<size_t I>
-    static constexpr auto type_at = TypeAt<I>{};
+    static constexpr auto type_at = type<TypeAt<I>>;
 
     template<size_t I>
-    using UnwrapTypeAt = UnwrapType<TypeAt<I>>;
-
-    template<size_t I>
-    constexpr auto at(Const<I> = {}) & -> UnwrapTypeAt<I>& {
-        using T = UnwrapTypeAt<I>;
+    constexpr auto at(Const<I> = {}) & -> TypeAt<I>& {
+        using T = TypeAt<I>;
         return *std::launder(reinterpret_cast<T*>(ptrAt<I>()));
     }
 
     template<size_t I>
-    constexpr auto at(Const<I> = {}) && -> UnwrapTypeAt<I> {
-        using T = UnwrapTypeAt<I>;
+    constexpr auto at(Const<I> = {}) && -> TypeAt<I> {
+        using T = TypeAt<I>;
         return std::move(*std::launder(reinterpret_cast<T*>(ptrAt<I>())));
     }
 
     template<size_t I>
-    constexpr auto at(Const<I> = {}) const& -> const UnwrapTypeAt<I>& {
-        using T = const UnwrapTypeAt<I>;
+    constexpr auto at(Const<I> = {}) const& -> const TypeAt<I>& {
+        using T = const TypeAt<I>;
         return *std::launder(reinterpret_cast<T*>(ptrAt<I>()));
     }
 
     template<class T>
     constexpr auto of(Type<T> = {}) & -> T& {
-        static_assert(hasType(meta17::type<T>));
+        static_assert(hasType(type<T>));
         return *std::launder(reinterpret_cast<T*>(ptrOf<T>()));
     }
 
     template<class T>
     constexpr auto of(Type<T> = {}) && -> T {
-        static_assert(hasType(meta17::type<T>));
+        static_assert(hasType(type<T>));
         return std::move(*std::launder(reinterpret_cast<T*>(ptrOf<T>())));
     }
 
     template<class T>
     constexpr auto of(Type<T> = {}) const& -> const T& {
-        static_assert(hasType(meta17::type<T>));
+        static_assert(hasType(type<T>));
         return *std::launder(reinterpret_cast<const T*>(ptrOf<T>()));
     }
 
@@ -244,12 +250,12 @@ private:
 
     template<class F, size_t... Is>
     constexpr void visitIndexTypes(IndexPack<Is...>, F&& f) {
-        (f(_const<Is>, typeAt<Is>()), ...);
+        (f(_const<Is>, type_at<Is>), ...);
     }
 
     template<class F, size_t... Is>
     constexpr void visitIndexTypes(IndexPack<Is...>, F&& f) const {
-        (f(_const<Is>, typeAt<Is>()), ...);
+        (f(_const<Is>, type_at<Is>), ...);
     }
 
     template<size_t I>
@@ -275,9 +281,9 @@ private:
 
 template<>
 struct Tuple<> {
-    static constexpr auto pack = meta17::type_pack<>;
-    static constexpr auto indices = meta17::index_pack<>;
-    static constexpr auto offsets = meta17::const_pack<>;
+    static constexpr auto pack = type_pack<>;
+    static constexpr auto indices = index_pack<>;
+    static constexpr auto offsets = const_pack<>;
     enum : size_t {
         size = 0,
         max_align = 1,
@@ -311,11 +317,11 @@ auto constexpr get(const Tuple<Ts...>& tuple) -> decltype(auto) {
     return tuple.at(_const<I>);
 }
 template<class T, class... Ts>
-auto constexpr get(tuple17::Tuple<Ts...>& tuple, ::meta17::Type<T> = {}) -> decltype(auto) {
+auto constexpr get(tuple17::Tuple<Ts...>& tuple, Type<T> = {}) -> decltype(auto) {
     return tuple.template of<T>();
 }
 template<class T, class... Ts>
-auto constexpr get(const tuple17::Tuple<Ts...>& tuple, ::meta17::Type<T> = {}) -> decltype(auto) {
+auto constexpr get(const tuple17::Tuple<Ts...>& tuple, Type<T> = {}) -> decltype(auto) {
     return tuple.template of<T>();
 }
 
@@ -333,7 +339,7 @@ class tuple_size<tuple17::Tuple<Ts...>> : public std::integral_constant<size_t, 
 template<size_t I, class... Ts>
 class tuple_element<I, tuple17::Tuple<Ts...>> {
 public:
-    using type = typename tuple17::Tuple<Ts...>::template UnwrapTypeAt<I>;
+    using type = typename tuple17::Tuple<Ts...>::template TypeAt<I>;
 };
 
 } // namespace std
