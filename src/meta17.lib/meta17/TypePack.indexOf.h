@@ -52,13 +52,14 @@ constexpr auto typePackOverflowIndexOf(TP, Type<T> = {}) {
     return indexed_type_pack_overflow_index_of<T, TP, IndexPackFor<TP>>;
 }
 
-/// statically asserts that the returned index is valid
+// TODO(mstaff): the functions with the prefix indexed should not be used. Can we indicate that or prevent usage?
+
 template<class T, class TP, class IP>
 constexpr auto indexed_type_pack_index_of = same<TP, TP>&& META17_DEFER_STATIC_ERROR("not a type pack");
 
 template<class T, class... Ts, size_t... Is>
-constexpr auto indexed_type_pack_index_of<T, TypePack<Ts...>, IndexPack<Is...>> = //
-    1 == countOf<T, Ts...>() ? (((type<Ts> == type<T>) ? Is : 0) + ...) : META17_DEFER_STATIC_ERROR("type not found");
+constexpr auto indexed_type_pack_index_of<T, TypePack<Ts...>, IndexPack<Is...>> =
+    (((type<Ts> == type<T>) ? Is : 0) + ...);
 
 template<class T, class TP, class IP>
 constexpr auto indexedTypePackIndexOf(TP = {}, IP = {}, Type<T> = {}) -> size_t {
@@ -68,11 +69,11 @@ constexpr auto indexedTypePackIndexOf(TP = {}, IP = {}, Type<T> = {}) -> size_t 
 }
 
 template<class T, class TP>
-constexpr auto type_pack_index_of = indexed_type_pack_index_of<T, TP, IndexPackFor<TP>>;
+constexpr auto type_pack_index_of = indexedTypePackIndexOf<T, TP, IndexPackFor<TP>>();
 
 template<class T, class TP>
 constexpr auto typePackIndexOf(TP = {}, Type<T> = {}) {
-    return indexed_type_pack_index_of<T, TP, IndexPackFor<TP>>;
+    return indexedTypePackIndexOf<T, TP, IndexPackFor<TP>>();
 }
 
 } // namespace meta17
