@@ -41,6 +41,27 @@ TEST(Variant, construction) {
     v5.visit([](auto value) { EXPECT_EQ(sizeof(value), sizeof(S)); });
 }
 
+TEST(Variant, emplace) {
+    using meta17::index;
+    using V = Variant<char, int, float>;
+
+    // Inplace change of type with type
+    auto v0 = V{};
+    v0.emplace(type<int>, 23.14f);
+    v0.visit([](auto value) {
+        EXPECT_EQ(sizeof(value), sizeof(int));
+        EXPECT_EQ(value, 23);
+    });
+
+    // Inplace change of type with index
+    auto v1 = V{};
+    v1.emplace(index<1>, 23.14f);
+    v1.visit([](auto value) {
+        ASSERT_EQ(sizeof(value), sizeof(int));
+        ASSERT_EQ(value, 23);
+    });
+}
+
 TEST(Variant, which) {
     using V = Variant<char, int, float>;
     V v{};

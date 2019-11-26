@@ -190,6 +190,26 @@ public:
         whichValue = I;
     }
 
+    /// inplace change of type
+    template<size_t I, class... Args>
+    void emplace(Index<I>, Args&&... args) {
+        static_assert(I < npos, "index not part of variant");
+        if (whichValue != npos) destruct();
+        whichValue = npos;
+        constexpr auto t = type_at<I>;
+        constructOf(t, std::forward<Args>(args)...);
+        whichValue = I;
+    }
+
+    template<class T, class... Args>
+    void emplace(Type<T>, Args&&... args) {
+        static_assert(containsOf<T>(pack), "type not part of variant");
+        if (whichValue != npos) destruct();
+        whichValue = npos;
+        constructOf(type<T>, std::forward<Args>(args)...);
+        whichValue = whichOf<T>();
+    }
+
     template<class T>
     constexpr static auto whichOf(Type<T> = {}) -> Which {
         return Which{static_cast<WhichValue>(indexedTypePackIndexOf<T>(pack, indices))};
