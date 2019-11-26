@@ -28,8 +28,8 @@ TEST(Variant, construction) {
     // Inplace creation with index
     auto v4 = Variant<char, int, float>(index<1>, 23.14f);
     v4.visit([](auto value) {
-        ASSERT_EQ(sizeof(value), sizeof(int));
-        ASSERT_EQ(value, 23);
+        EXPECT_EQ(sizeof(value), sizeof(int));
+        EXPECT_EQ(value, 23);
     });
 
     // Type without default
@@ -57,8 +57,8 @@ TEST(Variant, emplace) {
     auto v1 = V{};
     v1.emplace(index<1>, 23.14f);
     v1.visit([](auto value) {
-        ASSERT_EQ(sizeof(value), sizeof(int));
-        ASSERT_EQ(value, 23);
+        EXPECT_EQ(sizeof(value), sizeof(int));
+        EXPECT_EQ(value, 23);
     });
 }
 
