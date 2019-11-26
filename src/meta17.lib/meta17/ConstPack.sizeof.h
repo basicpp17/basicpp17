@@ -2,14 +2,14 @@
 #include "IndexPack.h"
 #include "TypePack.h"
 
-#include "DeferStaticError.h"
+#include "StaticErrorExpr.h"
 #include "same.h"
 
 namespace meta17 {
 
 /// sizeof every type in typepack
 template<class TP>
-constexpr auto sizeof_pack = same<TP, TP>&& META17_DEFER_STATIC_ERROR("no typepack given");
+constexpr auto sizeof_pack = META17_STATIC_ERROR_EXPR(size_t, "no typepack given");
 
 template<class... Ts>
 constexpr auto sizeof_pack<TypePack<Ts...>> = const_pack<sizeof(Ts)...>;
@@ -24,7 +24,7 @@ constexpr auto sizeofPack(TypePack<Ts...> = {}) -> ConstPack<sizeof(Ts)...> {
 
 /// alignof every type in typepack
 template<class TP>
-constexpr auto alignof_pack = same<TP, TP>&& META17_DEFER_STATIC_ERROR("no typepack given");
+constexpr auto alignof_pack = META17_STATIC_ERROR_EXPR(size_t, "no typepack given");
 
 template<class... Ts>
 constexpr auto alignof_pack<TypePack<Ts...>> = const_pack<alignof(Ts)...>;

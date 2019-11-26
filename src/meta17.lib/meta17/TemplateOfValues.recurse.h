@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DeferStaticError.h"
+#include "StaticErrorExpr.h"
 #include "same.h"
 
 #include <utility> // std::declval
@@ -9,14 +9,14 @@ namespace meta17 {
 
 /// Count template value arguments
 template<class T>
-constexpr auto count_template_values = same<T, T>&& META17_DEFER_STATIC_ERROR("no template of values");
+constexpr auto count_template_values = META17_STATIC_ERROR_EXPR(size_t, "no template of values");
 
 template<template<auto...> class Template, auto... Vs>
 constexpr auto count_template_values<Template<Vs...>> = sizeof...(Vs);
 
 /// extract first template value
 template<class T>
-constexpr auto head_template_values = same<T, T>&& META17_DEFER_STATIC_ERROR("no template of values");
+constexpr auto head_template_values = META17_STATIC_ERROR_EXPR(void*, "no template of values");
 
 template<template<auto...> class Template, auto V, auto... Vs>
 constexpr auto head_template_values<Template<V, Vs...>> = V;

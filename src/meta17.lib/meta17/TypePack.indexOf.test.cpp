@@ -13,3 +13,6 @@ static_assert(type_pack_overflow_index_of<int, TypePack<float, double>> == 2);
 
 static_assert(typePackIndexOf<int>(type_pack<void, char, int>) == 2);
 static_assert(type_pack_index_of<int, TypePack<void, char, int>> == 2);
+
+// constexpr auto x = type_pack_index_of<int, int>;
+// constexpr auto y = type_pack_index_of<int, TypePack<int, char, int>>;

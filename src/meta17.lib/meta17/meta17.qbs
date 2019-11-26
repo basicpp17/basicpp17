@@ -146,6 +146,7 @@ Product {
     files: [
         "Arguments.fold.h",
         "DeferStaticError.h",
+        "StaticErrorExpr.h",
         "Unreachable.h",
         "align.h",
         "same.h",

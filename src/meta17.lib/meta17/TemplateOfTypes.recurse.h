@@ -1,5 +1,5 @@
 #pragma once
-#include "DeferStaticError.h"
+#include "StaticErrorExpr.h"
 #include "Type.h"
 #include "same.h"
 
@@ -9,7 +9,7 @@ namespace meta17 {
 
 /// Count template type arguments
 template<class T>
-constexpr auto count_template_types = same<T, T>&& META17_DEFER_STATIC_ERROR("no template of types");
+constexpr auto count_template_types = META17_STATIC_ERROR_EXPR(size_t, "no template of types");
 
 template<template<class...> class Template, class... Ts>
 constexpr auto count_template_types<Template<Ts...>> = sizeof...(Ts);

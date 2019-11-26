@@ -147,6 +147,7 @@ Application {
 
     files: [
         "Arguments.fold.test.cpp",
+        "StaticErrorExpr.test.cpp",
         "align.test.cpp",
         "main.cpp",
     ]

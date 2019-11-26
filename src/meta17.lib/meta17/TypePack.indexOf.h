@@ -8,32 +8,32 @@
 namespace meta17 {
 
 /// return number of occurences of type T in the TypePack
-template<class T, class TP>
-constexpr auto count_of = same<TP, TP>&& META17_DEFER_STATIC_ERROR("not a type pack");
+template<class T, class... Ts>
+constexpr auto count_of = ((type<Ts> == type<T> ? 1 : 0) + ... + 0);
 
 template<class T, class... Ts>
-constexpr auto count_of<T, TypePack<Ts...>> = ((type<Ts> == type<T> ? 1 : 0) + ... + 0);
+constexpr auto count_of<T, TypePack<Ts...>> = count_of<T, Ts...>;
 
 template<class T, class... Ts>
 constexpr auto countOf(TypePack<Ts...> = {}, Type<T> = {}) -> size_t {
-    return ((type<Ts> == type<T> ? 1 : 0) + ... + 0);
+    return count_of<T, Ts...>;
 }
 
 /// return true if T occurs at least once in the TypePack
-template<class T, class TP>
-constexpr auto contains_of = same<TP, TP>&& META17_DEFER_STATIC_ERROR("not a type pack");
+template<class T, class... Ts>
+constexpr auto contains_of = ((type<Ts> == type<T>) || ...);
 
 template<class T, class... Ts>
-constexpr auto contains_of<T, TypePack<Ts...>> = ((type<Ts> == type<T>) || ...);
+constexpr auto contains_of<T, TypePack<Ts...>> = contains_of<T, Ts...>;
 
 template<class T, class... Ts>
 constexpr auto containsOf(TypePack<Ts...>, Type<T> = {}) -> bool {
-    return ((type<Ts> == type<T>) || ...);
+    return contains_of<T, Ts...>;
 }
 
 /// return index of type T in TypePack or size of TypePack if index is not part or occurs multiple times
 template<class T, class TP, class IP>
-constexpr auto indexed_type_pack_overflow_index_of = same<TP, TP>&& META17_DEFER_STATIC_ERROR("not a type pack");
+constexpr auto indexed_type_pack_overflow_index_of = META17_STATIC_ERROR_EXPR(size_t, "not a type pack");
 
 template<class T, class... Ts, size_t... Is>
 constexpr auto indexed_type_pack_overflow_index_of<T, TypePack<Ts...>, IndexPack<Is...>> = //
@@ -54,11 +54,12 @@ constexpr auto typePackOverflowIndexOf(TP, Type<T> = {}) {
 
 /// statically asserts that the returned index is valid
 template<class T, class TP, class IP>
-constexpr auto indexed_type_pack_index_of = same<TP, TP>&& META17_DEFER_STATIC_ERROR("not a type pack");
+constexpr auto indexed_type_pack_index_of = META17_STATIC_ERROR_EXPR(size_t, "not a type pack");
 
 template<class T, class... Ts, size_t... Is>
 constexpr auto indexed_type_pack_index_of<T, TypePack<Ts...>, IndexPack<Is...>> = //
-    1 == countOf<T, Ts...>() ? (((type<Ts> == type<T>) ? Is : 0) + ...) : META17_DEFER_STATIC_ERROR("type not found");
+    1 == count_of<T, Ts...> ? (((type<Ts> == type<T>) ? Is : 0) + ...)
+                            : META17_STATIC_ASSERT_EXPR(size_t, (1 == count_of<T, Ts...>), "type not found");
 
 template<class T, class TP, class IP>
 constexpr auto indexedTypePackIndexOf(TP = {}, IP = {}, Type<T> = {}) -> size_t {

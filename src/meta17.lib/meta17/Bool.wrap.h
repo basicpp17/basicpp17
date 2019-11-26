@@ -1,14 +1,14 @@
 #pragma once
 #include "Bool.h"
 
-#include "DeferStaticError.h"
+#include "StaticErrorExpr.h"
 #include "same.h"
 
 namespace meta17 {
 
 /// Unwrapping
 template<class T>
-constexpr auto to_value = same<T, T>&& META17_DEFER_STATIC_ERROR("no value");
+constexpr auto to_value = META17_STATIC_ERROR_EXPR(T, "no value");
 
 template<bool B>
 constexpr auto to_value<Bool<B>> = B;
