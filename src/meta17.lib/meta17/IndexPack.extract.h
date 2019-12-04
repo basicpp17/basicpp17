@@ -13,8 +13,8 @@ constexpr auto extract_index_pack = META17_STATIC_ERROR_EXPR(T, "no index_pack t
 template<template<size_t...> class Template, size_t... Is>
 constexpr auto extract_index_pack<Template<Is...>> = index_pack<Is...>;
 
-template<template<class, size_t...> class Template, size_t... Is>
-constexpr auto extract_index_pack<Template<size_t, Is...>> = index_pack<Is...>;
+template<template<class T, T...> class Template, class T, T... Is>
+constexpr auto extract_index_pack<Template<T, Is...>> = index_pack<Is...>;
 
 template<class T>
 using ExtractIndexPack = decltype(extract_index_pack<T>);
