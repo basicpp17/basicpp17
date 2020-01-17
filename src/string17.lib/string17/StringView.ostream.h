@@ -5,7 +5,7 @@
 
 namespace string17 {
 
-auto operator<<(std::ostream& out, StringView v) -> std::ostream& {
+inline auto operator<<(std::ostream& out, StringView v) -> std::ostream& {
     return out.write(v.begin, v.size()); //
 }
 
