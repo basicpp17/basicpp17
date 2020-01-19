@@ -1,6 +1,8 @@
 import qbs
 
 Product {
+    Depends { name: "cpp17" }
+
     Group {
         name: "Bool"
         files: [

@@ -1,6 +1,9 @@
 import qbs
 
 Product {
+    Depends { name: "cpp" }
+    Depends { name: "meta17" }
+
     files: [
         "Tuple.h",
         "Tuple.make.h",
