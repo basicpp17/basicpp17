@@ -44,7 +44,7 @@ constexpr auto indexed_type_template_index_of = META17_STATIC_ERROR_EXPR(size_t,
 template<class T, template<typename...> class Template, class... Ts, size_t... Is>
 constexpr auto indexed_type_template_index_of<T, Template<Ts...>, IndexPack<Is...>> = //
     1 == countOf<T, Ts...>() ? (((type<Ts> == type<T>) ? Is : 0) + ...)
-                             : META17_STATIC_ERROR_EXPR(size_t, "type not found");
+                             : META17_STATIC_ASSERT_EXPR(size_t, (1 == countOf<T, Ts...>()), "type not found");
 
 template<class T, class TT>
 constexpr auto type_template_index_of = indexed_type_template_index_of<T, TT, IndexPackFor<TT>>;

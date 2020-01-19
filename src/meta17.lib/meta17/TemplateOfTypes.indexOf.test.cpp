@@ -12,3 +12,4 @@ static_assert(type_template_overflow_index_of<int, TypePack<char, int, unsigned>
 static_assert(type_template_overflow_index_of<int, TypePack<float, double>> == 2);
 
 static_assert(type_template_index_of<int, TypePack<void, char, int>> == 2);
+// static_assert(type_template_index_of<double, TypePack<void, char, int>> == 0);
