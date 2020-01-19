@@ -250,12 +250,12 @@ private:
 
     template<class F, size_t... Is>
     constexpr void visitIndexTypes(IndexPack<Is...>, F&& f) {
-        (f(_const<Is>, type_at<Is>), ...);
+        (f(_const<Is>, type<Ts>), ...);
     }
 
     template<class F, size_t... Is>
     constexpr void visitIndexTypes(IndexPack<Is...>, F&& f) const {
-        (f(_const<Is>, type_at<Is>), ...);
+        (f(_const<Is>, type<Ts>), ...);
     }
 
     template<size_t I>
