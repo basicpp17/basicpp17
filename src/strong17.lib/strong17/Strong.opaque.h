@@ -13,7 +13,7 @@
         return {};                                                                                                     \
     }                                                                                                                  \
     struct NAME : strong17::Strong<TYPE, ##__VA_ARGS__> {                                                              \
-        using Strong::Strong;                                                                                          \
+        using strong17::Strong<TYPE, ##__VA_ARGS__>::Strong;                                                           \
     }
 
 #define STRONG_OPAQUE_TYPE(NAME, STRONG_TYPE)                                                                          \
