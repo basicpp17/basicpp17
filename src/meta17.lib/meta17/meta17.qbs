@@ -50,6 +50,7 @@ Product {
             "IndexPack.extract.h",
             "IndexPack.for.h",
             "IndexPack.h",
+            "IndexPack.iterate.h",
             "IndexPack.make.h",
             "IndexPack.ops.h",
             "IndexPack.trait.h",
