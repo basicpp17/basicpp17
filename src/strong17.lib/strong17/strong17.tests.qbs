@@ -16,6 +16,7 @@ Application {
         "Strong.inspect.test.cpp",
         "Strong.make.test.cpp",
         "Strong.manip.test.cpp",
+        "Strong.opaque.test.cpp",
         "Strong.ops.test.cpp",
         "Strong.ostream.cpp",
         "Strong.test.cpp",

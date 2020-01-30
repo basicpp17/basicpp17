@@ -4,8 +4,6 @@
 #include "Strong.make.h"
 
 #include "meta17/Type.h"
-#include "meta17/TypePack.h"
-#include "meta17/TypePack.recurse.h"
 
 #define STRONG_OPAQUE(NAME, TYPE, ...)                                                                                 \
     struct NAME;                                                                                                       \
