@@ -53,6 +53,7 @@ Application {
         files: [
             "IndexPack.extract.test.cpp",
             "IndexPack.for.test.cpp",
+            "IndexPack.iterate.test.cpp",
             "IndexPack.make.test.cpp",
             "IndexPack.ops.test.cpp",
             "IndexPack.test.cpp",
