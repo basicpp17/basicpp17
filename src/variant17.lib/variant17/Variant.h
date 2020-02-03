@@ -64,6 +64,9 @@ struct VariantWhich {
     static constexpr auto pack = to_type_pack<Ts...>;
     static constexpr auto indices = indexPackFor(pack);
     using WhichValue = UnwrapType<SelectType<sizeof...(Ts)>>; // enough for npos!
+
+    constexpr VariantWhich()
+        : value(0) {}
     explicit constexpr VariantWhich(WhichValue v)
         : value(v) {}
 
