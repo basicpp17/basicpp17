@@ -76,7 +76,7 @@ TEST(Variant, which) {
     ASSERT_NE(v.which(), type<int>);
     ASSERT_EQ(v.which(), type<float>);
 
-    static_assert(V::whichOf<char>() == type<char>);
+    static_assert(V::Which::whichOf<char>() == type<char>);
     // Should not compile due to double is not part of V
     // static_assert(V::whichOf<double>() == type<double>);
 }
