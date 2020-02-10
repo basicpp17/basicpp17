@@ -59,14 +59,14 @@ auto selectType() {
 template<size_t N>
 using SelectType = UnwrapType<decltype(selectType<N>())>;
 
+/// VariantWhich is an enum-like type used in Variant to determine which type is currently present in the Variant.
 template<class... Ts>
 struct VariantWhich {
     static constexpr auto pack = to_type_pack<Ts...>;
     static constexpr auto indices = indexPackFor(pack);
     using WhichValue = UnwrapType<SelectType<sizeof...(Ts)>>; // enough for npos!
 
-    constexpr VariantWhich()
-        : value(0) {}
+    constexpr VariantWhich() = default;
     explicit constexpr VariantWhich(WhichValue v)
         : value(v) {}
 
@@ -77,20 +77,20 @@ struct VariantWhich {
 
     template<class T>
     constexpr bool operator==(Type<T>) const {
-        return whichOf<T>() == *this;
+        return of<T>() == *this;
     }
     template<class T>
     constexpr bool operator!=(Type<T>) const {
-        return whichOf<T>() != *this;
+        return of<T>() != *this;
     }
 
     template<class T>
-    constexpr static auto whichOf(Type<T> = {}) -> VariantWhich {
+    constexpr static auto of(Type<T> = {}) -> VariantWhich {
         return VariantWhich{static_cast<WhichValue>(indexedTypePackIndexOf<T>(pack, indices))};
     }
 
 private:
-    WhichValue value;
+    WhichValue value{};
 };
 
 /// Variant != std::variant
@@ -184,7 +184,7 @@ public:
     Variant(T&& t) {
         static_assert(containsOf<BT>(pack), "type not part of variant");
         constructOf(type<BT>, std::forward<T>(t));
-        whichValue = Which::whichOf(type<BT>);
+        whichValue = whichOf(type<BT>);
     }
 
     /// inplace construct of type
@@ -192,7 +192,7 @@ public:
     Variant(Type<T>, Args&&... args) {
         static_assert(containsOf<T>(pack), "type not part of variant");
         constructOf(type<T>, std::forward<Args>(args)...);
-        whichValue = Which::whichOf(type<T>);
+        whichValue = whichOf(type<T>);
     }
 
     template<size_t I, class... Args>
@@ -220,7 +220,12 @@ public:
         if (whichValue != npos) destruct();
         whichValue = npos;
         constructOf(type<T>, std::forward<Args>(args)...);
-        whichValue = Which::whichOf(type<T>);
+        whichValue = whichOf(type<T>);
+    }
+
+    template<class T>
+    constexpr static auto whichOf(Type<T> = {}) -> Which {
+        return Which::of(type<T>);
     }
 
     template<size_t I>
