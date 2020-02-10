@@ -29,6 +29,7 @@ using meta17::indexPackFor;
 using meta17::to_type_pack;
 using meta17::type;
 using meta17::Type;
+using meta17::type_head;
 using meta17::type_pack;
 using meta17::TypeHead;
 using meta17::TypePack;
@@ -89,8 +90,53 @@ struct VariantWhich {
         return VariantWhich{static_cast<WhichValue>(indexedTypePackIndexOf<T>(pack, indices))};
     }
 
+    template<class F>
+    constexpr auto visit(F&& f) -> decltype(auto) {
+        return visitImpl(*this, std::forward<F>(f));
+    }
+    template<class F>
+    constexpr auto visit(F&& f) const -> decltype(auto) {
+        return visitImpl(*this, std::forward<F>(f));
+    }
+
+    /// overloaded visitor
+    template<class F, class F2, class... Fs>
+    constexpr auto visit(F&& f, F2&& f2, Fs&&... fs) -> decltype(auto) {
+        return visit(Overloaded{std::forward<F>(f), std::forward<F2>(f2), std::forward<Fs>(fs)...});
+    }
+    template<class F, class F2, class... Fs>
+    constexpr auto visit(F&& f, F2&& f2, Fs&&... fs) const -> decltype(auto) {
+        return visit(Overloaded{std::forward<F>(f), std::forward<F2>(f2), std::forward<Fs>(fs)...});
+    }
+
 private:
     WhichValue value{};
+
+    template<class V, class F>
+    static constexpr auto visitImpl(V&& v, F&& f) -> decltype(auto) {
+        using R = std::remove_cv_t<decltype(f(type_head<decltype(pack)>))>;
+        if constexpr (type<R> == type<void>)
+            visitVoidImpl(std::forward<V>(v), std::forward<F>(f), indices);
+        else
+            return visitRecursiveImpl(std::forward<V>(v), std::forward<F>(f), pack, indices);
+    }
+
+    template<class V, class F, size_t... Is>
+    static constexpr auto visitVoidImpl(V&& v, F&& f, IndexPack<Is...>) {
+        return (void)((Is == v ? (f(type<Ts>), true) : false) || ...);
+    }
+    template<class V, class F, class T, class... TTs, size_t I, size_t... Is>
+    static constexpr auto visitRecursiveImpl(V&& v, F&& f, TypePack<T, TTs...>, IndexPack<I, Is...>) -> decltype(auto) {
+        if (I == v) {
+            return f(type<T>);
+        }
+        if constexpr (0 != sizeof...(TTs)) {
+            return visitRecursiveImpl(std::forward<V>(v), std::forward<F>(f), type_pack<TTs...>, index_pack<Is...>);
+        }
+        else {
+            UNREACHABLE();
+        }
+    }
 };
 
 /// Variant != std::variant
