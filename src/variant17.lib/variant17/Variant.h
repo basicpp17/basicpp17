@@ -59,6 +59,40 @@ auto selectType() {
 template<size_t N>
 using SelectType = UnwrapType<decltype(selectType<N>())>;
 
+/// VariantWhich is an enum-like type used in Variant to determine which type is currently present in the Variant.
+template<class... Ts>
+struct VariantWhich {
+    static constexpr auto pack = to_type_pack<Ts...>;
+    static constexpr auto indices = indexPackFor(pack);
+    using WhichValue = UnwrapType<SelectType<sizeof...(Ts)>>; // enough for npos!
+
+    constexpr VariantWhich() = default;
+    explicit constexpr VariantWhich(WhichValue v)
+        : value(v) {}
+
+    constexpr operator WhichValue() const { return value; }
+
+    constexpr bool operator==(VariantWhich w) const { return w.value == value; }
+    constexpr bool operator!=(VariantWhich w) const { return w.value != value; }
+
+    template<class T>
+    constexpr bool operator==(Type<T>) const {
+        return of<T>() == *this;
+    }
+    template<class T>
+    constexpr bool operator!=(Type<T>) const {
+        return of<T>() != *this;
+    }
+
+    template<class T>
+    constexpr static auto of(Type<T> = {}) -> VariantWhich {
+        return VariantWhich{static_cast<WhichValue>(indexedTypePackIndexOf<T>(pack, indices))};
+    }
+
+private:
+    WhichValue value{};
+};
+
 /// Variant != std::variant
 /// * unchecked invalid state (only destruction is valid!)
 /// * simple recursive vistor
@@ -66,33 +100,12 @@ using SelectType = UnwrapType<decltype(selectType<N>())>;
 /// * sizeof(index) limits
 template<class... Ts>
 struct Variant {
-    static constexpr auto pack = to_type_pack<Ts...>;
-    static constexpr auto indices = indexPackFor(pack);
+    using Which = VariantWhich<Ts...>;
+    static constexpr auto pack = Which::pack;
+    static constexpr auto indices = Which::indices;
     using First = TypeHead<decltype(pack)>;
-    using WhichValue = UnwrapType<SelectType<sizeof...(Ts)>>; // enough for npos!
+    using WhichValue = typename Which::WhichValue;
     enum { npos = sizeof...(Ts) }; // invalid state after exception - only destruction checks!
-
-    struct Which {
-        explicit constexpr Which(WhichValue v)
-            : value(v) {}
-
-        constexpr operator WhichValue() const { return value; }
-
-        constexpr bool operator==(Which w) const { return w.value == value; }
-        constexpr bool operator!=(Which w) const { return w.value != value; }
-
-        template<class T>
-        constexpr bool operator==(Type<T>) const {
-            return whichOf<T>() == *this;
-        }
-        template<class T>
-        constexpr bool operator!=(Type<T>) const {
-            return whichOf<T>() != *this;
-        }
-
-    private:
-        WhichValue value;
-    };
 
 private:
     std::aligned_union_t<0, Ts...> m{};
@@ -171,7 +184,7 @@ public:
     Variant(T&& t) {
         static_assert(containsOf<BT>(pack), "type not part of variant");
         constructOf(type<BT>, std::forward<T>(t));
-        whichValue = whichOf<BT>();
+        whichValue = whichOf(type<BT>);
     }
 
     /// inplace construct of type
@@ -179,7 +192,7 @@ public:
     Variant(Type<T>, Args&&... args) {
         static_assert(containsOf<T>(pack), "type not part of variant");
         constructOf(type<T>, std::forward<Args>(args)...);
-        whichValue = whichOf<T>();
+        whichValue = whichOf(type<T>);
     }
 
     template<size_t I, class... Args>
@@ -207,12 +220,12 @@ public:
         if (whichValue != npos) destruct();
         whichValue = npos;
         constructOf(type<T>, std::forward<Args>(args)...);
-        whichValue = whichOf<T>();
+        whichValue = whichOf(type<T>);
     }
 
     template<class T>
     constexpr static auto whichOf(Type<T> = {}) -> Which {
-        return Which{static_cast<WhichValue>(indexedTypePackIndexOf<T>(pack, indices))};
+        return Which::of(type<T>);
     }
 
     template<size_t I>
