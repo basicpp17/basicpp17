@@ -18,11 +18,11 @@ using meta17::UnwrapType;
 
 /// like extractValue, but does nothing for non-strong types
 template<class S>
-constexpr auto weakenType(Type<S> = {}) -> std::enable_if_t<is_strong<S>.v, Type<ExtractValue<Base<S>>>> {
+constexpr auto weakenType(Type<S> = {}) -> std::enable_if_t<is_strong<S>, Type<ExtractValue<Base<S>>>> {
     return {};
 }
 template<class T>
-constexpr auto weakenType(Type<T> = {}) -> std::enable_if_t<!is_strong<T>.v, Type<T>> {
+constexpr auto weakenType(Type<T> = {}) -> std::enable_if_t<!is_strong<T>, Type<T>> {
     return {};
 }
 template<class S>

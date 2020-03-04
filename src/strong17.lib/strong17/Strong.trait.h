@@ -12,14 +12,11 @@ using meta17::False;
 using meta17::is_type_template;
 using meta17::same;
 
-template<class, class = void>
-struct IsStrong : False {};
+template<class T, class = void>
+constexpr auto is_strong = false;
 
 template<class T>
-struct IsStrong<T, std::void_t<Base<T>>> : Bool<is_type_template<Base<T>, Strong>> {};
-
-template<class T>
-constexpr auto is_strong = IsStrong<std::remove_const_t<T>>{};
+constexpr auto is_strong<T, std::void_t<Base<T>>> = is_type_template<Base<T>, Strong>;
 
 template<class, class = void>
 struct IsOpaque : False {};
