@@ -153,6 +153,7 @@ Product {
         "Unreachable.h",
         "align.h",
         "same.h",
+        "ptr.h",
     ]
 
     Export {

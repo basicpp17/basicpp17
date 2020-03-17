@@ -151,5 +151,6 @@ Application {
         "StaticErrorExpr.test.cpp",
         "align.test.cpp",
         "main.cpp",
+        "ptr.test.cpp",
     ]
 }
