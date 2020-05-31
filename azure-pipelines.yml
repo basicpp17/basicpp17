@@ -5,11 +5,13 @@ jobs:
     steps:
       - checkout: self
         submodules: true
-      - script:
-          docker run -v${PWD}:/build
-            arbmind/qbs-clang7:1
-            build --file /build/BasiC++17.qbs --build-directory /tmp/build
-            -p autotest-runner
+      - task: ShellScript@2
+        inputs:
+          scriptPath: thirdparty/git_clone_googletest.sh
+      - script: docker run -v${PWD}:/build
+          arbmind/qbs-clang7:1
+          build --file /build/BasiC++17.qbs --build-directory /tmp/build
+          -p autotest-runner
 
   - job: Windows
     pool:
@@ -21,6 +23,9 @@ jobs:
       - script: qbs config --list profiles
       - checkout: self
         submodules: true
+      - task: ShellScript@2
+        inputs:
+          scriptPath: thirdparty/git_clone_googletest.sh
       - script: qbs
-            build profile:MSVC2019-x64 --file BasiC++17.qbs --build-directory %TMP%\build
-            -p autotest-runner
+          build profile:MSVC2019-x64 --file BasiC++17.qbs --build-directory %TMP%\build
+          -p autotest-runner
